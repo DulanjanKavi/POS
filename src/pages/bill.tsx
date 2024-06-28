@@ -775,13 +775,13 @@ const Bill = () => {
 
 
       
-      <div className="fixed top-10 left-0 right-0   z-10">
+      <div className="fixed top-6 left-0 right-0   z-10">
         <div >
           
         </div>
       
       
-        <div className="border-2  m-1 p-1 rounded-lg flex justify-between items-center">
+        <div className="border-b-4  m-1 p-1  flex justify-between items-center">
     <p className="text-lg text-center text-white">Quick access bar</p>
     <div className="flex justify-end space-x-1">
         <button onClick={handleRemove} className="bg-red-500 rounded px-10 py-1 m-1">Remove Bill</button>
@@ -791,11 +791,11 @@ const Bill = () => {
 
       </div>
 
-      <div className="my-10">
+      <div className="my-6">
         <br></br>
       </div>
       {isVisibleAddItem && (
-                      <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50  z-50">
+                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
                         <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black">
                         <div className='text-2xl text-center'>
                               Select The Price
@@ -804,7 +804,7 @@ const Bill = () => {
                           {editItem.Values.map((value, index) => (
                                 <div key={index}>
                                     <button onClick={() => handleAddItemToCardWithMultiValue(index)} className="bg-blue-500 text-white p-2 rounded m-2">
-                                    {value}
+                                    {value.toFixed(2)}
                                     </button>
                                 </div>
                                 ))}
@@ -824,45 +824,45 @@ const Bill = () => {
 )}  
 
 {isVisibleProcessBill && (
-                        console.log('Rendering dialog with pArray:', pArray),
-                      <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50 z-50">
+                      
+                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
                         <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black w-96">
-                          <div className='flex items-center justify-center'>
+                          <div className='flex items-center justify-center '>
                           <p className="text-2xl">PROSESS BILL</p>
                           </div>
                           <div className='items-center justify-center flex'>
                           <div className='w-72 p-4 flex flex-col items-start justify-between'>
-    <div className='w-full flex justify-between'>
+    <div className='w-full flex justify-between '>
         <p className='text-xl'>Total:</p>
-        <p>{total}</p>
+        <p>{total.toFixed(2)}</p>
     </div>
     {isPayMethodCash && (
         <div className='w-full  flex flex-col items-start z-50'>
             <div className='w-full flex justify-between'>
                 <p className='text-xl'>Cash :</p>
-                <p>{payAmount}</p>
+                <p>{payAmount.toFixed(2)}</p>
             </div>
             <div className='w-full flex justify-between'>
                 <p className='text-xl'>Balance :</p>
                 {isWithdrawPoint &&(
-                  <p>{payAmount-total}</p>
+                  <p>{(payAmount-total).toFixed(2)}</p>
                 )
                 }
                 {!isWithdrawPoint &&(
-                  <p>{payAmount-total}</p>
+                  <p>{(payAmount-total).toFixed(2)}</p>
                 )
                 }
             </div>
             {isWithdrawPoint && (
               <div className='w-full flex justify-between'>
               <p className='text-xl'>Withdraw point :</p>
-              <p>{maxWithdrawPoint}</p>
+              <p>{maxWithdrawPoint.toFixed(2)}</p>
           </div>
             )}
             {isCollectPoint && (
               <div className='w-full flex justify-between'>
               <p className='text-xl'>Collect point :</p>
-              <p>{collectPoint}</p>
+              <p>{collectPoint.toFixed(2)}</p>
           </div>
             )}
         </div>
@@ -888,10 +888,10 @@ const Bill = () => {
 
                           </div>
 
-                          <div className="bg-white p-1 rounded-lg">
+                          <div className="bg-white p-1  border-t-2">
     <table className="table-auto w-full">
                     <tbody>
-                        <tr className="flex w-full justify-between rounded-lg border-2 border-black">
+                        <tr className="flex w-full justify-between  border-b-2">
                             
                             <td className='w-5/10 p-2 '>snumber</td>
                             <td className='w-1/10 p-2 '>price</td>
@@ -903,7 +903,7 @@ const Bill = () => {
                     </tbody>
                 </table>
     </div>
-    <div className=' max-h-[30vh] md:max-h-[80vh]  overflow-auto m-2 p-2 rounded-lg border-2 border-black'>
+    <div className=' max-h-[30vh] md:max-h-[80vh]  overflow-auto m-2 p-2 w-full'>
     {cardArray.map((item, index) => {
         // Generate a unique key for each item
         const uniqueKey = `${item.snumber}-${index}`;
@@ -913,7 +913,7 @@ const Bill = () => {
             <div key={uniqueKey} className=" bg-white m-1 rounded-lg overflow-auto">
                 <table className="table-auto w-full">
                     <tbody>
-                        <tr className="flex w-full justify-between rounded-lg border-2 border-black text-sm">
+                        <tr className="flex w-full justify-between   text-sm">
                             
                             <td className='w-5/10 p-2 '>{item.snumber}</td>
                             <td className='w-1/10 p-2 '>{item.selectedValue}</td>
@@ -945,7 +945,7 @@ const Bill = () => {
 
 
 {isVisibleDeleteItem && (
-                      <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50  z-50">
+                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
                         <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black">
                         <div className='flex flex-col items-center justify-center'>
                                     <div className='text-lg text-center mb-4'>Delete item</div>
@@ -963,7 +963,7 @@ const Bill = () => {
                                     </div>
                                     <div className='flex justify-between w-full'>
                                         <span>Amount:</span>
-                                        <span>{cardArray[deleteItemSnumber].Amount}</span>
+                                        <span>{cardArray[deleteItemSnumber].Amount.toFixed(2)}</span>
                                     </div>
                                     </div>
 
@@ -983,14 +983,14 @@ const Bill = () => {
 )}
 
 {isVisibleMultiValueAddItem && (
-                      <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50 z-50">
+                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
                         <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black items-center  justify-center ">
                           <div>
                           <p className='text-3xl text-center text-black'>Select Price</p>
                           </div>
                           <div className='flex items-center justify-center'>
                           {editItem.Values.map((value, index) => (
-                              <div key={index}><button onClick={()=>handlAddItemOrUpdateToCardWithMultiValue(index)} className="bg-blue-500 text-white p-2  rounded m-2">{value}</button></div>
+                              <div key={index}><button onClick={()=>handlAddItemOrUpdateToCardWithMultiValue(index)} className="bg-blue-500 text-white p-2  rounded m-2">{value.toFixed(2)}</button></div>
                             ))}
                           </div>
                           <div className="flex items-center justify-center">
@@ -1036,7 +1036,7 @@ const Bill = () => {
 )}
 
 {isVisiblePayMethodcash && (
-                      <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50 z-50">
+                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
                       <div className="bg-white  rounded-lg shadow-md  border-2 border-black p-5 m-100">
                       <button  onClick={backToPayMethodInCash} className=" text-black   rounded border-2 border-black m-1 px-1">
                         Back
@@ -1045,11 +1045,11 @@ const Bill = () => {
                         <div className='flex justify-between items-center text-xl'>
                           <p>Total :</p>
                           {isWithdrawPoint && (
-                            <p className='px-4'>{total-maxWithdrawPoint}</p>
+                            <p className='px-4'>{(total-maxWithdrawPoint).toFixed(2)}</p>
                           )
                           }
                           {!isWithdrawPoint && (
-                            <p className='px-4'>{total-maxWithdrawPoint}</p>
+                            <p className='px-4'>{total.toFixed(2)}</p>
                           )
                           }
                           
@@ -1081,7 +1081,7 @@ const Bill = () => {
 )}
 
 {isVisiblePayMethodCard && (
-                      <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50 z-50">
+                    <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
                       <div className="bg-white  rounded-lg shadow-md  border-2 border-black p-5 m-100">
                       <button  onClick={backToPayMethodInCard} className=" text-black   rounded border-2 border-black m-1 px-1">
                         Back
@@ -1090,10 +1090,10 @@ const Bill = () => {
                         <div className='flex justify-between items-center text-xl'>
                           <p>Total :</p>
                           {isWithdrawPoint && (
-                            <p className='px-4'>{total-maxWithdrawPoint}</p>
+                            <p className='px-4'>{(total-maxWithdrawPoint).toFixed(2)}</p>
                           )}
                           {!isWithdrawPoint && (
-                            <p className='px-4'>{total-maxWithdrawPoint}</p>
+                            <p className='px-4'>{total.toFixed(2)}</p>
                           )}
                           
                         </div>
@@ -1124,7 +1124,7 @@ const Bill = () => {
 )}
 
 {isVisibleLoyalCustomer && (
-  <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50 z-50">
+  <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
     <div className="bg-white rounded-lg shadow-md border-2 border-black p-5 m-100">
       <p className="text-3xl text-center m-5">Add Loyal Customer</p>
 
@@ -1135,7 +1135,7 @@ const Bill = () => {
           type="number"
           onChange={(e) => {
             setCustomerTP(e.target.value);
-            setError(''); // Clear any previous error
+            setError(''); 
           }}
         />
       </div>
@@ -1170,7 +1170,7 @@ const Bill = () => {
 
 
 {isVisibleaddNewLoyalCustomer && (
-  <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50 z-50">
+  <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
     <div className="bg-white rounded-lg shadow-md border-2 border-black p-5 m-100">
       <button onClick={handleBackOnAddNewLoyalCustomer} className="text-black rounded border-2 border-black m-1 px-1">
         Back
@@ -1217,7 +1217,7 @@ const Bill = () => {
 )}
 
 {isVisibleConfirmAddNewCustomerDetails && (
-  <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50 z-50">
+  <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
     <div className="bg-white rounded-lg shadow-md border-2 border-black p-5 m-100">
       <p className="text-3xl text-center m-5">Confirm New Loyal Customer</p>
       <p className="text-2xl text-center m-5">{customerTP}</p>
@@ -1246,9 +1246,9 @@ const Bill = () => {
 
 
 {isVisible && (
-                      <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50 z-50">
+                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
                         <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black">
-                          {/* Your modal content */}
+                
                           <p className='text-3xl'>Conferm The Remove Bill.</p>
                           <p className='text-3xl'>{}</p>
                           <div className="flex items-center justify-center">
@@ -1265,7 +1265,7 @@ const Bill = () => {
 )}
 
 {isConfermLoyalNumber && (
-                      <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50 z-50">
+                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
                         <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black">
                       
                           <p className='text-3xl'>Confirm The Loyal Number.</p>
@@ -1286,21 +1286,21 @@ const Bill = () => {
 )}
 
 {isCollectOrWithdraw && (
-                      <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50 z-50">
+                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
                         <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black">
                       
                           <p className='text-3xl text-center mb-5'>Loyalty Point Panel</p> 
                           <div className="flex items-center justify-center">
                           <button onClick={()=>handleCollectPoint("c")} className="bg-blue-500 text-black p-2  rounded m-2">
                             <div className='items-center'><img className="h-8 w-8 mx-8 my-1 " src={starIcon} alt="points" /></div>
-                            <p>{collectPoint}</p>
+                            <p>{collectPoint.toFixed(2)}</p>
                             <p>Collect</p>
                             <p>Points</p>
 
                           </button>
                           <button onClick={()=>handleCollectPoint("w")} className="bg-red-500 text-black p-2  rounded m-2">
                           <div className='items-center'><img className="h-8 w-8 mx-8 my-1 " src={starIcon} alt="points" /></div>
-                            <p>{maxWithdrawPoint}</p>
+                            <p>{maxWithdrawPoint.toFixed(2)}</p>
                             <p>Withdraw</p>
                             <p>Points</p>
                           </button>
@@ -1311,7 +1311,7 @@ const Bill = () => {
 )}
 
 {isVisibleEditItem && (
-                      <dialog open className="popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-800 bg-opacity-50 z-50">
+                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
                         <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black z-50">
                         <div className='text-center mx-3'>
                           <p className='text-3xl'>Edit Item</p>
@@ -1325,7 +1325,7 @@ const Bill = () => {
                           </div>
                           <div className='flex justify-between text-xl'>
                             <span>Amount :</span>
-                            <span>{cardArray[itemInndex].Amount}</span>
+                            <span>{cardArray[itemInndex].Amount.toFixed(2)}</span>
                           </div>
                         </div>
 
@@ -1347,9 +1347,9 @@ const Bill = () => {
 )}
 
       <div className="fixed top-15 left-0 right-0    grid grid-cols-1 md:grid-cols-12  m-1 p-1  h-auto">
-        <div className="max-h-[40vh] md:max-h-[90vh] col-span-12 sm:col-span-7 m-1 p-1 rounded border-2  ">
+        <div className="max-h-[40vh] md:border-r-2 md:border-b-white border-b-2 md:max-h-[90vh] col-span-12  sm:col-span-7 m-1 p-1 border-black ">
           <div className="flex items-center justify-center p-1 m-1  ">
-            <input className='m-1 p-1 rounded border-2 border-black'
+            <input className='m-1 p-1 rounded border-2 border-black focus:outline-none focus:border-black'
               type="text"
               value={inputText}
               onChange={handleInputChange}
@@ -1384,6 +1384,98 @@ const Bill = () => {
                
               </div>  
           </div>
+
+          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
+              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
+                <button >
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
+                    <h1>Item Image</h1>
+                  </div>
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
+                    Item Name
+                  </div>
+                </button>
+               
+              </div>  
+          </div>
+          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
+              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
+                <button >
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
+                    <h1>Item Image</h1>
+                  </div>
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
+                    Item Name
+                  </div>
+                </button>
+               
+              </div>  
+          </div>
+          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
+              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
+                <button >
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
+                    <h1>Item Image</h1>
+                  </div>
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
+                    Item Name
+                  </div>
+                </button>
+               
+              </div>  
+          </div>
+          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
+              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
+                <button >
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
+                    <h1>Item Image</h1>
+                  </div>
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
+                    Item Name
+                  </div>
+                </button>
+               
+              </div>  
+          </div>
+          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
+              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
+                <button >
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
+                    <h1>Item Image</h1>
+                  </div>
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
+                    Item Name
+                  </div>
+                </button>
+               
+              </div>  
+          </div>
+          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
+              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
+                <button >
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
+                    <h1>Item Image</h1>
+                  </div>
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
+                    Item Name
+                  </div>
+                </button>
+               
+              </div>  
+          </div>
+          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
+              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
+                <button >
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
+                    <h1>Item Image</h1>
+                  </div>
+                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
+                    Item Name
+                  </div>
+                </button>
+               
+              </div>  
+          </div>
           
           
           
@@ -1397,9 +1489,9 @@ const Bill = () => {
         </div>
 
 
-        <div className=" max-h-[40vh] md:max-h-[90vh] col-span-12 md:col-span-5 m-1 p-1 rounded border-2 ">
+        <div className=" max-h-[40vh] md:max-h-[90vh] col-span-12 md:col-span-5 m-1 p-1  ">
     
-    <div className="text-2xl text-center bg-white m-1 p-1 rounded-lg flex justify-between  border-2 border-black">
+    <div className="text-2xl text-center bg-white m-1 p-1  flex justify-between  border-b-4 ">
         <h3>Total</h3>
         <h1>{total.toFixed(2)}</h1>
     </div>
@@ -1411,7 +1503,7 @@ const Bill = () => {
 
 
 
-    <div className="rounded-lg border-2 border-black mx-1">
+    <div className="border-b-2  mx-1">
     <table className="table-auto w-full text-md ">
                     <tbody className=''>
                     <tr className="flex  justify-between mx-2">
@@ -1452,7 +1544,7 @@ const Bill = () => {
         return (
             <div key={index} className="bg-white m-1 ">
                 <table className="table-auto w-full ">
-                    <tbody className='rounded-lg border-2 text-sm'>
+                    <tbody className=' border-b-2 text-sm'>
                         <tr className="flex w-full justify-between">
                             
                             <td className='w-3/10  '>{item.snumber}</td>
@@ -1465,10 +1557,10 @@ const Bill = () => {
                             </td>
                         </tr>
                         <tr className="flex w-full justify-between ">
-                            <td className='w-1/10  '>{item.selectedValue}</td>
+                            <td className='w-1/10  '>{item.selectedValue.toFixed(2)}</td>
                             <td className='w-1/10  '>{item.NoOfItems}</td>
-                            <td className='w-1/10  '> {item.discount}</td>
-                            <td className='w-1/10  '>{item.Amount}</td>
+                            <td className='w-1/10  '> {item.discount.toFixed(2)}</td>
+                            <td className='w-1/10  '>{item.Amount.toFixed(2)}</td>
                         </tr>
                     </tbody>
                 </table>
