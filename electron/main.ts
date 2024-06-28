@@ -303,8 +303,12 @@ ipcMain.handle('addLoyalCustomer', async (event, tp, name, points) => {
 
 ipcMain.handle('processBill', async (event, total, pMethod, customerID, discount, withdrowPoints, additionalDetails) => {
   try {
-      await db.run("INSERT INTO bill (customerID, cashierID, total, pMethod, discount, withdrowPoints, aditionalDetails) VALUES (?, ?, ?, ?, ?, ?, ?)",
-          [customerID, cashierID, total, pMethod, discount, withdrowPoints, additionalDetails]);
+    const currentDate = new Date();
+    const currentTime = currentDate.toLocaleTimeString(); 
+    const currentDateFormatted = currentDate.toLocaleDateString(); 
+    
+      await db.run("INSERT INTO bill (customerID, cashierID, total, pMethod, discount, withdrowPoints, aditionalDetails,date,time) VALUES (?, ?, ?, ?, ?, ?, ?,?,?)",
+          [customerID, cashierID, total, pMethod, discount, withdrowPoints, additionalDetails,currentDateFormatted,currentTime]);
   } catch (error) {
       console.error(error);
       return null;
