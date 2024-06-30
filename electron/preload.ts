@@ -114,3 +114,54 @@ const BILL_API={
 contextBridge.exposeInMainWorld('BILL_API', BILL_API);
 
 
+const REPORT_API={
+  getTotalCashPayment:async()=>{
+    try {
+      const cashPayment=await ipcRenderer.invoke('getTotalCashPayment');
+      return cashPayment
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getTotalCardPayment:async()=>{
+    try {
+      const cardPayment=await ipcRenderer.invoke('getTotalCardPayment');
+      return cardPayment
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getTotalBankPayment:async()=>{
+    try {
+      const bankPayment=await ipcRenderer.invoke('getTotalBankPayment');
+      return bankPayment
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getTotalCheckPayment:async()=>{
+    try {
+      const checkPayment=await ipcRenderer.invoke('getTotalCheckPayment');
+      return checkPayment
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getTotal:async()=>{
+    try {
+      const Payment=await ipcRenderer.invoke('getTotal');
+      return Payment
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getCheckDetails:async()=>{
+    try {
+      const Payment=await ipcRenderer.invoke('getCheckDetails');
+      return Payment
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+contextBridge.exposeInMainWorld('REPORT_API', REPORT_API);
