@@ -549,7 +549,8 @@ const Bill = () => {
   }
 
   const [errorOnPayCash,setErrorOnPayCash]=useState("")
-  const [payAmount,setPayAmount]=useState(0)
+  const zero=0
+  const [payAmount,setPayAmount]=useState(zero.toFixed(2))
   
 
   const [isVisibleLoyalCustomer,SetIsVisibleLoyalCustomer]=useState(false)
@@ -840,7 +841,7 @@ const Bill = () => {
         <div className='w-full  flex flex-col items-start z-50'>
             <div className='w-full flex justify-between'>
                 <p className='text-xl'>Cash :</p>
-                <p>{payAmount.toFixed(2)}</p>
+                <p>{(payAmount)}</p>
             </div>
             <div className='w-full flex justify-between'>
                 <p className='text-xl'>Balance :</p>
@@ -856,13 +857,13 @@ const Bill = () => {
             {isWithdrawPoint && (
               <div className='w-full flex justify-between'>
               <p className='text-xl'>Withdraw point :</p>
-              <p>{maxWithdrawPoint.toFixed(2)}</p>
+              <p>{(maxWithdrawPoint).toFixed(2)}</p>
           </div>
             )}
             {isCollectPoint && (
               <div className='w-full flex justify-between'>
               <p className='text-xl'>Collect point :</p>
-              <p>{collectPoint.toFixed(2)}</p>
+              <p>{(collectPoint).toFixed(2)}</p>
           </div>
             )}
         </div>
@@ -872,13 +873,13 @@ const Bill = () => {
             {isWithdrawPoint && (
               <div className='w-full flex justify-between'>
               <p className='text-xl'>Withdraw point :</p>
-              <p>{maxWithdrawPoint}</p>
+              <p>{(maxWithdrawPoint).toFixed(2)}</p>
           </div>
             )}
             {isCollectPoint && (
               <div className='w-full flex justify-between'>
               <p className='text-xl'>Collect point :</p>
-              <p>{collectPoint}</p>
+              <p>{(collectPoint).toFixed(2)}</p>
           </div>
             )}
         </div>
@@ -916,9 +917,9 @@ const Bill = () => {
                         <tr className="flex w-full justify-between   text-sm">
                             
                             <td className='w-5/10 p-2 '>{item.snumber}</td>
-                            <td className='w-1/10 p-2 '>{item.selectedValue}</td>
+                            <td className='w-1/10 p-2 '>{(item.selectedValue).toFixed(2)}</td>
                             <td className='w-1/10 p-2 '>{item.NoOfItems}</td>
-                            <td className='w-1/10 p-2 '>{item.Amount}</td>
+                            <td className='w-1/10 p-2 '>{(item.Amount).toFixed(2)}</td>
                             
                         </tr>
                     </tbody>
