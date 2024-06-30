@@ -316,6 +316,158 @@ ipcMain.handle('processBill', async (event, total, pMethod, customerID, discount
 });
 
 
+ipcMain.handle('getTotalCashPayment', async () => {
+  try {
+    const row = await new Promise((resolve, reject) => {
+      const currentDate = new Date();
+    const currentDateFormatted = currentDate.toLocaleDateString(); 
+      db.get("SELECT SUM(total) FROM bill WHERE cashierID=? AND pMethod=? AND date=?", [cashierID,'Cash',currentDateFormatted], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+    if (row) {
+      console.log(row);
+      return row;
+    } else {
+      console.log('No matching item found.');
+      return null;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+ipcMain.handle('getTotalCardPayment', async () => {
+  try {
+    const row = await new Promise((resolve, reject) => {
+      const currentDate = new Date();
+    const currentDateFormatted = currentDate.toLocaleDateString(); 
+      db.get("SELECT SUM(total) FROM bill WHERE cashierID=? AND pMethod=? AND date=?", [cashierID,'Card',currentDateFormatted], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+    if (row) {
+      console.log(row);
+      return row;
+    } else {
+      console.log('No matching item found.');
+      return null;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+ipcMain.handle('getTotalBankPayment', async () => {
+  try {
+    const row = await new Promise((resolve, reject) => {
+      const currentDate = new Date();
+    const currentDateFormatted = currentDate.toLocaleDateString(); 
+      db.get("SELECT SUM(total) FROM bill WHERE cashierID=? AND pMethod=? AND date=?", [cashierID,'Bank',currentDateFormatted], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+    if (row) {
+      console.log(row);
+      return row;
+    } else {
+      console.log('No matching item found.');
+      return null;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+ipcMain.handle('getTotalCheckPayment', async () => {
+  try {
+    const row = await new Promise((resolve, reject) => {
+      const currentDate = new Date();
+    const currentDateFormatted = currentDate.toLocaleDateString(); 
+      db.get("SELECT SUM(total) FROM bill WHERE cashierID=? AND pMethod=? AND date=?", [cashierID,'Check',currentDateFormatted], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+    if (row) {
+      console.log(row);
+      return row;
+    } else {
+      console.log('No matching item found.');
+      return null;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+ipcMain.handle('getTotal', async () => {
+  try {
+    const row = await new Promise((resolve, reject) => {
+      const currentDate = new Date();
+    const currentDateFormatted = currentDate.toLocaleDateString(); 
+      db.get("SELECT SUM(total) FROM bill WHERE cashierID=? AND date=?", [cashierID,currentDateFormatted], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+    if (row) {
+      console.log(row);
+      return row;
+    } else {
+      console.log('No matching item found.');
+      return null;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+ipcMain.handle('getCheckDetails', async () => {
+  try {
+    const currentDate = new Date();
+    const currentDateFormatted = currentDate.toLocaleDateString(); 
+    const rows = await new Promise((resolve, reject) => {
+      db.all("SELECT total, aditionalDetails FROM bill WHERE cashierID=? AND date=? AND pMethod=?", [cashierID, currentDateFormatted, 'Check'], (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+
+    if (rows.length > 0) {
+      console.log(rows); 
+      return rows;
+    } else {
+      console.log('No matching items found.');
+      return null;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+
 
 
 
