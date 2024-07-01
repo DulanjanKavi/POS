@@ -29,9 +29,9 @@ const onlinePayment = () => {
                         <tbody>
                             <tr className="  justify-between border-b-2 text-xl p-2 ">
                                 
-                                <td className='w-1/3   '>Bill no.</td>
-                                <td className='w-1/3  text-left'>Transection no.</td>
-                                <td className='w-1/3  text-right'>Amount</td>
+                                <td className='w-3/12  '>Bill no.</td>
+                                <td className='w-6/12  text-left'>Transection no.</td>
+                                <td className='w-3/12  text-right'>Amount</td>
                             </tr>
                         </tbody>
                     </table>
@@ -42,7 +42,9 @@ const onlinePayment = () => {
   {Details.map((item, index) => (
     <div key={index} className="flex justify-between border-b-2">
       <div className='w-1/3 mx-2'>{Details[index].biiNumber}</div>
-      <div className='w-1/3 text-left'>{(Details[index].aditionalDetails)}</div>
+      <div className='w-1/3 text-left overflow-hidden ' title={checkDetails[index].aditionalDetails}>
+  {checkDetails[index].aditionalDetails}
+</div>
       <div className='w-1/3 text-right'>{(Details[index].total).toFixed(2)}</div>
     </div>
   ))}

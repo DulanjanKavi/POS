@@ -52,7 +52,10 @@ function checkDetailComponenet() {
   {checkDetails.map((item, index) => (
     <div key={index} className="flex justify-between   border-b-2">
       <div className='w-1/3 mx-2'>{checkDetails[index].biiNumber}</div>
-      <div className=' w-1/3 text-left'>{checkDetails[index].aditionalDetails}</div>
+      <div className='w-1/3 text-left overflow-hidden ' title={checkDetails[index].aditionalDetails}>
+  {checkDetails[index].aditionalDetails}
+</div>
+
       <div className='w-1/3 text-right'>{(checkDetails[index].total).toFixed(2)}</div>
     </div>
   ))}
