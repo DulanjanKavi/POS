@@ -28,16 +28,16 @@ function checkDetailComponenet() {
         <div className='border-l-2 border-black h-screen m-1'>
           <div className="bg-white p-1 rounded-lg">
           <div className='flex justify-center items-center text-center p-1 mb-2  border-b-2 text-2xl'>
-        Collected Check Details
+        Check Payment
     </div>
     
-        <div className='mx-4'>
+        <div className=''>
         <table className="table-auto w-full">
                         <tbody>
-                            <tr className="flex  justify-between border-b-2 text-xl  ">
-                                
-                                <td className='   '>Check no.</td>
-                                <td className='  '>Amount</td>
+                            <tr className="flex  justify-between border-b-2 text-xl p-2 ">
+                                <td className='w-1/3   '>Bill no.</td>
+                                <td className='w-1/3  text-left'>Check no.</td>
+                                <td className='w-1/3  text-right '>Amount</td>
                             
                                 
                                 
@@ -51,8 +51,9 @@ function checkDetailComponenet() {
         <div className="w-full">
   {checkDetails.map((item, index) => (
     <div key={index} className="flex justify-between   border-b-2">
-      <div className=' '>{checkDetails[index].aditionalDetails}</div>
-      <div className=''>{(checkDetails[index].total).toFixed(2)}</div>
+      <div className='w-1/3 mx-2'>{checkDetails[index].biiNumber}</div>
+      <div className=' w-1/3 text-left'>{checkDetails[index].aditionalDetails}</div>
+      <div className='w-1/3 text-right'>{(checkDetails[index].total).toFixed(2)}</div>
     </div>
   ))}
 </div>
