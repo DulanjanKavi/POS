@@ -2,7 +2,10 @@ import React,{useState} from 'react'
 import Menubar from '../component/menubar'
 import CheckDetailComponenet from '../component/checkDetailComponenet';
 import Refundcomponent from '../component/refundcomponenet';
-
+import AllSalse from '../component/allSalse';
+import CashPayment from '../component/cashPayment';
+import CardPayment from '../component/cardPayment';  
+import OnlinePayment from '../component/onlinePayment';
 
 function report() {
   const zero=0
@@ -11,6 +14,21 @@ function report() {
   const [bankPayment,setBankPayment]=useState(zero.toFixed(2))
   const [checkPayment,setCheckPayment]=useState(zero.toFixed(2))
   const [total,setTotal]=useState(zero.toFixed(2))
+  const [cashierName,setCashierName]=useState('')
+  const date = new Date();
+
+
+  const getCashierName=async()=>{
+    try{
+      const result=await window.WINDOW_API.getCashierName();
+      setCashierName(result)
+    }catch (error){
+      console.error(error)
+    }
+  }
+  getCashierName()
+
+
 
   const getCashPayment=async()=>{
     try{
@@ -86,14 +104,30 @@ function report() {
 
 
 
-    const [isShowCheckDetails, setIsShowCheckDetails] = useState(true);
+  const [showDetails, setShowDetails] = useState('all');
 
   const onClikeRefund = () => {
-    setIsShowCheckDetails(false);
+    setShowDetails('refund');
   };
 
   const onClickCheck = () => {
-    setIsShowCheckDetails(true);
+    setShowDetails('check');
+  };
+
+  const onClickTotal = () => {
+    setShowDetails('all');
+  };
+
+  const onClickCash = () => {
+    setShowDetails('cash');
+  };
+
+  const onClickCard = () => {
+    setShowDetails('card');
+  };
+
+  const onClickOnline = () => {
+    setShowDetails('online');
   };
 
     
@@ -113,11 +147,37 @@ function report() {
             <div className='col-span-1  h-screen-15 w-full'>
                 
             {/*<UserComponent/>*/}
-            <div className='text-lg grid grid-rows-10 m-1 p-1 h-screen '>
-          <div className='row-span-1 flex justify-between px-4 py-1  border-b-2 items-center '>
-          <p>Total Sales </p>
-          <p>{total}</p>
+            <div className='text-lg grid grid-rows-10  h-screen '>
+            <div className='row-span-1 flex justify-between px-4 border-b-2  items-center text-xl'>
+          <p>Cashier Name:</p>
+          <p>{cashierName}</p>
       </div>
+      <div className=' flex justify-between px-4 py-1  border-b-2 border-black items-center text-xl'>
+          <p>Salse Summary on:</p>
+          <p>{date.toLocaleDateString()}</p>
+      </div>
+
+
+
+
+          
+
+      <div className='row-span-1 flex justify-between px-4 py-2  border-b-2 items-center'>
+    <button onClick={onClickTotal} className="flex justify-between w-full">
+        <div>
+            <p>Total Salse</p>
+        </div>
+        <div>
+            <p>{total}</p>
+        </div>
+    </button>
+</div>
+
+
+
+
+
+
       {/*<div className='row-span-1 flex justify-between px-4 py-2 rounded-lg border-2 items-center'>
       <p>Opening cash balance </p>
           <p>150.00</p>
@@ -131,25 +191,49 @@ function report() {
     
           <p>150.00</p>
       </div>*/}
-      <div className='row-span-1 flex justify-between px-4 py-2  border-b-2 items-center'>
-      <p>Cash payment </p>
-          <p>{cashPayment}</p>
-      </div>
-
-      <div className='row-span-1 flex justify-between px-4 py-2 border-b-2 items-center'>
-      <p>Card payment </p>
-          <p>{cardPayment}</p>
-      </div>
+      
 
       <div className='row-span-1 flex justify-between px-4 py-2  border-b-2 items-center'>
-      <p>Online payment </p>
-          <p>{bankPayment}</p>
-      </div>
+    <button onClick={onClickCash} className="flex justify-between w-full">
+        <div>
+            <p>Cash payment </p>
+        </div>
+        <div>
+            <p>{cashPayment}</p>
+        </div>
+    </button>
+</div>
+
+<div className='row-span-1 flex justify-between px-4 py-2  border-b-2 items-center'>
+    <button onClick={onClickCard} className="flex justify-between w-full">
+        <div>
+            <p>Card payment </p>
+        </div>
+        <div>
+            <p>{cardPayment}</p>
+        </div>
+    </button>
+</div>
+
+<div className='row-span-1 flex justify-between px-4 py-2  border-b-2 items-center'>
+    <button onClick={onClickOnline} className="flex justify-between w-full">
+        <div>
+            <p>Online payment </p>
+        </div>
+        <div>
+            <p>{bankPayment}</p>
+        </div>
+    </button>
+</div>
+
+
+
+      
 
       <div className='row-span-1 flex justify-between px-4 py-2  border-b-2 items-center'>
     <button onClick={onClickCheck} className="flex justify-between w-full">
         <div>
-            <p>Cheack payment</p>
+            <p>Check payment</p>
         </div>
         <div>
             <p>{checkPayment}</p>
@@ -157,7 +241,7 @@ function report() {
     </button>
 </div>
 
-      <div className='row-span-1 flex justify-between px-4 py-2 border-b-2 items-center'>
+      <div className='row-span-1 flex justify-between px-4 py-2 border-t-2 border-black items-center'>
     <button onClick={onClikeRefund} className="flex justify-between w-full">
         <div>
             <p>Refund payment</p>
@@ -183,7 +267,31 @@ function report() {
 
             </div>
             <div className='col-span-1  h-screen-15 w-full'>
-            {isShowCheckDetails ? <CheckDetailComponenet /> : <Refundcomponent />}
+           
+            {showDetails=='refund' && (
+              <Refundcomponent />
+            )  
+            }
+            {showDetails=='check' && (
+              <CheckDetailComponenet />
+            )  
+            }
+            {showDetails=='all' && (
+              <AllSalse />
+            )  
+            }
+            {showDetails=='cash' && (
+              <CashPayment />
+            )  
+            }
+            {showDetails=='card' && (
+              <CardPayment />
+            )  
+            }
+            {showDetails=='online' && (
+              <OnlinePayment />
+            )  
+            }
             
             </div>
     
