@@ -22,7 +22,7 @@ async function fetchPaymentMethod() {
 
 
 fetchPaymentMethod();
-console.log("get pay method from main")
+
 
 
 
