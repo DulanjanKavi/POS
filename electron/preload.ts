@@ -33,6 +33,15 @@ const WINDOW_API = {
       console.error(error);
     }
   },
+  getCashierName: async()=>{
+    try{
+      const result=await ipcRenderer.invoke('getCashierName');
+      return result
+    }catch(error){
+      console.error(error);
+    }
+    }
+  
  
   
 
@@ -162,6 +171,39 @@ const REPORT_API={
     } catch (error) {
       console.error(error);
     }
-  }
+  },
+  getAllSalseDetails:async()=>{
+    try {
+      const result=await ipcRenderer.invoke('getAllSalseDetails');
+      return result
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getAllCashPayment:async()=>{
+    try {
+      const result=await ipcRenderer.invoke('getAllCashPayment');
+      return result
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getAllCardPayment:async()=>{
+    try {
+      const result=await ipcRenderer.invoke('getAllCardPayment');
+      return result
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getAllBankPayment:async()=>{
+    try {
+      const result=await ipcRenderer.invoke('getAllBankPayment');
+      return result
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  
 }
 contextBridge.exposeInMainWorld('REPORT_API', REPORT_API);
