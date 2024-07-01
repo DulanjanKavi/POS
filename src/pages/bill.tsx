@@ -502,6 +502,14 @@ const Bill = () => {
   const [isVisiblePayMethodCard,setIsVisiblePayMethodCard]=useState(false)
   const [isPayMethodCard,setIsPayMethodCard]=useState(false)
   const [errorOnPayCard,setErrorOnPayCard]=useState('')
+  const [isVisiblePayMethodBank,setIsVisiblePayMethodBank]=useState(false)
+  const [isPayMethodBank,setIsPayMethodBank]=useState(false)
+  const [transferID,setTransferID]=useState(0)
+  const [errorOnPayBank,setErrorOnPayBank]=useState('')
+  const [isVisiblePayMethodCheque,setIsVisiblePayMethodCheque]=useState(false)
+  const [isPayMethodCheque,setIsPayMethodCheque]=useState(false)
+  const [chequeNumber,setChequeNumber]=useState(0)
+  const [errorOnPayCheque,setErrorOnPayCheque]=useState('')
   
 
   const navigateToPatMethod = (method) => {
@@ -518,6 +526,21 @@ const Bill = () => {
       setErrorOnPayCard('')
 
     }
+    else if(method=='Bank Transfer'){
+      console.log('bank transfer')
+      setIsVisiblePayMethodBank(true)
+      setIsPayMethodBank(true)
+      setErrorOnPayBank('')
+      setTransferID(0)
+    }
+    else if(method=='Check'){
+      console.log('check')
+      setIsVisiblePayMethodCheque(true)
+      setIsPayMethodCheque(true)
+      setErrorOnPayCheque('')
+      setChequeNumber(0)
+    }
+
   }
 
   const callDiscount=()=>{
@@ -538,6 +561,18 @@ const Bill = () => {
     setIsVisiblePayMethod(true)
     SetCardNumber(0)
   }
+
+  const backToPayMethodInBank=()=>{
+    setIsVisiblePayMethodBank(false)
+    setIsVisiblePayMethod(true)
+    setTransferID(0)
+  }
+
+  const backToPayMethodInCheque=()=>{
+    setIsVisiblePayMethodCheque(false)
+    setIsVisiblePayMethod(true)
+    setChequeNumber(0)
+  }
   
   const payCashClose=()=>{
     setIsVisiblePayMethodCash(false)
@@ -546,6 +581,16 @@ const Bill = () => {
   const payCardhClose=()=>{
     SetCardNumber(0)
     setIsVisiblePayMethodCard(false)
+  }
+
+  const payBankClose=()=>{
+    setTransferID(0)
+    setIsVisiblePayMethodBank(false)
+  }
+
+  const payChequeClose=()=>{
+    setChequeNumber(0)
+    setIsVisiblePayMethodCheque(false)
   }
 
   const [errorOnPayCash,setErrorOnPayCash]=useState("")
@@ -657,6 +702,100 @@ const Bill = () => {
         
     }
   };
+
+  const handlePayBank = () => {
+    setIsPayMethodBank(false)
+    if (transferID.length!==10) {
+      setErrorOnPayCard('Bank transfer number is wrong. ');
+    } 
+    else {
+
+      payBillSuccess()
+      setIsVisiblePayMethodBank(false)
+      if(payStep=='quickPay')
+        {
+          console.log('Quick pay')
+          billProcess (total,'Bank',0,callDiscount(),0,transferID)
+        }
+      else if(payStep=='add new loyal customer')
+        {
+          console.log('add new loyal customer to coyal customer table & pay')
+          setCollectPoint(calCollectPoint)
+          setIsCollectPoint(true)
+          console.log(collectPoint)
+          addNewLoyalCustomerToDatabase(customerTP,newCustomerName,total/100)
+          billProcess (total,'Bank',customerTP,callDiscount(),0,transferID)
+      }
+      else if(payStep=='collect loyal points')
+        {
+          console.log('collect loyal points')
+          const newPoint=loyalCustomerDetails.points+collectPoint
+          updateUserPoint(loyalCustomerDetails.TP,newPoint)
+          billProcess (total,'Bank',loyalCustomerDetails.TP,callDiscount(),0,transferID)
+        }
+
+      else if(payStep=='withdraw loyal points')
+        {
+          console.log('withdrow points')
+          const newPoint=loyalCustomerDetails.points-maxWithdrawPoint
+          updateUserPoint(loyalCustomerDetails.TP,newPoint)
+          billProcess (total-maxWithdrawPoint,'Bank',loyalCustomerDetails.TP,callDiscount(),maxWithdrawPoint,transferID)
+          setTotal(total-maxWithdrawPoint)
+        }
+        
+        
+    }
+  };
+
+  const handlePayCheque = () => {
+    setIsPayMethodCheque(false)
+    if (transferID.length<=10) {
+      setErrorOnPayCard('Cheque number is wrong. ');
+    } 
+    else {
+
+      payBillSuccess()
+      setIsVisiblePayMethodCheque(false)
+      if(payStep=='quickPay')
+        {
+          console.log('Quick pay')
+          billProcess (total,'Check',0,callDiscount(),0,chequeNumber)
+        }
+      else if(payStep=='add new loyal customer')
+        {
+          console.log('add new loyal customer to coyal customer table & pay')
+          setCollectPoint(calCollectPoint)
+          setIsCollectPoint(true)
+          console.log(collectPoint)
+          addNewLoyalCustomerToDatabase(customerTP,newCustomerName,total/100)
+          billProcess (total,'Check',customerTP,callDiscount(),0,chequeNumber)
+      }
+      else if(payStep=='collect loyal points')
+        {
+          console.log('collect loyal points')
+          const newPoint=loyalCustomerDetails.points+collectPoint
+          updateUserPoint(loyalCustomerDetails.TP,newPoint)
+          billProcess (total,'Check',loyalCustomerDetails.TP,callDiscount(),0,chequeNumber)
+        }
+
+      else if(payStep=='withdraw loyal points')
+        {
+          console.log('withdrow points')
+          const newPoint=loyalCustomerDetails.points-maxWithdrawPoint
+          updateUserPoint(loyalCustomerDetails.TP,newPoint)
+          billProcess (total-maxWithdrawPoint,'Cheque',loyalCustomerDetails.TP,callDiscount(),maxWithdrawPoint,chequeNumber)
+          setTotal(total-maxWithdrawPoint)
+        }
+        
+        
+    }
+  };
+
+
+
+
+
+
 
   const handleIsVisibleConfermLoyalNumber=()=>{
     SetIsVisibleLoyalCustomer(false)
@@ -1117,6 +1256,92 @@ const Bill = () => {
                           Pay
                         </button>
                         <button  onClick={payCardhClose} className="bg-red-500 text-white p-4  rounded m-4">
+                          Close
+                        </button>
+                        </div>
+                      </div>
+                    </dialog>
+)}
+
+{isVisiblePayMethodBank && (
+                    <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
+                      <div className="bg-white  rounded-lg shadow-md  border-2 border-black p-5 m-100">
+                      <button  onClick={backToPayMethodInBank} className=" text-black   rounded border-2 border-black m-1 px-1">
+                        Back
+                       </button>
+                        <p className='text-3xl text-center mb-5'>Online Bank Transfer</p>
+                        <div className='flex justify-between items-center text-xl'>
+                          <p>Total :</p>
+                          {isWithdrawPoint && (
+                            <p className='px-4'>{(total-maxWithdrawPoint).toFixed(2)}</p>
+                          )}
+                          {!isWithdrawPoint && (
+                            <p className='px-4'>{total.toFixed(2)}</p>
+                          )}
+                          
+                        </div>
+                        <div className='flex justify-between items-center text-xl'>
+                          <p>Transfer number :</p>
+                        <input className='m-1 p-1 rounded border-2 border-black'
+                          type="number"
+                          min={0}
+                          onChange={(e) => {
+                            setTransferID(e.target.value);
+                            setError('');
+                          }}
+                        />
+                        </div>
+                        <div className='w-72'>
+                        {errorOnPayBank && <p className="text-red-500">{errorOnPayBank}</p>}
+                        </div>
+                        <div className='flex justify-center items-center text-black'>
+                        <button onClick={handlePayBank} className="bg-blue-500 text-white p-4  rounded m-4">
+                          Pay
+                        </button>
+                        <button  onClick={payBankClose} className="bg-red-500 text-white p-4  rounded m-4">
+                          Close
+                        </button>
+                        </div>
+                      </div>
+                    </dialog>
+)}
+
+{isVisiblePayMethodCheque && (
+                    <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
+                      <div className="bg-white  rounded-lg shadow-md  border-2 border-black p-5 m-100">
+                      <button  onClick={backToPayMethodInCheque} className=" text-black   rounded border-2 border-black m-1 px-1">
+                        Back
+                       </button>
+                        <p className='text-3xl text-center mb-5'>Cheque Payment</p>
+                        <div className='flex justify-between items-center text-xl'>
+                          <p>Total :</p>
+                          {isWithdrawPoint && (
+                            <p className='px-4'>{(total-maxWithdrawPoint).toFixed(2)}</p>
+                          )}
+                          {!isWithdrawPoint && (
+                            <p className='px-4'>{total.toFixed(2)}</p>
+                          )}
+                          
+                        </div>
+                        <div className='flex justify-between items-center text-xl'>
+                          <p>Transfer number :</p>
+                        <input className='m-1 p-1 rounded border-2 border-black'
+                          type="number"
+                          min={0}
+                          onChange={(e) => {
+                            setChequeNumber(e.target.value);
+                            setError('');
+                          }}
+                        />
+                        </div>
+                        <div className='w-72'>
+                        {errorOnPayCheque && <p className="text-red-500">{errorOnPayCheque}</p>}
+                        </div>
+                        <div className='flex justify-center items-center text-black'>
+                        <button onClick={handlePayCheque} className="bg-blue-500 text-white p-4  rounded m-4">
+                          Pay
+                        </button>
+                        <button  onClick={payChequeClose} className="bg-red-500 text-white p-4  rounded m-4">
                           Close
                         </button>
                         </div>
