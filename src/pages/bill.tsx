@@ -1663,6 +1663,51 @@ const Bill = () => {
     </div>
 </div>
           </button>
+          <button >
+          <div className="w-20 h-20 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+        <img  className="w-10 h-10" alt="Return" />
+    </div>
+    <div className="text-center">
+        
+    </div>
+</div>
+          </button>
+
+          <button >
+          <div className="w-20 h-20 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+        <img  className="w-10 h-10" alt="Payout" />
+    </div>
+    <div className="text-center">
+        
+    </div>
+</div>
+          </button>
+
+          <button >
+          <div className="w-20 h-20 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+        <img  className="w-10 h-10" alt="Report" />
+    </div>
+    <div className="text-center">
+        
+    </div>
+</div>
+          </button>
+
+          <button >
+          <div className="w-20 h-20 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+        <img  className="w-10 h-10" alt="User" />
+    </div>
+    <div className="text-center">
+        
+    </div>
+</div>
+          </button>
+          
+          
 
             
             
