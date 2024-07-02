@@ -8,6 +8,7 @@ import React, { useEffect } from 'react';
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 let cashierID;
+let ID;
 
 const sqlite3 = require('sqlite3').verbose();
 const dbPath='pos.db'
@@ -82,7 +83,7 @@ let win: BrowserWindow | null
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
-    minWidth:600,
+    minWidth:800,
     minHeight:750,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
@@ -220,6 +221,10 @@ ipcMain.handle('getCashierName',async(event)=>{
   return cashierID
 })
 
+ipcMain.handle('getCashierID',async(event)=>{
+  return ID
+})
+
 
 
 
@@ -232,6 +237,7 @@ ipcMain.handle('getUserID', async (event, args) => {
         reject(err.message);
       } else if (row) {
         console.log(`User ID: ${row.userID}`);
+        ID=row.userID
         resolve(row.userID);
         cashierID=userName
       } else {

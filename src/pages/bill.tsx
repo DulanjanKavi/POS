@@ -1,14 +1,24 @@
 import React, { useState,useEffect } from 'react';
-import deleteIcon from '../image/delete.png'
 import editIcon from '../image/Edit.png'
 import starIcon from'../image/star.png'
 import { Link } from 'react-router-dom';
 import Menubar from '../component/menubar';
-
-
-
-
-
+import addIcon from '../assets/icons/addIcon.png'
+import deleteIcon from '../assets/icons/delete.png'
+import holdIcon from '../assets/icons/holdIcon.png'
+import payIcon from '../assets/icons/payIcon.png'
+import { BarcodeScannerProvider } from "../component/barcodeScanner";
+import StatusBar from '../component/statusbar';
+import searchIcon from '../assets/icons/searchIcon.png';
+import plant1 from '../assets/products/1.png'
+import plant2 from '../assets/products/2.png'
+import plant3 from '../assets/products/3.png'
+import plant4 from '../assets/products/4.png'
+import plant5 from '../assets/products/5.png'
+import plant6 from '../assets/products/6.png'
+import plant7 from '../assets/products/7.png'
+import plant8 from '../assets/products/8.png'
+import sellIcon from '../assets/icons/sell.png'
 
 let paymentMethod=[]
 
@@ -48,6 +58,49 @@ const Bill = () => {
   const [isWithdrawPoint,setIsWithdrawPoint]=useState(false)
   const [isCollectPoint,setIsCollectPoint]=useState(false)
   const [payStep,setPayStep]=useState('quickPay')
+  const [dateState, setDateState] = useState(new Date());
+  
+    useEffect(() => {
+      const timer = setInterval(() => {
+        // Update the date state every minute
+        setDateState(new Date());
+      }, 60 * 1000);
+  
+      // Clear the interval when the component unmounts
+      return () => clearInterval(timer);
+    }, []);
+  
+    const formattedDate = dateState.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  
+    const formattedTime = dateState.toLocaleString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    });
+
+    const [cashierID, setCashierID] = useState('');
+
+  async function getCashierID() {
+    try {
+      console.log('Getting cashier name...');
+      const ID = await window.WINDOW_API.getCashierID();
+      setCashierID(ID);
+    } catch (error) {
+      console.error('Error fetching cashier name:', error);
+    }
+  }
+
+  useEffect(() => {
+    getCashierID();
+  }, []);
+
+
+
+
   
 
   const handleConfirmOnConfirmTheLoyalNumber=async()=>{
@@ -343,6 +396,8 @@ const Bill = () => {
     handleRemoveBill();
     setIsVisible(false);
   };
+
+  
 
   const cancelPopup=()=>{
     setIsVisible(false);
@@ -880,47 +935,47 @@ const Bill = () => {
 
 
   return (
-    <div>
-      <div>
+
+<BarcodeScannerProvider>
+    <div >
+     <div >
       <Menubar/>
       </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-      <div className="fixed top-6 left-0 right-0   z-10">
-        <div >
-          
-        </div>
       
       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       {/*
+      <div className="fixed top-2 left-0 right-0   z-10">
+        
+      
+      {/*
         <div className="border-b-4  m-1 p-1  flex justify-between items-center">
     <p className="text-lg text-center text-white">Quick access bar</p>
     <div className="flex justify-end space-x-1">
@@ -929,9 +984,11 @@ const Bill = () => {
     </div>
 </div>
 
-      </div>
 
-      <div className="my-6">
+      </div>
+      */}
+
+      <div className="">
         <br></br>
       </div>
       {isVisibleAddItem && (
@@ -1572,8 +1629,12 @@ const Bill = () => {
                       </dialog>
 )}
 
-      <div className="fixed top-15 left-0 right-0    grid grid-cols-1 md:grid-cols-12  m-1 p-1  h-auto">
-        <div className="max-h-[40vh] md:border-r-2 md:border-b-white border-b-2 md:max-h-[90vh] col-span-12  sm:col-span-7 m-1 p-1 border-black ">
+      <div className="fixed top-5 left-0 right-0    grid grid-cols-1 md:grid-cols-12   pt-1  h-full ">
+        <div className="max-h-[40vh]  md:max-h-[90vh] col-span-12  sm:col-span-7  ">
+        <div className="h-7 bg-slate-800 flex items-center ">
+                    <StatusBar />
+                </div>
+          {/*
           <div className="flex items-center justify-center p-1 m-1  ">
             <input className='m-1 p-1 rounded border-2 border-black focus:outline-none focus:border-black'
               type="text"
@@ -1590,118 +1651,139 @@ const Bill = () => {
           <div className="flex items-center justify-center p-1 m-1  ">
           {error && <p className="text-red-500 text-center">{error}</p>}
           </div>
-          
+          */}
+          <div className='h-20 w-full mr-4 flex pr-2  '>
+          <button onClick={handleRemoveBill}>
+          <div className="w-20 h-20 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+        <img src={sellIcon} className="w-10 h-10" alt="New bill" />
+    </div>
+    <div className="text-center">
+        New Bill
+    </div>
+</div>
+          </button>
+
+            
+            
+
+          </div>
+
+          <div className="flex w-full items-stretch border-2 border-r-0 border-slate-400  ">
+                <input type="text"
+                        className="w-full  h-10 px-3 bg-gray-100  focus:outline-none focus:border-none"
+                        placeholder="Search for products (Name, SKU or Barcode)"
+                />
+                <button type="button" className="w-20 h-10 border-r-2 border-slate-400 bg-slate-200 flex items-center justify-center hover:bg-slate-400 transition duration-150"><img src={searchIcon} className="w-6" alt="Search" /></button>
+            </div>
+
+
+
 
           
           
-          <div className=' max-h-[25vh] md:max-h-[70vh] overflow-auto m-2 p-2 rounded border-2 '>
+          <div className=' max-h-[calc(100vh-180px)]  overflow-auto   '>
+          
+          
+          
           <div className="grid grid-cols-12 ">
           
-          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
-              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
-                <button >
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
-                    <h1>Item Image</h1>
-                  </div>
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
-                    Item Name
-                  </div>
-                </button>
-               
-              </div>  
-          </div>
+          
 
-          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
-              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
-                <button >
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
-                    <h1>Item Image</h1>
+         
+          
+              
+                
+
+                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
+                  <div className="border-b-2 border-slate-200  h-32">
+                  <img src={plant2} alt={plant1} className="w-full h-32 " />
                   </div>
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
-                    Item Name
-                  </div>
-                </button>
-               
-              </div>  
-          </div>
-          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
-              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
-                <button >
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
-                    <h1>Item Image</h1>
-                  </div>
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
-                    Item Name
+                  <div className=" text-center h-8 ">
+                    plant
                   </div>
                 </button>
-               
-              </div>  
-          </div>
-          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
-              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
-                <button >
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
-                    <h1>Item Image</h1>
+
+                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
+                  <div className="border-b-2 border-slate-200  h-32">
+                  <img src={plant3} alt={plant1} className="w-full h-32 " />
                   </div>
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
-                    Item Name
+                  <div className=" text-center h-8 ">
+                    plant
                   </div>
                 </button>
-               
-              </div>  
-          </div>
-          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
-              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
-                <button >
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
-                    <h1>Item Image</h1>
+                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
+                  <div className="border-b-2 border-slate-200  h-32">
+                  <img src={plant4} alt={plant1} className="w-full h-32 " />
                   </div>
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
-                    Item Name
+                  <div className=" text-center h-8 ">
+                    plant
                   </div>
                 </button>
-               
-              </div>  
-          </div>
-          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
-              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
-                <button >
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
-                    <h1>Item Image</h1>
+                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
+                  <div className="border-b-2 border-slate-200  h-32">
+                  <img src={plant5} alt={plant1} className="w-full h-32 " />
                   </div>
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
-                    Item Name
+                  <div className=" text-center h-8 ">
+                    plant
                   </div>
                 </button>
-               
-              </div>  
-          </div>
-          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
-              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
-                <button >
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
-                    <h1>Item Image</h1>
+                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
+                  <div className="border-b-2 border-slate-200  h-32">
+                  <img src={plant6} alt={plant1} className="w-full h-32 " />
                   </div>
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
-                    Item Name
+                  <div className=" text-center h-8 ">
+                    plant
                   </div>
                 </button>
-               
-              </div>  
-          </div>
-          <div className="col-span-6 sm:col-span-6 md:col-span-4 lg:col-span-3 bg-white h-auto border-2  m-1 p-1 rounded">
-              <div className="  border-2 border-white m-1 p-1 rounded-lg text-center">
-                <button >
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center h-20">
-                    <h1>Item Image</h1>
+                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
+                  <div className="border-b-2 border-slate-200  h-32">
+                  <img src={plant7} alt={plant1} className="w-full h-32 " />
                   </div>
-                  <div className="  border-2  m-1 p-1 rounded-lg text-center">
-                    Item Name
+                  <div className=" text-center h-8 ">
+                    plant
                   </div>
                 </button>
+                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
+                  <div className="border-b-2 border-slate-200  h-32">
+                  <img src={plant8} alt={plant1} className="w-full h-32 " />
+                  </div>
+                  <div className=" text-center h-8 ">
+                    plant
+                  </div>
+                </button>
+                
+                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
+                  <div className="border-b-2 border-slate-200  h-32">
+                  <img src={plant2} alt={plant1} className="w-full h-32 " />
+                  </div>
+                  <div className=" text-center h-8 ">
+                    plant
+                  </div>
+                </button>
+                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
+                  <div className="border-b-2 border-slate-200  h-32">
+                  <img src={plant3} alt={plant1} className="w-full h-32 " />
+                  </div>
+                  <div className=" text-center h-8 ">
+                    plant
+                  </div>
+                </button>
+                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
+                  <div className="border-b-2 border-slate-200  h-32">
+                  <img src={plant1} alt={plant1} className="w-full h-32 " />
+                  </div>
+                  <div className=" text-center h-8 ">
+                    plant
+                  </div>
+                </button>
+                
+                
                
-              </div>  
-          </div>
+               
+          
+          
+          
           
           
           
@@ -1715,12 +1797,41 @@ const Bill = () => {
         </div>
 
 
-        <div className=" max-h-[40vh] md:max-h-[90vh] col-span-12 md:col-span-5 m-1 p-1  ">
-    
-    <div className="text-2xl text-center bg-white m-1 p-1  flex justify-between  border-b-4 ">
-        <h3>Total</h3>
-        <h1>{total.toFixed(2)}</h1>
+        <div className=" h-full col-span-12 md:col-span-5    bg-slate-200 ">
+        <div className=" text-center font-bold   flex item-center justify-center h-7 bg-gray-800">
+        
     </div>
+
+
+        <div className=" text-center font-bold m-1 p-1  flex item-center justify-center">
+        <div>Bill Area</div>
+    </div>
+    
+    {/*<div className=" text-center mx-4 p-1  flex justify-between  ">
+        <h3 className='font-bold'>Total</h3>
+        <h1>{total.toFixed(2)}</h1>
+    </div>*/}
+
+    <div className='border-b-2 border-slate-400 '>
+    <table className="w-full mx-4 h-20 pb-1">
+                    <tr>
+                        <td className="py-1"><strong>Date:</strong> {formattedDate}</td>
+                        <td className="py-1"><strong>Cashier ID:</strong> {cashierID}</td>
+                    </tr>
+                    <tr>
+                        <td className="py-1"><strong>Time:</strong> {formattedTime}</td>
+                        <td className="py-1"><strong>Bill No:</strong> 123234</td>
+                    </tr>
+                    
+                </table>
+    </div>
+
+    
+
+
+
+
+
 
     <div>
       
@@ -1728,8 +1839,8 @@ const Bill = () => {
 
 
 
-
-    <div className="border-b-2  mx-1">
+{/*}
+    <div className="border-y-2  mx-1">
     <table className="table-auto w-full text-md ">
                     <tbody className=''>
                     <tr className="flex  justify-between mx-2">
@@ -1757,8 +1868,8 @@ const Bill = () => {
                     </tbody>
                 </table>
     </div>
-
-    <div className='max-h-[20vh] md:max-h-[70vh] overflow-auto  '>
+*/}
+    <div className=' overflow-auto max-h-[calc(100vh-370px)] ml-4'>
 
       {/* Display cardArray */}
     
@@ -1768,25 +1879,26 @@ const Bill = () => {
 
 
         return (
-            <div key={index} className="bg-white m-1 ">
+            <div key={index} >
                 <table className="table-auto w-full ">
-                    <tbody className=' border-b-2 text-sm'>
+                    <tbody className=' border-b-2 text-sm  border-slate-400'>
                         <tr className="flex w-full justify-between">
+                            <td className='w-4/10  '>{index+1}. {item.iname}</td>
+                            <td className='w-3/10 mr-4 '>{item.snumber}</td>
                             
-                            <td className='w-3/10  '>{item.snumber}</td>
-                            <td className='w-4/10  '>{item.iname}</td>
                             
-                            <td>
+                             <td className='w-4/10 '>
                             
-                            <button  onClick={() => handleEditItem(index)} className="w-1/10  bg-yellow-500  p-1 rounded m-1"><img className="h-4 w-4  " src={editIcon} alt="Delete" /></button>
-                            <button onClick={() => handleDeleteItem(index)} className="w-1/10 bg-red-500 p-1 rounded  m-1"><img className="h-4 w-4 " src={deleteIcon} alt="Delete" /></button>
+                           <button  onClick={() => handleEditItem(index)} className="    p-1  border-2 border-slate-400 mx-1 hover:bg-slate-400 transition duration-150"><img className="h-4 w-4  " src={editIcon} alt="Delete" /></button>
+                            <button onClick={() => handleDeleteItem(index)} className=" p-1 mx-1 border-2 border-slate-400 hover:bg-slate-400 transition duration-150 "><img className="h-4 w-4 " src={deleteIcon} alt="Delete" /></button>
                             </td>
                         </tr>
                         <tr className="flex w-full justify-between ">
-                            <td className='w-1/10  '>{item.selectedValue.toFixed(2)}</td>
-                            <td className='w-1/10  '>{item.NoOfItems}</td>
-                            <td className='w-1/10  '> {item.discount.toFixed(2)}</td>
-                            <td className='w-1/10  '>{item.Amount.toFixed(2)}</td>
+                            <td className='w-1/4  text-right '>{item.selectedValue.toFixed(2)}</td>
+                            
+                            <td className='w-1/4 text-right '>{item.NoOfItems}</td>
+                            <td className='w-1/4 text-right '> {item.discount.toFixed(2)}</td>
+                            <td className='w-1/4 text-right mr-4'>{item.Amount.toFixed(2)}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1797,6 +1909,53 @@ const Bill = () => {
         
     </div>
 
+   
+
+
+    <div className='fixed bottom-0  w-5/12'>
+    <div className="flex  justify-between     w-full ">
+            <input className='w-full     focus:outline-none border-2 border-gray-400'
+              type="text"
+              value={inputText}
+              onChange={handleInputChange}
+              placeholder="Barcode"
+            />
+            {/*<button className="bg-blue-500 rounded p-2 m-1 " onClick={handleEnter}>Add Item</button>
+            <button className="bg-yellow-500  rounded p-2 m-1 " onClick={handleClear}>Clear</button>*/}
+            <button onClick={handleEnter} className="w-12 h-12  border-2 border-l-0 border-gray-400 bg-slate-200 flex items-center justify-center hover:bg-slate-400 transition duration-150"><img src={addIcon} className="w-6 h-6 " alt="Search" /></button>
+            
+            
+          </div>
+          <div className="flex items-center justify-center h-5">
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          </div>
+
+
+          <div className="action-buttons gap-1 grid grid-cols-2 divide-x bg-slate-100 pt-1  ">
+                <button onClick={handleRemove} className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center "><img src={deleteIcon} className="w-5 mr-2" alt="Add customer" />  Cancel</button>
+                <button className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center "><img src={holdIcon} className="w-5 mr-2" alt="Add customer" /> Hold</button>
+                <button onClick={handlePayButton} className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center  col-span-2"><img src={payIcon} className="w-5 mr-2" alt="Add customer" />  Pay</button>
+            </div>
+            <div className="text-center text-xl font-bold py-2 bg-slate-800 text-white">
+                Total: {(total).toFixed(2)}
+            </div>
+
+
+
+
+
+
+
+
+
+
+    </div>
+    
+<div>
+  
+</div>
+
+
 </div>
 
       </div>
@@ -1805,7 +1964,9 @@ const Bill = () => {
 
       
     </div>
-  );
+    </BarcodeScannerProvider> 
+
+);
 };
 
 export default Bill;

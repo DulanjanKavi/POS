@@ -17,7 +17,7 @@ function Menubar() {
   }
 
   return (
-    <div className="bg-gray-800 text-white fixed top-0 left-0 w-full">
+    <div className="bg-gray-800 text-white fixed top-0 left-0 w-full ">
       <button
         className="px-2 py-1 rounded-md text-xs"
         onClick={handleBill}

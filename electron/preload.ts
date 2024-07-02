@@ -40,7 +40,15 @@ const WINDOW_API = {
     }catch(error){
       console.error(error);
     }
-    }
+    },
+    getCashierID: async()=>{
+      try{
+        const result=await ipcRenderer.invoke('getCashierID');
+        return result
+      }catch(error){
+        console.error(error);
+      }
+      }
   
  
   
