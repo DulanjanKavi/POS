@@ -1652,11 +1652,11 @@ const Bill = () => {
           {error && <p className="text-red-500 text-center">{error}</p>}
           </div>
           */}
-          <div className='h-20 w-full mr-4 flex pr-2  '>
+          <div className='h-20 w-full mr-4 flex pr-2 overflow-x-scroll '>
           <button onClick={handleRemoveBill}>
-          <div className="w-20 h-20 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+          <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-        <img src={sellIcon} className="w-10 h-10" alt="New bill" />
+        <img src={sellIcon} className="w-10 h-8" alt="New bill" />
     </div>
     <div className="text-center">
         New Bill
@@ -1664,9 +1664,29 @@ const Bill = () => {
 </div>
           </button>
           <button >
-          <div className="w-20 h-20 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+          <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-        <img  className="w-10 h-10" alt="Return" />
+        <img  className="w-10 h-8" alt="Return" />
+    </div>
+    <div className="text-center">
+        
+    </div>
+</div>
+          </button>
+          <button >
+          <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+        <img  className="w-10 h-8" alt="Payout" />
+    </div>
+    <div className="text-center">
+        
+    </div>
+</div>
+          </button>
+          <button >
+          <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+        <img  className="w-10 h-8" alt="Reports" />
     </div>
     <div className="text-center">
         
@@ -1675,9 +1695,39 @@ const Bill = () => {
           </button>
 
           <button >
-          <div className="w-20 h-20 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+          <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-        <img  className="w-10 h-10" alt="Payout" />
+        <img  className="w-10 h-8" alt="User" />
+    </div>
+    <div className="text-center">
+        
+    </div>
+</div>
+          </button>
+          <button >
+          <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+        <img  className="w-10 h-8" alt="User" />
+    </div>
+    <div className="text-center">
+        
+    </div>
+</div>
+          </button>
+          <button >
+          <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+        <img  className="w-10 h-8" alt="User" />
+    </div>
+    <div className="text-center">
+        
+    </div>
+</div>
+          </button>
+          <button >
+          <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+        <img  className="w-10 h-8" alt="User" />
     </div>
     <div className="text-center">
         
@@ -1685,27 +1735,12 @@ const Bill = () => {
 </div>
           </button>
 
-          <button >
-          <div className="w-20 h-20 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
-    <div>
-        <img  className="w-10 h-10" alt="Report" />
-    </div>
-    <div className="text-center">
-        
-    </div>
-</div>
-          </button>
+          
+          
 
-          <button >
-          <div className="w-20 h-20 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
-    <div>
-        <img  className="w-10 h-10" alt="User" />
-    </div>
-    <div className="text-center">
-        
-    </div>
-</div>
-          </button>
+          
+
+          
           
           
 
