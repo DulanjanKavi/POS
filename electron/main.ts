@@ -230,7 +230,7 @@ ipcMain.on('restore', () => {
 
 
 
-const  paymentMethod=['Cash','Card','Bank Transfer','Check']
+const  paymentMethod=['Cash','Card','Bank Transfer','Cheque']
 ipcMain.handle('get-pay-method',async(event)=>{
   return paymentMethod
 })

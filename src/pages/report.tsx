@@ -132,27 +132,25 @@ function report() {
 
     
     return (
-        <div>
+        <div className='font-semibold'>
             <div className="fixed top-0 left-0 right-0   z-10">
             <div >
               <Menubar/>  
             </div>
           </div>
     
-          <div className="my-1">
-            <br></br>
-          </div>
+          
     
-          <div className="text-lg fixed top-15 left-0 right-0 grid grid-cols-2  m-1 p-1 h-screen-15  ">
-            <div className='col-span-1  h-screen-15 w-full'>
+          <div className="text-lg fixed top-15 left-0 right-0 grid grid-cols-2  mt-5 p-1 h-screen-15 bg-slate-200 ">
+            <div className='col-span-1  h-screen-15 w-full border-r-2 border-slate-800'>
                 
             {/*<UserComponent/>*/}
             <div className='text-lg grid grid-rows-10  h-screen '>
-            <div className='row-span-1 flex justify-between px-4 border-b-2  items-center text-xl'>
+            <div className='row-span-1 flex justify-between px-4 border-b-2 border-slate-400 items-center text-xl'>
           <p>Cashier Name:</p>
           <p>{cashierName}</p>
       </div>
-      <div className=' flex justify-between px-4 py-1  border-b-2 border-black items-center text-xl'>
+      <div className=' flex justify-between px-4 py-1  border-b-2 border-slate-800 items-center text-xl'>
           <p>Salse Summary on:</p>
           <p>{date.toLocaleDateString()}</p>
       </div>
@@ -162,7 +160,7 @@ function report() {
 
           
 
-      <div className='row-span-1 flex justify-between px-4 py-2  border-b-2 items-center'>
+      <div className='row-span-1 flex justify-between px-4 py-2  border-b-2 border-slate-400 items-center'>
     <button onClick={onClickTotal} className="flex justify-between w-full">
         <div>
             <p>Total Salse</p>
@@ -193,7 +191,7 @@ function report() {
       </div>*/}
       
 
-      <div className='row-span-1 flex justify-between px-4 py-2  border-b-2 items-center'>
+      <div className='row-span-1 flex justify-between px-4 py-2  border-b-2 border-slate-400 items-center'>
     <button onClick={onClickCash} className="flex justify-between w-full">
         <div>
             <p>Cash payment </p>
@@ -204,7 +202,7 @@ function report() {
     </button>
 </div>
 
-<div className='row-span-1 flex justify-between px-4 py-2  border-b-2 items-center'>
+<div className='row-span-1 flex justify-between px-4 py-2  border-b-2 border-slate-400 items-center'>
     <button onClick={onClickCard} className="flex justify-between w-full">
         <div>
             <p>Card payment </p>
@@ -215,7 +213,7 @@ function report() {
     </button>
 </div>
 
-<div className='row-span-1 flex justify-between px-4 py-2  border-b-2 items-center'>
+<div className='row-span-1 flex justify-between px-4 py-2  border-b-2 border-slate-400 items-center'>
     <button onClick={onClickOnline} className="flex justify-between w-full">
         <div>
             <p>Online payment </p>
@@ -241,7 +239,7 @@ function report() {
     </button>
 </div>
 
-      <div className='row-span-1 flex justify-between px-4 py-2 border-t-2 border-black items-center'>
+      <div className='row-span-1 flex justify-between px-4 py-2 border-t-2 border-slate-800 items-center'>
     <button onClick={onClikeRefund} className="flex justify-between w-full">
         <div>
             <p>Refund payment</p>
@@ -266,7 +264,7 @@ function report() {
 
 
             </div>
-            <div className='col-span-1  h-screen-15 w-full'>
+            <div className='col-span-1  h-screen-15 w-full bg-white'>
            
             {showDetails=='refund' && (
               <Refundcomponent />
