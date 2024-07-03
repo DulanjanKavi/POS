@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 function Menubar() {
   const navigate = useNavigate(); 
 
-  const handleLogout = () => {
-    navigate('/logout'); 
+  const handleCachier = () => {
+    navigate('/cashier'); 
   };
 
   const handleBill=()=>{
@@ -32,9 +32,9 @@ function Menubar() {
       </button>
       <button
         className="px-2 py-1 rounded-md text-xs"
-        onClick={handleLogout}
+        onClick={handleCachier}
       >
-        Log Out
+        Cashier
       </button>
       
     </div>

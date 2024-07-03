@@ -9,6 +9,7 @@ const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 let cashierID;
 let ID;
+let holdArray=[];
 
 const sqlite3 = require('sqlite3').verbose();
 const dbPath='pos.db'
@@ -94,6 +95,7 @@ function createWindow() {
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
   })
+  win.maximize();
 
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
@@ -212,6 +214,22 @@ app.on('activate', () => {
   }
 })
 
+ipcMain.on('minimize', () => {
+  win.isMinimized() ? win.restore() : win.minimize()
+})
+
+ipcMain.on('maximize', () => {
+  win.maximize()
+})
+
+ipcMain.on('restore', () => {
+  win.restore()
+})
+
+
+
+
+
 const  paymentMethod=['Cash','Card','Bank Transfer','Check']
 ipcMain.handle('get-pay-method',async(event)=>{
   return paymentMethod
@@ -224,6 +242,19 @@ ipcMain.handle('getCashierName',async(event)=>{
 ipcMain.handle('getCashierID',async(event)=>{
   return ID
 })
+
+
+ipcMain.handle('getHoldArray',async(event)=>{
+  return holdArray
+})
+
+ipcMain.handle('setHoldArray',async(event,array)=>{
+  holdArray=array;
+  console.log('set new hold array')
+  console.log(array)
+})
+
+
 
 
 

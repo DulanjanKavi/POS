@@ -1,4 +1,5 @@
 import React, { useState,useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import editIcon from '../image/Edit.png'
 import starIcon from'../image/star.png'
 import { Link } from 'react-router-dom';
@@ -10,16 +11,17 @@ import payIcon from '../assets/icons/payIcon.png'
 import { BarcodeScannerProvider } from "../component/barcodeScanner";
 import StatusBar from '../component/statusbar';
 import searchIcon from '../assets/icons/searchIcon.png';
-import plant1 from '../assets/products/1.png'
-import plant2 from '../assets/products/2.png'
-import plant3 from '../assets/products/3.png'
-import plant4 from '../assets/products/4.png'
-import plant5 from '../assets/products/5.png'
-import plant6 from '../assets/products/6.png'
-import plant7 from '../assets/products/7.png'
-import plant8 from '../assets/products/8.png'
-import sellIcon from '../assets/icons/sell.png'
+import maximiseIcon from '../assets/icons/maximise.png'
+import minimizeIcon from '../assets/icons/minimise.png'
+import restoreIcon from '../assets/icons/restore.png'
 
+import plant2 from '../assets/products/2.png'
+import sellIcon from '../assets/icons/sell.png'
+import returnIcon from '../assets/icons/delivery-status.png' 
+import payOutIcon from '../assets/icons/withdraw.png'
+import reportIcon from '../assets/icons/report.png'
+import userIcon from '../assets/icons/user.png'
+import coutinueIcon from '../assets/icons/continue.png'
 let paymentMethod=[]
 
 async function fetchPaymentMethod() {
@@ -59,7 +61,19 @@ const Bill = () => {
   const [isCollectPoint,setIsCollectPoint]=useState(false)
   const [payStep,setPayStep]=useState('quickPay')
   const [dateState, setDateState] = useState(new Date());
-  
+  const navigate = useNavigate(); 
+  const [holdArray,setHoldArray]=useState([])
+  const [isVisibleHoldArray,setIsVisibleHoldArray]=useState(false)
+
+
+  const handleOnClickCoutinue=()=>{
+    setIsVisibleHoldArray(true)
+  }
+
+  const closeHoldCustomer=()=>{
+    setIsVisibleHoldArray(false)
+  }
+
     useEffect(() => {
       const timer = setInterval(() => {
         // Update the date state every minute
@@ -94,12 +108,44 @@ const Bill = () => {
     }
   }
 
+
+  async function getHoldArray() {
+    try {
+      console.log('get hold array from main frist time loding page')
+
+      const result = await window.WINDOW_API.getHoldArray();
+      console.log(result)
+      console.log('**********************')
+      setHoldArray(result)
+    } catch (error) {
+      console.error('Error fetching cashier name:', error);
+    }
+  }
+
+  const updateHoldArrayInMain=(array)=>{
+    console.log('send hold array to preload')
+    console.log(array)
+    window.WINDOW_API.setHoldArray(array);
+    
+  
+  }
+
   useEffect(() => {
     getCashierID();
+    getHoldArray();
   }, []);
 
 
+  
 
+  
+  const handleReports=()=>{
+    navigate('/report')
+  }
+
+  const handleCashier=()=>{
+    navigate('/cashier'); 
+  }
 
   
 
@@ -229,6 +275,11 @@ const Bill = () => {
     setIsVisiblePayMethod(true)
   }
 
+  const handlePayout=()=>{
+    setPayStep('quickPay')
+    setIsVisiblePayMethod(true)
+  }
+
   const handleCloseOnAddLoyalCustomer=()=>{
     SetIsVisibleLoyalCustomer(false)
     setError("")
@@ -249,6 +300,8 @@ const Bill = () => {
   useEffect(() => {
     console.log(cardArray);
   }, [cardArray]);
+
+  
 
 
   const handleInputChange = (e) => {
@@ -433,6 +486,7 @@ const Bill = () => {
 
   const cancelPopupEditItem=()=>{
     setIsVisibleEditItem(false);
+    setError('')
   };
 
   //popupwindow for Add item*
@@ -668,6 +722,19 @@ const Bill = () => {
     setIsVisiblePayMethodCash(false)
   }
 
+  const handleHold= ()=>{
+    const newHoldCustomer={
+      holdTotal:total,
+      holdCard:cardArray
+    }
+    
+    setHoldArray([...holdArray,newHoldCustomer]);
+    updateHoldArrayInMain([...holdArray,newHoldCustomer]);
+    handleRemoveBill();
+  }
+
+  
+
   
   
   const handlePayCash = () => {
@@ -848,7 +915,17 @@ const Bill = () => {
 
 
 
+  const handleMinimize=()=>{
+    window.WINDOW_API.minimize();
+  }
 
+  const handleRestore=()=>{
+    window.WINDOW_API.restore();
+  }
+
+  const handleMaximize=()=>{
+    window.WINDOW_API.maximize();
+  }
 
 
 
@@ -933,14 +1010,26 @@ const Bill = () => {
 
 
 
+const processHoldcrat=(holdTotal,holdCard,i)=>{
+  setTotal(holdTotal)
+  setCardArray(holdCard)
+  setIsVisibleHoldArray(false)
+  updateHoldArrayInMain(holdArray.filter((item,index)=>index!==i))
+  const updatedHoldArray = holdArray.filter((item,index)=>index!==i);
+  setHoldArray(updatedHoldArray)
+  console.log(updatedHoldArray)
+}
+
+
+
 
   return (
 
 <BarcodeScannerProvider>
     <div >
-     <div >
+    {/*} <div >
       <Menubar/>
-      </div>
+      </div>*/}
       
       
 
@@ -985,22 +1074,20 @@ const Bill = () => {
 </div>
 
 
-      </div>
+      </div>SS
       */}
 
-      <div className="">
-        <br></br>
-      </div>
+      
       {isVisibleAddItem && (
-                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                        <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black">
-                        <div className='text-2xl text-center'>
+                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-slate-100 bg-opacity-90 z-50">
+                        <div className="bg-slate-200 py-5 px-10 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                        <div className='text-2xl text-center text-black font-bold pb-3 mb-3 border-b-2 border-slate-400'>
                               Select The Price
                             </div>
-                          <div className='flex items-center justify-center'>
+                          <div className='flex items-center justify-center font-semibold'>
                           {editItem.Values.map((value, index) => (
                                 <div key={index}>
-                                    <button onClick={() => handleAddItemToCardWithMultiValue(index)} className="bg-blue-500 text-white p-2 rounded m-2">
+                                    <button onClick={() => handleAddItemToCardWithMultiValue(index)} className="bg-slate-400  text-black hover:bg-slate-600 hover:text-slate-100 p-2 rounded m-2">
                                     {value.toFixed(2)}
                                     </button>
                                 </div>
@@ -1008,9 +1095,9 @@ const Bill = () => {
 
 
                           </div>
-                          <div className='flex items-center justify-center'>
-                          <button onClick={closePopupAddItem} className="bg-red-500 text-white p-2  rounded m-2">
-                            close
+                          <div className='flex items-center justify-center border-t-2 border-slate-400 mt-5'>
+                          <button onClick={closePopupAddItem} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
+                            Close
                           </button>
 
                           </div>
@@ -1023,24 +1110,24 @@ const Bill = () => {
 {isVisibleProcessBill && (
                       
                       <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                        <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black w-96">
-                          <div className='flex items-center justify-center '>
-                          <p className="text-2xl">PROSESS BILL</p>
+                        <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                          <div className='flex items-center justify-center border-b-2 border-slate-400 pb-5'>
+                          <p className="text-2xl text-black font-bold ">PROSESS BILL</p>
                           </div>
                           <div className='items-center justify-center flex'>
                           <div className='w-72 p-4 flex flex-col items-start justify-between'>
-    <div className='w-full flex justify-between '>
-        <p className='text-xl'>Total:</p>
+    <div className='w-full flex justify-between font-semibold '>
+        <p className=' '>Total:</p>
         <p>{total.toFixed(2)}</p>
     </div>
     {isPayMethodCash && (
-        <div className='w-full  flex flex-col items-start z-50'>
+        <div className='w-full  flex flex-col items-start z-50 font-semibold text-black'>
             <div className='w-full flex justify-between'>
-                <p className='text-xl'>Cash :</p>
+                <p className=''>Cash :</p>
                 <p>{(payAmount)}</p>
             </div>
             <div className='w-full flex justify-between'>
-                <p className='text-xl'>Balance :</p>
+                <p className=''>Balance :</p>
                 {isWithdrawPoint &&(
                   <p>{(payAmount-total).toFixed(2)}</p>
                 )
@@ -1052,29 +1139,29 @@ const Bill = () => {
             </div>
             {isWithdrawPoint && (
               <div className='w-full flex justify-between'>
-              <p className='text-xl'>Withdraw point :</p>
+              <p className=''>Withdraw point :</p>
               <p>{(maxWithdrawPoint).toFixed(2)}</p>
           </div>
             )}
             {isCollectPoint && (
               <div className='w-full flex justify-between'>
-              <p className='text-xl'>Collect point :</p>
+              <p className=''>Collect point :</p>
               <p>{(collectPoint).toFixed(2)}</p>
           </div>
             )}
         </div>
     )}
     {!isPayMethodCash && (
-        <div className='w-full  flex flex-col items-start z-50'>
+        <div className='w-full  flex flex-col items-start z-50 text-black font-semibold'>
             {isWithdrawPoint && (
               <div className='w-full flex justify-between'>
-              <p className='text-xl'>Withdraw point :</p>
+              <p className=''>Withdraw point :</p>
               <p>{(maxWithdrawPoint).toFixed(2)}</p>
           </div>
             )}
             {isCollectPoint && (
               <div className='w-full flex justify-between'>
-              <p className='text-xl'>Collect point :</p>
+              <p className=''>Collect point :</p>
               <p>{(collectPoint).toFixed(2)}</p>
           </div>
             )}
@@ -1085,37 +1172,37 @@ const Bill = () => {
 
                           </div>
 
-                          <div className="bg-white p-1  border-t-2">
+                          <div className=" p-1  border-y-2 border-slate-400">
     <table className="table-auto w-full">
                     <tbody>
-                        <tr className="flex w-full justify-between  border-b-2">
+                        <tr className="flex w-full justify-between ">
                             
-                            <td className='w-5/10 p-2 '>snumber</td>
-                            <td className='w-1/10 p-2 '>price</td>
-                            <td className='w-1/10 p-2 '>Qut.</td>
-                            <td className='w-1/10 p-2 '>Amount</td>
+                            <td className='w-5/10 px-2 '>snumber</td>
+                            <td className='w-1/10 px-2 '>price</td>
+                            <td className='w-1/10 px-2 '>Qut.</td>
+                            <td className='w-1/10 px-2 '>Amount</td>
                            
                             
                         </tr>
                     </tbody>
                 </table>
     </div>
-    <div className=' max-h-[30vh] md:max-h-[80vh]  overflow-auto m-2 p-2 w-full'>
+    <div className=' max-h-[calc(100vh-400px)] overflow-auto  p-2 w-full'>
     {cardArray.map((item, index) => {
         // Generate a unique key for each item
         const uniqueKey = `${item.snumber}-${index}`;
 
 
         return (
-            <div key={uniqueKey} className=" bg-white m-1 rounded-lg overflow-auto">
+            <div key={uniqueKey} className="  rounded-lg overflow-auto">
                 <table className="table-auto w-full">
                     <tbody>
-                        <tr className="flex w-full justify-between   text-sm">
+                        <tr className="flex w-full justify-between border-b-2 border-slate-300  text-sm">
                             
-                            <td className='w-5/10 p-2 '>{item.snumber}</td>
-                            <td className='w-1/10 p-2 '>{(item.selectedValue).toFixed(2)}</td>
-                            <td className='w-1/10 p-2 '>{item.NoOfItems}</td>
-                            <td className='w-1/10 p-2 '>{(item.Amount).toFixed(2)}</td>
+                            <td className='w-5/10 px-2 '>{item.snumber}</td>
+                            <td className='w-1/10 px-2 '>{(item.selectedValue).toFixed(2)}</td>
+                            <td className='w-1/10 px-2 '>{item.NoOfItems}</td>
+                            <td className='w-1/10 px-2 '>{(item.Amount).toFixed(2)}</td>
                             
                         </tr>
                     </tbody>
@@ -1128,9 +1215,57 @@ const Bill = () => {
 
                           
 
-                          <div className='flex items-center justify-center'>
-                          <button onClick={closeProcessBill}   className="bg-blue-500 text-white p-2  rounded m-2">
-                            close
+                          <div className='flex items-center justify-center border-t-2 border-slate-400 mt-5'>
+                          
+                          <button onClick={closeProcessBill}   className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
+                            Close
+                          </button>
+                          </div>
+                          
+                          
+                        </div>
+                      </dialog>
+)}
+
+{isVisibleHoldArray && (
+                      
+                      <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
+                        <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                          <div className='flex items-center justify-center mb-5 pb-5 border-b-2 border-slate-400'>
+                          <p className="text-2xl text-black font-bold">Hold Customers</p>
+                          </div>
+                          
+                          <div className="max-h-[calc(100vh-50px)] overflow-auto w-full">
+    {holdArray.map((item, index) => {
+        const holdCardTitle = item.holdCard.map((cardItem) => cardItem.iname).join(', ');
+        return (
+            <div key={index} className="m-1 rounded-lg overflow-auto">
+                <table className="table-auto w-full">
+                    <tbody className="border-2 bg-slate-100 border-slate-200 hover:bg-slate-300">
+                      <button onClick={()=>processHoldcrat(item.holdTotal,item.holdCard,index)} className=' w-full'>
+                      <tr className="flex w-full justify-between px-2 text-sm">
+                            <td>{index + 1}</td>
+                            <td>{item.holdTotal.toFixed(2)}</td>
+                        </tr>
+                        <tr className="flex w-full justify-between px-2 text-sm">
+                            <td className="w-full overflow-auto text-left">{holdCardTitle}</td>
+                        </tr>
+
+                      </button>
+                        
+                    </tbody>
+                </table>
+            </div>
+        );
+    })}
+</div>
+
+
+                          
+
+                          <div className='flex items-center justify-center pt-3 mt-2 border-slate-400 border-t-2'>
+                          <button onClick={closeHoldCustomer}   className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
+                            Close
                           </button>
                           </div>
                           
@@ -1143,32 +1278,32 @@ const Bill = () => {
 
 {isVisibleDeleteItem && (
                       <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                        <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black">
+                        <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
                         <div className='flex flex-col items-center justify-center'>
-                                    <div className='text-lg text-center mb-4'>Delete item</div>
-                                    <div className='flex justify-between w-full mb-2'>
+                                    <div className='text-2xl text-black font-bold mb-5 pb-5 border-b-2 border-slate-400 w-full text-center'>Delete item</div>
+                                    <div className='flex justify-between w-full mb-2 font-semibold'>
                                         <span>Item Snumber:</span>
                                         <span>{cardArray[deleteItemSnumber].snumber}</span>
                                     </div>
-                                    <div className='flex justify-between w-full mb-2'>
+                                    <div className='flex justify-between w-full mb-2 font-semibold'>
                                         <span>Item name:</span>
                                         <span>{cardArray[deleteItemSnumber].iname}</span>
                                     </div>
-                                    <div className='flex justify-between w-full mb-2'>
+                                    <div className='flex justify-between w-full mb-2 font-semibold'>
                                         <span>No of items:</span>
                                         <span>{cardArray[deleteItemSnumber].NoOfItems}</span>
                                     </div>
-                                    <div className='flex justify-between w-full'>
+                                    <div className='flex justify-between w-full font-semibold'>
                                         <span>Amount:</span>
                                         <span>{cardArray[deleteItemSnumber].Amount.toFixed(2)}</span>
                                     </div>
                                     </div>
 
-                          <div className='flex items-center justify-center'>
-                          <button  onClick={handleCloseDeleteWindow} className="bg-blue-500 text-white p-2  rounded m-2">
+                          <div className='flex items-center justify-center mt-5 pt-5 border-t-2 border-slate-400'>
+                          <button  onClick={handleCloseDeleteWindow} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                             close
                           </button>
-                          <button  onClick={deleteItem} className="bg-red-500 text-white p-2  rounded m-2">
+                          <button  onClick={deleteItem} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                             Delete
                           </button>
 
@@ -1181,18 +1316,22 @@ const Bill = () => {
 
 {isVisibleMultiValueAddItem && (
                       <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                        <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black items-center  justify-center ">
-                          <div>
-                          <p className='text-3xl text-center text-black'>Select Price</p>
-                          </div>
-                          <div className='flex items-center justify-center'>
+                        <div className="bg-slate-200 py-5 px-10 rounded-lg shadow-md  border-2 border-slate-400 min-w-96 ">
+                        <div className='text-2xl text-center text-black font-bold pb-3 mb-3 border-b-2 border-slate-400'>
+                              Select The Price
+                            </div>
+                          <div className='flex items-center justify-center  font-semibold'>
                           {editItem.Values.map((value, index) => (
-                              <div key={index}><button onClick={()=>handlAddItemOrUpdateToCardWithMultiValue(index)} className="bg-blue-500 text-white p-2  rounded m-2">{value.toFixed(2)}</button></div>
+                              <div key={index}>
+                                <button onClick={()=>handlAddItemOrUpdateToCardWithMultiValue(index)} className="bg-slate-400  text-black hover:bg-slate-600 hover:text-slate-100 p-2 rounded m-2 ">
+                                {value.toFixed(2)}
+                                </button>
+                                </div>
                             ))}
                           </div>
-                          <div className="flex items-center justify-center">
-                          <button onClick={handelCloseUpdateItemMultipleValue} className="bg-red-500 text-white p-2  rounded m-2  items-center justify-center ">
-                            close
+                          <div className="flex items-center justify-center border-t-2 border-slate-400 mt-5">
+                          <button onClick={handelCloseUpdateItemMultipleValue} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
+                            Close
                           </button>
                           </div>
                           
@@ -1203,11 +1342,11 @@ const Bill = () => {
 
 {isVisiblePayMethod && (
                       <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                        <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black items-center  justify-center ">
-                          <div className='items-center  justify-center text-center text-2xl'>
+                        <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                          <div className='text-2xl text-black font-bold text-center mb-5 pb-5 border-b-2 border-slate-400'>
                           Select The Payment Method
                           </div>
-                          <div className="text-xl text-center bg-white m-1 p-1 rounded-lg flex justify-between ">
+                          <div className="font-semibold text-center  m-1 p-1 pb-4 mb-4 flex justify-between border-b-2 border-slate-300">
                               Total
                               {!isWithdrawPoint && (<h1>{total.toFixed(2)}</h1>)}
                               {isWithdrawPoint && (<h1>{(total-maxWithdrawPoint).toFixed(2)}</h1>)}
@@ -1216,14 +1355,15 @@ const Bill = () => {
                           <div className='flex items-center justify-center'>
                             {paymentMethod.map((method) => (
                               <div key={method}>
-                                <button  onClick={()=>navigateToPatMethod(method)}className="bg-blue-500 text-white p-2 rounded m-2">{method}</button>
+                                <button  onClick={()=>navigateToPatMethod(method)}className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">{method}</button>
                               </div>
                             ))}
                           </div>
 
-                          <div className="flex items-center justify-center">
-                          <button onClick={closePayMethod}className="bg-red-500 text-white p-2  rounded m-2  items-center justify-center ">
-                            close
+                          <div className="flex items-center justify-center mt-5 pt-5 border-t-2 border-slate-400">
+                          <button onClick={closePayMethod} className=" bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
+                          
+                            Close
                           </button>
                           </div>
                           
@@ -1234,12 +1374,15 @@ const Bill = () => {
 
 {isVisiblePayMethodcash && (
                       <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                      <div className="bg-white  rounded-lg shadow-md  border-2 border-black p-5 m-100">
-                      <button  onClick={backToPayMethodInCash} className=" text-black   rounded border-2 border-black m-1 px-1">
+                      <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                      <button  onClick={backToPayMethodInCash} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                         Back
                        </button>
-                        <p className='text-3xl text-center mb-5'>Pay Cash</p>
-                        <div className='flex justify-between items-center text-xl'>
+                       <div className='flex items-center justify-center mb-5 pb-5 border-b-2 border-slate-400'>
+                          <p className="text-2xl text-black font-bold">Pay Cash</p>
+                          </div>
+                        
+                        <div className='flex justify-between items-center font-semibold'>
                           <p>Total :</p>
                           {isWithdrawPoint && (
                             <p className='px-4'>{(total-maxWithdrawPoint).toFixed(2)}</p>
@@ -1251,9 +1394,9 @@ const Bill = () => {
                           }
                           
                         </div>
-                        <div className='flex justify-between items-center text-xl'>
+                        <div className='flex justify-between items-center font-semibold'>
                           <p>Cash :</p>
-                        <input className='m-1 p-1 rounded border-2 border-black'
+                        <input className='m-1  rounded border-2 border-slate-400 text-right focus:outline-none'
                           type="number"
                           min={0.00}
                           onChange={(e) => {
@@ -1262,14 +1405,14 @@ const Bill = () => {
                           }}
                         />
                         </div>
-                        <div className='w-72'>
+                        <div className='w-full text-sm text-center h-5'>
                         {errorOnPayCash && <p className="text-red-500">{errorOnPayCash}</p>}
                         </div>
-                        <div className='flex justify-center items-center text-black'>
-                        <button onClick={handlePayCash} className="bg-blue-500 text-white p-4  rounded m-4">
+                        <div className='flex justify-center items-center mt-2 pt-5 border-t-2 border-slate-400'>
+                        <button onClick={handlePayCash} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
                           Pay
                         </button>
-                        <button  onClick={payCashClose} className="bg-red-500 text-white p-4  rounded m-4">
+                        <button  onClick={payCashClose} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
                           Close
                         </button>
                         </div>
@@ -1279,12 +1422,14 @@ const Bill = () => {
 
 {isVisiblePayMethodCard && (
                     <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                      <div className="bg-white  rounded-lg shadow-md  border-2 border-black p-5 m-100">
-                      <button  onClick={backToPayMethodInCard} className=" text-black   rounded border-2 border-black m-1 px-1">
+                      <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                      <button  onClick={backToPayMethodInCard} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                         Back
                        </button>
-                        <p className='text-3xl text-center mb-5'>Pay Card</p>
-                        <div className='flex justify-between items-center text-xl'>
+                       <div className='flex items-center justify-center mb-5 pb-5 border-b-2 border-slate-400'>
+                          <p className="text-2xl text-black font-bold">Pay Card</p>
+                          </div>
+                        <div className='flex justify-between items-center font-semibold'>
                           <p>Total :</p>
                           {isWithdrawPoint && (
                             <p className='px-4'>{(total-maxWithdrawPoint).toFixed(2)}</p>
@@ -1294,9 +1439,9 @@ const Bill = () => {
                           )}
                           
                         </div>
-                        <div className='flex justify-between items-center text-xl'>
+                        <div className='flex justify-between items-center font-semibold'>
                           <p>card last 4 digit :</p>
-                        <input className='m-1 p-1 rounded border-2 border-black'
+                        <input className='m-1  rounded border-2 border-slate-400 text-right focus:outline-none'
                           type="number"
                           min={0}
                           onChange={(e) => {
@@ -1305,14 +1450,14 @@ const Bill = () => {
                           }}
                         />
                         </div>
-                        <div className='w-72'>
+                        <div className='w-full text-sm text-center h-5'>
                         {errorOnPayCard && <p className="text-red-500">{errorOnPayCard}</p>}
                         </div>
-                        <div className='flex justify-center items-center text-black'>
-                        <button onClick={handlePayCard} className="bg-blue-500 text-white p-4  rounded m-4">
+                        <div className='flex justify-center items-center mt-2 pt-5 border-t-2 border-slate-400'>
+                        <button onClick={handlePayCard} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
                           Pay
                         </button>
-                        <button  onClick={payCardhClose} className="bg-red-500 text-white p-4  rounded m-4">
+                        <button  onClick={payCardhClose} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
                           Close
                         </button>
                         </div>
@@ -1322,12 +1467,15 @@ const Bill = () => {
 
 {isVisiblePayMethodBank && (
                     <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                      <div className="bg-white  rounded-lg shadow-md  border-2 border-black p-5 m-100">
-                      <button  onClick={backToPayMethodInBank} className=" text-black   rounded border-2 border-black m-1 px-1">
+                      <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                      <button  onClick={backToPayMethodInBank} className=" bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                         Back
                        </button>
-                        <p className='text-3xl text-center mb-5'>Online Bank Transfer</p>
-                        <div className='flex justify-between items-center text-xl'>
+                       <div className='flex items-center justify-center mb-5 pb-5 border-b-2 border-slate-400'>
+                          <p className="text-2xl text-black font-bold">Online Bank Transfer</p>
+                          </div>
+                        
+                        <div className='flex justify-between items-center font-semibold'>
                           <p>Total :</p>
                           {isWithdrawPoint && (
                             <p className='px-4'>{(total-maxWithdrawPoint).toFixed(2)}</p>
@@ -1337,9 +1485,9 @@ const Bill = () => {
                           )}
                           
                         </div>
-                        <div className='flex justify-between items-center text-xl'>
+                        <div className='flex justify-between items-center font-semibold'>
                           <p>Transfer number :</p>
-                        <input className='m-1 p-1 rounded border-2 border-black'
+                        <input className='m-1  rounded border-2 border-slate-400 text-right focus:outline-none'
                           type="number"
                           min={0}
                           onChange={(e) => {
@@ -1348,14 +1496,14 @@ const Bill = () => {
                           }}
                         />
                         </div>
-                        <div className='w-72'>
+                        <div className='w-full text-sm text-center h-5'>
                         {errorOnPayBank && <p className="text-red-500">{errorOnPayBank}</p>}
                         </div>
-                        <div className='flex justify-center items-center text-black'>
-                        <button onClick={handlePayBank} className="bg-blue-500 text-white p-4  rounded m-4">
+                        <div className='flex justify-center items-center mt-2 pt-5 border-t-2 border-slate-400'>
+                        <button onClick={handlePayBank} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
                           Pay
                         </button>
-                        <button  onClick={payBankClose} className="bg-red-500 text-white p-4  rounded m-4">
+                        <button  onClick={payBankClose} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
                           Close
                         </button>
                         </div>
@@ -1365,12 +1513,15 @@ const Bill = () => {
 
 {isVisiblePayMethodCheque && (
                     <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                      <div className="bg-white  rounded-lg shadow-md  border-2 border-black p-5 m-100">
-                      <button  onClick={backToPayMethodInCheque} className=" text-black   rounded border-2 border-black m-1 px-1">
+                      <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                      <button  onClick={backToPayMethodInCheque} className=" bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                         Back
                        </button>
-                        <p className='text-3xl text-center mb-5'>Cheque Payment</p>
-                        <div className='flex justify-between items-center text-xl'>
+                       <div className='flex items-center justify-center mb-5 pb-5 border-b-2 border-slate-400'>
+                          <p className="text-2xl text-black font-bold">Cheque Payment</p>
+                          </div>
+                      
+                        <div className='flex justify-between items-center font-semibold'>
                           <p>Total :</p>
                           {isWithdrawPoint && (
                             <p className='px-4'>{(total-maxWithdrawPoint).toFixed(2)}</p>
@@ -1380,9 +1531,9 @@ const Bill = () => {
                           )}
                           
                         </div>
-                        <div className='flex justify-between items-center text-xl'>
+                        <div className='flex justify-between items-center font-semibold'>
                           <p>Transfer number :</p>
-                        <input className='m-1 p-1 rounded border-2 border-black'
+                        <input className='m-1  rounded border-2 border-slate-400 text-right focus:outline-none'
                           type="number"
                           min={0}
                           onChange={(e) => {
@@ -1391,14 +1542,14 @@ const Bill = () => {
                           }}
                         />
                         </div>
-                        <div className='w-72'>
+                        <div className='w-full text-sm text-center h-5'>
                         {errorOnPayCheque && <p className="text-red-500">{errorOnPayCheque}</p>}
                         </div>
-                        <div className='flex justify-center items-center text-black'>
-                        <button onClick={handlePayCheque} className="bg-blue-500 text-white p-4  rounded m-4">
+                        <div className='flex justify-center items-center mt-2 pt-5 border-t-2 border-slate-400'>
+                        <button onClick={handlePayCheque} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
                           Pay
                         </button>
-                        <button  onClick={payChequeClose} className="bg-red-500 text-white p-4  rounded m-4">
+                        <button  onClick={payChequeClose} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
                           Close
                         </button>
                         </div>
@@ -1408,13 +1559,13 @@ const Bill = () => {
 
 {isVisibleLoyalCustomer && (
   <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-    <div className="bg-white rounded-lg shadow-md border-2 border-black p-5 m-100">
-      <p className="text-3xl text-center m-5">Add Loyal Customer</p>
+    <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+      <p className="text-2xl text-black font-bold mb-5 pb-5 border-b-2 border-slate-400 w-full text-center">Add Loyal Customer</p>
 
-      <div className="flex justify-between items-center text-xl">
+      <div className="flex justify-between items-center font-semibold">
         <p>TP:</p>
         <input
-          className="m-1 p-1 rounded border-2 border-black"
+          className="m-1  rounded border-2 border-slate-400 text-right focus:outline-none"
           type="number"
           onChange={(e) => {
             setCustomerTP(e.target.value);
@@ -1422,11 +1573,13 @@ const Bill = () => {
           }}
         />
       </div>
+          <div className='w-full text-sm text-center h-5'>
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          </div>
+      
 
-      {error && <p className="text-red-500 text-center">{error}</p>}
-
-      <div className="flex justify-center items-center text-black">
-      <button onClick={habdleQuickPayOnAddLoyalCustomer} className="bg-blue-500 text-white py-2 px-4 rounded m-2">
+      <div className="flex justify-center items-center mt-2 pt-5 border-t-2 border-slate-400">
+      <button onClick={habdleQuickPayOnAddLoyalCustomer} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
           Quick Pay
         </button>
         <button
@@ -1438,11 +1591,11 @@ const Bill = () => {
               getCustomerDetails(null,customerTP ); // Call the next function
             }
           }}
-          className="bg-blue-500 text-white py-2 px-4 rounded m-2"
+          className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4"
         >
           Next
         </button>
-        <button onClick={handleCloseOnAddLoyalCustomer} className="bg-red-500 text-white py-2 px-4 rounded m-2">
+        <button onClick={handleCloseOnAddLoyalCustomer} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
           close
         </button>
       </div>
@@ -1454,16 +1607,19 @@ const Bill = () => {
 
 {isVisibleaddNewLoyalCustomer && (
   <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-    <div className="bg-white rounded-lg shadow-md border-2 border-black p-5 m-100">
-      <button onClick={handleBackOnAddNewLoyalCustomer} className="text-black rounded border-2 border-black m-1 px-1">
+    <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+      <button onClick={handleBackOnAddNewLoyalCustomer} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
         Back
       </button>
-      <p className="text-3xl text-center m-5">Add New Loyal Customer</p>
+      <div className='flex items-center justify-center mb-5 pb-5 border-b-2 border-slate-400'>
+                          <p className="text-2xl text-black font-bold">Add New Loyal Customer</p>
+                          </div>
+      
 
-      <div className="flex justify-between items-center text-xl">
+      <div className="flex justify-between items-center font-semibold">
         <p>Name:</p>
         <input
-          className="m-1 p-1 rounded border-2 border-black"
+          className="m-1  rounded border-2 border-slate-400 text-right focus:outline-none"
           type="text" 
           onChange={(e) => {
             setNewCustomerName(e.target.value);
@@ -1471,11 +1627,14 @@ const Bill = () => {
           }}
         />
       </div>
-
+      <div className='w-full text-sm text-center h-5'>
       {error && <p className="text-red-500 text-center">{error}</p>}
+                        </div>
 
-      <div className="flex justify-center items-center text-black">
-      <button  onClick={handleQuickPayOnAddNewLoyalCustomer} className="bg-blue-400 text-white py-2 px-4 rounded m-2"
+      
+
+      <div className="flex justify-center items-center mt-2 pt-5 border-t-2 border-slate-400">
+      <button  onClick={handleQuickPayOnAddNewLoyalCustomer} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4"
         >
           Quick Pay
         </button>
@@ -1488,7 +1647,7 @@ const Bill = () => {
               handleNextOnAddNewLoyalCustomer()
             }
           }}
-          className="bg-blue-600 text-white py-2 px-4 rounded m-2"
+          className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4"
         >
           Next
         </button>
@@ -1501,20 +1660,31 @@ const Bill = () => {
 
 {isVisibleConfirmAddNewCustomerDetails && (
   <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-    <div className="bg-white rounded-lg shadow-md border-2 border-black p-5 m-100">
-      <p className="text-3xl text-center m-5">Confirm New Loyal Customer</p>
-      <p className="text-2xl text-center m-5">{customerTP}</p>
-      <p className="text-2xl text-center m-5">{newCustomerName}</p>
+    <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+    <div className='text-2xl text-black font-bold mb-5 pb-5 border-b-2 border-slate-400 w-full text-center'>
+      Confirm New Loyal Customer</div>
 
+      <div className='flex justify-between w-full mb-2 font-semibold'>
+                                        <span>Phone number:</span>
+                                        <span>{customerTP}</span>
+                                    </div>
+
+                                    <div className='flex justify-between w-full mb-2 font-semibold'>
+                                        <span>Customer name:</span>
+                                        <span>{newCustomerName}</span>
+                                    </div>
+      
       
 
       
 
-      <div className="flex justify-center items-center text-black">
-        <button onClick={handleNextOnConfirmNewLoyalCustomer} className="bg-blue-600 text-white py-2 px-4 rounded m-2">
+      
+
+      <div className="flex items-center justify-center mt-5 pt-5 border-t-2 border-slate-400">
+        <button onClick={handleNextOnConfirmNewLoyalCustomer} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
           Next
         </button>
-        <button onClick={handleEditOnConfirmNewLoyalCustomer}  className="bg-blue-400 text-white py-2 px-4 rounded m-2"
+        <button onClick={handleEditOnConfirmNewLoyalCustomer}  className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2"
         >
           Edit
         </button>
@@ -1530,15 +1700,15 @@ const Bill = () => {
 
 {isVisible && (
                       <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                        <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black">
-                
-                          <p className='text-3xl'>Conferm The Remove Bill.</p>
-                          <p className='text-3xl'>{}</p>
+                        <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                        <div className='text-2xl text-black font-bold mb-5 pb-5 border-b-2 border-slate-400 w-full text-center'>
+                        Conferm The Remove Bill</div>
+                          
                           <div className="flex items-center justify-center">
-                          <button onClick={cancelPopup} className="bg-blue-500 text-white p-2  rounded m-2">
+                          <button onClick={cancelPopup} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                             Close
                           </button>
-                          <button onClick={closePopup} className="bg-red-500 text-white p-2  rounded m-2">
+                          <button onClick={closePopup} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                             Remove Bill
                           </button>
                           </div>
@@ -1549,17 +1719,27 @@ const Bill = () => {
 
 {isConfermLoyalNumber && (
                       <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                        <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black">
-                      
-                          <p className='text-3xl'>Confirm The Loyal Number.</p>
-                          <p className='text-2xl text-center'>{customerTP}</p>
-                          <p className='text-2xl text-center'>{loyalCustomerDetails.name}</p>
+                        <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                        <div className='text-2xl text-black font-bold mb-5 pb-5 border-b-2 border-slate-400 w-full text-center'>
+                        Confirm Loyal Customer Details</div>
+
+                        <div className='flex justify-between w-full mb-2 font-semibold'>
+                                        <span>Phone number:</span>
+                                        <span>{customerTP}</span>
+                                    </div>
+
+                                    <div className='flex justify-between w-full mb-2 font-semibold'>
+                                        <span>Customer name:</span>
+                                        <span>{loyalCustomerDetails.name}</span>
+                                    </div>
                           
-                          <div className="flex items-center justify-center">
-                          <button onClick={handleConfirmOnConfirmTheLoyalNumber} className="bg-blue-500 text-white p-2  rounded m-2">
+                          
+                          
+                          <div className="flex items-center justify-center mt-5 pt-5 border-t-2 border-slate-400">
+                          <button onClick={handleConfirmOnConfirmTheLoyalNumber} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                             Confirm
                           </button>
-                          <button onClick={handleEditInConfermLoyalNumber} className="bg-red-500 text-white p-2  rounded m-2">
+                          <button onClick={handleEditInConfermLoyalNumber} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                             Change Customer
                           </button>
                           </div>
@@ -1570,18 +1750,20 @@ const Bill = () => {
 
 {isCollectOrWithdraw && (
                       <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                        <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black">
+                        <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                        <div className='text-2xl text-black font-bold mb-5 pb-5 border-b-2 border-slate-400 w-full text-center'>
+                        Loyalty Point Panel</div>
                       
-                          <p className='text-3xl text-center mb-5'>Loyalty Point Panel</p> 
+                          
                           <div className="flex items-center justify-center">
-                          <button onClick={()=>handleCollectPoint("c")} className="bg-blue-500 text-black p-2  rounded m-2">
+                          <button onClick={()=>handleCollectPoint("c")} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                             <div className='items-center'><img className="h-8 w-8 mx-8 my-1 " src={starIcon} alt="points" /></div>
                             <p>{collectPoint.toFixed(2)}</p>
                             <p>Collect</p>
                             <p>Points</p>
 
                           </button>
-                          <button onClick={()=>handleCollectPoint("w")} className="bg-red-500 text-black p-2  rounded m-2">
+                          <button onClick={()=>handleCollectPoint("w")} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                           <div className='items-center'><img className="h-8 w-8 mx-8 my-1 " src={starIcon} alt="points" /></div>
                             <p>{maxWithdrawPoint.toFixed(2)}</p>
                             <p>Withdraw</p>
@@ -1595,41 +1777,67 @@ const Bill = () => {
 
 {isVisibleEditItem && (
                       <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
-                        <div className="bg-white p-4 rounded-lg shadow-md  border-2 border-black z-50">
-                        <div className='text-center mx-3'>
-                          <p className='text-3xl'>Edit Item</p>
-                          <div className='flex justify-between text-xl'>
+                        <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+                        <div className='flex items-center justify-center mb-5 pb-5 border-b-2 border-slate-400'>
+                          <p className="text-2xl text-black font-bold">Edit Item</p>
+                          </div>
+                          
+                          <div className='flex justify-between items-center font-semibold'>
                             <span>sNumber :</span>
                             <span>{cardArray[itemInndex].snumber}</span>
                           </div>
-                          <div className='flex justify-between text-xl'>
+                          <div className='flex justify-between items-center font-semibold'>
                             <span>Item :</span>
                             <span>{cardArray[itemInndex].iname}</span>
                           </div>
-                          <div className='flex justify-between text-xl'>
+                          <div className='flex justify-between items-center font-semibold'>
                             <span>Amount :</span>
                             <span>{cardArray[itemInndex].Amount.toFixed(2)}</span>
                           </div>
-                        </div>
-
-                          <input className='m-1 p-1 rounded border-2 border-black'
-                            type="number"
-                            
+                          <div className='flex justify-between items-center font-semibold'>
+                          <p>Items quntity :</p>
+                          <input className='m-1  rounded border-2 border-slate-400 text-right focus:outline-none'
+                            type="number"  
                             defaultValue={cardArray[itemInndex].NoOfItems}
-                            onChange={handleNoOfItem}
+                            
+                            onChange={(e)=>{
+                              setNoOfitem(e.target.value);
+                              setError('');
+                            }}
                             min={1}
                           />
-                          <button onClick={successPopupEditItem} className="bg-blue-500 text-white p-2  rounded m-2">
+                        
+                        </div>
+                        <div className='w-full text-sm text-center h-5'>
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          </div>
+                        
+
+                        <div className='flex justify-center items-center mt-2 pt-5 border-t-2 border-slate-400'>
+                          <button onClick={()=>{
+                            if(parseInt(noOfitem, 10)<1){
+                              setError('Minimum item quntity is 1');
+                            }else{
+                              setError('')
+                              setNoOfitem(cardArray[itemInndex].NoOfItems)
+                              successPopupEditItem();
+
+                            }
+                          }
+                            
+                            
+                        } className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
                             Edit item
                           </button>
-                          <button onClick={cancelPopupEditItem} className="bg-red-500 text-white p-2  rounded m-2">
+                          <button onClick={cancelPopupEditItem} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
                             Close
                           </button>
+                          </div>
                         </div>
                       </dialog>
 )}
 
-      <div className="fixed top-5 left-0 right-0    grid grid-cols-1 md:grid-cols-12   pt-1  h-full ">
+      <div className="fixed top-0 left-0 right-0    grid grid-cols-1 md:grid-cols-12     h-full ">
         <div className="max-h-[40vh]  md:max-h-[90vh] col-span-12  sm:col-span-7  ">
         <div className="h-7 bg-slate-800 flex items-center ">
                     <StatusBar />
@@ -1652,7 +1860,7 @@ const Bill = () => {
           {error && <p className="text-red-500 text-center">{error}</p>}
           </div>
           */}
-          <div className='h-20 w-full mr-4 flex pr-2 overflow-x-scroll '>
+          <div className='h-20 w-full mr-4 flex pr-2 overflow-x-auto '>
           <button onClick={handleRemoveBill}>
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
@@ -1666,74 +1874,91 @@ const Bill = () => {
           <button >
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-        <img  className="w-10 h-8" alt="Return" />
+    <img src={returnIcon} className="w-10 h-8" alt="Return Icon" />
     </div>
     <div className="text-center">
-        
+        Return
     </div>
 </div>
           </button>
-          <button >
+          <button onClick={handlePayout}>
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-        <img  className="w-10 h-8" alt="Payout" />
+    <img src={payIcon} className="w-10 h-8" alt="Pay Icon" />
     </div>
     <div className="text-center">
-        
+        Payout
     </div>
 </div>
           </button>
-          <button >
+          <button onClick={handleOnClickCoutinue} >
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-        <img  className="w-10 h-8" alt="Reports" />
+    <img src={coutinueIcon} className="w-10 h-8" alt="Coutinue Icon" />
     </div>
     <div className="text-center">
-        
+        Coutinue
     </div>
 </div>
           </button>
 
-          <button >
+          <button onClick={handleReports} >
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-        <img  className="w-10 h-8" alt="User" />
+    <img src={reportIcon} className="w-10 h-8" alt="Report Icon" />
     </div>
     <div className="text-center">
-        
+        Reports
     </div>
 </div>
           </button>
-          <button >
+
+          <button onClick={handleCashier}>
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-        <img  className="w-10 h-8" alt="User" />
+    <img src={userIcon} className="w-10 h-8" alt="Cashier Icon" />
     </div>
     <div className="text-center">
-        
+        Cashier
     </div>
 </div>
           </button>
-          <button >
+          <button onClick={handleMaximize} >
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-        <img  className="w-10 h-8" alt="User" />
+    <img src={maximiseIcon} className="w-10 h-8" alt="Maximise Icon" />
     </div>
     <div className="text-center">
-        
+        Maximize
     </div>
 </div>
           </button>
-          <button >
+
+          <button onClick={handleRestore} >
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-        <img  className="w-10 h-8" alt="User" />
+    <img src={restoreIcon} className="w-10 h-8" alt="Restore Icon" />
     </div>
     <div className="text-center">
-        
+        Restore
     </div>
 </div>
           </button>
+          <button onClick={handleMinimize} >
+          <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+    <img src={minimizeIcon} className="w-10 h-8" alt="Maximise Icon" />
+    </div>
+    <div className="text-center">
+        Minimize
+    </div>
+</div>
+          </button>
+
+
+
+
+          
 
           
           
@@ -1775,88 +2000,101 @@ const Bill = () => {
               
                 
 
-                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
-                  <div className="border-b-2 border-slate-200  h-32">
-                  <img src={plant2} alt={plant1} className="w-full h-32 " />
-                  </div>
-                  <div className=" text-center h-8 ">
-                    plant
-                  </div>
-                </button>
-
-                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
-                  <div className="border-b-2 border-slate-200  h-32">
-                  <img src={plant3} alt={plant1} className="w-full h-32 " />
-                  </div>
-                  <div className=" text-center h-8 ">
-                    plant
-                  </div>
-                </button>
-                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
-                  <div className="border-b-2 border-slate-200  h-32">
-                  <img src={plant4} alt={plant1} className="w-full h-32 " />
-                  </div>
-                  <div className=" text-center h-8 ">
-                    plant
-                  </div>
-                </button>
-                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
-                  <div className="border-b-2 border-slate-200  h-32">
-                  <img src={plant5} alt={plant1} className="w-full h-32 " />
-                  </div>
-                  <div className=" text-center h-8 ">
-                    plant
-                  </div>
-                </button>
-                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
-                  <div className="border-b-2 border-slate-200  h-32">
-                  <img src={plant6} alt={plant1} className="w-full h-32 " />
-                  </div>
-                  <div className=" text-center h-8 ">
-                    plant
-                  </div>
-                </button>
-                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
-                  <div className="border-b-2 border-slate-200  h-32">
-                  <img src={plant7} alt={plant1} className="w-full h-32 " />
-                  </div>
-                  <div className=" text-center h-8 ">
-                    plant
-                  </div>
-                </button>
-                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
-                  <div className="border-b-2 border-slate-200  h-32">
-                  <img src={plant8} alt={plant1} className="w-full h-32 " />
-                  </div>
-                  <div className=" text-center h-8 ">
-                    plant
-                  </div>
-                </button>
                 
-                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
-                  <div className="border-b-2 border-slate-200  h-32">
-                  <img src={plant2} alt={plant1} className="w-full h-32 " />
-                  </div>
-                  <div className=" text-center h-8 ">
-                    plant
-                  </div>
-                </button>
-                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
-                  <div className="border-b-2 border-slate-200  h-32">
-                  <img src={plant3} alt={plant1} className="w-full h-32 " />
-                  </div>
-                  <div className=" text-center h-8 ">
-                    plant
-                  </div>
-                </button>
-                <button className="col-span-4 border-slate-200  border-2 m-1  hover:bg-slate-200 transition duration-150 h-40">
-                  <div className="border-b-2 border-slate-200  h-32">
-                  <img src={plant1} alt={plant1} className="w-full h-32 " />
-                  </div>
-                  <div className=" text-center h-8 ">
-                    plant
-                  </div>
-                </button>
+
+          <div className='col-span-4 lg:col-span-3 xl:col-span-2 flex items-center justify-center'>
+    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
+        <div className="border-b-2 border-slate-200 h-32">
+            <img src={plant2} alt={plant2} className="w-full h-32" />
+        </div>
+        <div className="text-center h-8">
+            plant
+        </div>
+    </button>
+</div>
+                <div className='col-span-4 lg:col-span-3 xl:col-span-2  flex items-center justify-center'>
+    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
+        <div className="border-b-2 border-slate-200 h-32">
+            <img src={plant2} alt={plant2} className="w-full h-32" />
+        </div>
+        <div className="text-center h-8">
+            plant
+        </div>
+    </button>
+</div>
+                <div className='col-span-4 lg:col-span-3 xl:col-span-2  flex items-center justify-center'>
+    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
+        <div className="border-b-2 border-slate-200 h-32">
+            <img src={plant2} alt={plant2} className="w-full h-32" />
+        </div>
+        <div className="text-center h-8">
+            plant
+        </div>
+    </button>
+</div>
+
+
+<div className='col-span-4  lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
+    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
+        <div className="border-b-2 border-slate-200 h-32">
+            <img src={plant2} alt={plant2} className="w-full h-32" />
+        </div>
+        <div className="text-center h-8">
+            plant
+        </div>
+    </button>
+</div>
+                <div className='col-span-4 lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
+    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
+        <div className="border-b-2 border-slate-200 h-32">
+            <img src={plant2} alt={plant2} className="w-full h-32" />
+        </div>
+        <div className="text-center h-8">
+            plant
+        </div>
+    </button>
+</div>
+                <div className='col-span-4 lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
+    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
+        <div className="border-b-2 border-slate-200 h-32">
+            <img src={plant2} alt={plant2} className="w-full h-32" />
+        </div>
+        <div className="text-center h-8">
+            plant
+        </div>
+    </button>
+</div>
+
+<div className='col-span-4 lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
+    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
+        <div className="border-b-2 border-slate-200 h-32">
+            <img src={plant2} alt={plant2} className="w-full h-32" />
+        </div>
+        <div className="text-center h-8">
+            plant
+        </div>
+    </button>
+</div>
+                <div className='col-span-4 lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
+    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
+        <div className="border-b-2 border-slate-200 h-32">
+            <img src={plant2} alt={plant2} className="w-full h-32" />
+        </div>
+        <div className="text-center h-8">
+            plant
+        </div>
+    </button>
+</div>
+                <div className='col-span-4 lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
+    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
+        <div className="border-b-2 border-slate-200 h-32">
+            <img src={plant2} alt={plant2} className="w-full h-32" />
+        </div>
+        <div className="text-center h-8">
+            plant
+        </div>
+    </button>
+</div>
                 
                 
                
@@ -2013,7 +2251,7 @@ const Bill = () => {
 
           <div className="action-buttons gap-1 grid grid-cols-2 divide-x bg-slate-100 pt-1  ">
                 <button onClick={handleRemove} className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center "><img src={deleteIcon} className="w-5 mr-2" alt="Add customer" />  Cancel</button>
-                <button className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center "><img src={holdIcon} className="w-5 mr-2" alt="Add customer" /> Hold</button>
+                <button onClick={handleHold} className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center "><img src={holdIcon} className="w-5 mr-2" alt="Add customer" /> Hold</button>
                 <button onClick={handlePayButton} className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center  col-span-2"><img src={payIcon} className="w-5 mr-2" alt="Add customer" />  Pay</button>
             </div>
             <div className="text-center text-xl font-bold py-2 bg-slate-800 text-white">

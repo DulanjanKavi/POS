@@ -48,7 +48,34 @@ const WINDOW_API = {
       }catch(error){
         console.error(error);
       }
-      }
+      },
+      minimize:()=>{
+        ipcRenderer.send('minimize')
+      },
+      maximize:()=>{
+        ipcRenderer.send('maximize')
+      },
+      restore:()=>{
+        ipcRenderer.send('restore')
+      },
+      getHoldArray: async()=>{
+        try{
+          const result=await ipcRenderer.invoke('getHoldArray');
+          return result
+        }catch(error){
+          console.error(error);
+        }
+        },
+        setHoldArray: (array)=>{
+          try{
+            ipcRenderer.invoke('setHoldArray',array);
+            console.log(array)
+            console.log('********************')
+          }catch(error){
+            console.error(error);
+          }
+          }
+
   
  
   
