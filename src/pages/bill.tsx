@@ -14,6 +14,7 @@ import searchIcon from '../assets/icons/searchIcon.png';
 import maximiseIcon from '../assets/icons/maximise.png'
 import minimizeIcon from '../assets/icons/minimise.png'
 import restoreIcon from '../assets/icons/restore.png'
+import logOutIcon1 from '../assets/icons/logOut.png'
 
 import plant2 from '../assets/products/2.png'
 import sellIcon from '../assets/icons/sell.png'
@@ -64,7 +65,22 @@ const Bill = () => {
   const navigate = useNavigate(); 
   const [holdArray,setHoldArray]=useState([])
   const [isVisibleHoldArray,setIsVisibleHoldArray]=useState(false)
+  const [isVisibleLogOut,setIsVisibleLogOut]=useState(false)
 
+  const handleLogOut=()=>{
+    setIsVisibleLogOut(true)
+  }
+
+
+
+  const handleConfirmLogOut=()=>{
+    updateHoldArrayInMain([])
+    navigate('/')
+  }
+
+  const handleCancelLogOut=()=>{
+    setIsVisibleLogOut(false)
+  }
 
   const handleOnClickCoutinue=()=>{
     setIsVisibleHoldArray(true)
@@ -123,8 +139,6 @@ const Bill = () => {
   }
 
   const updateHoldArrayInMain=(array)=>{
-    console.log('send hold array to preload')
-    console.log(array)
     window.WINDOW_API.setHoldArray(array);
     
   
@@ -1658,6 +1672,28 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
   </dialog>
 )}
 
+{isVisibleLogOut && (
+        <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-80 mt-6 z-50">
+        <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
+      
+          
+          <div className='flex items-center justify-center mb-5 pb-5 border-b-2 border-slate-400'>
+                          <p className="text-2xl text-black font-bold">Confirm The Log Out</p>
+                          </div>
+          
+          <div className="flex items-center justify-center">
+          <button onClick={handleCancelLogOut} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
+            Cancel
+          </button>
+          <button onClick={handleConfirmLogOut} className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded mx-4">
+            Log Out
+          </button>
+          </div>
+          
+        </div>
+      </dialog>
+      )}
+
 {isVisibleConfirmAddNewCustomerDetails && (
   <dialog open className=" h-full w-full popup-content fixed inset-0 flex items-center justify-center rounded-lg bg-gray-100 bg-opacity-80 z-50">
     <div className="bg-slate-200 p-4 rounded-lg shadow-md  border-2 border-slate-400 min-w-96">
@@ -1951,6 +1987,17 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
     </div>
     <div className="text-center">
         Minimize
+    </div>
+</div>
+          </button>
+
+          <button onClick={handleLogOut} >
+          <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
+    <div>
+    <img src={logOutIcon1} className="w-10 h-8" alt="Maximise Icon" />
+    </div>
+    <div className="text-center">
+        Log out
     </div>
 </div>
           </button>

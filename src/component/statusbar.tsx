@@ -7,7 +7,7 @@ export default function StatusBar(){
 
   const [cashierName, setCashierName] = useState('');
 
-  async function fetchPaymentMethod() {
+  async function fetchCashierName() {
     try {
       console.log("get cashier name")
       const name = await window.WINDOW_API.getCashierName();
@@ -17,7 +17,7 @@ export default function StatusBar(){
     }
   }
   useEffect(() => {
-    fetchPaymentMethod();
+    fetchCashierName();
   }, []); 
 
 
