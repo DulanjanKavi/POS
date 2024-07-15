@@ -107,6 +107,15 @@ const ITEM_API={
     } catch (error) {
       console.error(error);
     }
+  },
+  verifyItem:async(snumber)=>{
+    try {
+      console.log("check item detais");
+      const result = await ipcRenderer.invoke('verifyItem', snumber);
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 contextBridge.exposeInMainWorld('Item_API', ITEM_API);
@@ -150,6 +159,16 @@ const BILL_API={
       console.log("billl process");
       await ipcRenderer.invoke('processBill', total,pMethod,customerID,discount,withdrowPoints,additionalDetails);
       
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  verifyBillNumber:async(billNumber)=>{
+    try {
+      console.log("verify bill");
+      console.log(billNumber)
+      const result = await ipcRenderer.invoke('verifyBillNumber', billNumber);
+      return result;
     } catch (error) {
       console.error(error);
     }

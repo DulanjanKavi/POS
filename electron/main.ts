@@ -279,10 +279,35 @@ ipcMain.handle('getUserID', async (event, args) => {
   });
 });
 
+
+
 ipcMain.handle('getItemDetails', async (event, snumber) => {
   try {
     const row = await new Promise((resolve, reject) => {
       db.get("SELECT * FROM items WHERE snumber = ?", [snumber], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+    if (row) {
+      console.log(row);
+      return row;
+    } else {
+      console.log('No matching item found.');
+      return null;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+ipcMain.handle('verifyItem', async (event, snumber) => {
+  try {
+    const row = await new Promise((resolve, reject) => {
+      db.get("SELECT name FROM items WHERE snumber = ?", [snumber], (err, row) => {
         if (err) {
           reject(err);
         } else {
@@ -357,6 +382,30 @@ ipcMain.handle('processBill', async (event, total, pMethod, customerID, discount
   } catch (error) {
       console.error(error);
       return null;
+  }
+});
+
+ipcMain.handle('verifyBillNumber', async (event, billNumber) => {
+  try {
+    console.log('Bill Number:', billNumber);
+    const row = await new Promise((resolve, reject) => {
+      db.get("SELECT total FROM bill WHERE biiNumber = ?", [billNumber], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+    if (row) {
+      console.log(row);
+      return row;
+    } else {
+      console.log('No matching item found.');
+      return null;
+    }
+  } catch (error) {
+    throw new Error(error);
   }
 });
 

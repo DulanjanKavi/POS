@@ -78,6 +78,10 @@ const Bill = () => {
     navigate('/')
   }
 
+  const handleReturn=()=>{
+    navigate('/refund')
+  }
+
   const handleCancelLogOut=()=>{
     setIsVisibleLogOut(false)
   }
@@ -1907,7 +1911,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
     </div>
 </div>
           </button>
-          <button >
+          <button onClick={handleReturn}>
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
     <img src={returnIcon} className="w-10 h-8" alt="Return Icon" />

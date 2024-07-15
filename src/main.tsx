@@ -8,6 +8,7 @@ import Bill from './pages/bill';
 import Logout from './pages/logout';
 import Report from './pages/report';
 import Chasier from './pages/cashier';
+import Refund from './pages/refund'
 
 
 
@@ -20,6 +21,7 @@ function Main() {
           <Route path="/logout" element={<Logout/>}/>
           <Route path="/report" element={<Report/>}/>
           <Route path="/cashier" element={<Chasier/>}/>
+          <Route path="/refund" element={<Refund/>}/>
         </Routes>
     </BrowserRouter>
   );
