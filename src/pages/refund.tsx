@@ -5,6 +5,7 @@ import deleteIcon from '../assets/icons/delete.png'
 import ferifyIcon from '../assets/icons/veryfyIcon.png'
 import addIcon from '../assets/icons/addIcon.png'
 import payIcon from '../assets/icons/payIcon.png'
+import editIcon from '../image/Edit.png'
 
 
 
@@ -25,16 +26,60 @@ function refund() {
     const [itemName,setItemName]=useState('')
     const [total,setTotal]=useState(0)
     const [errorInPay,setErrorInPay]=useState('')
+    const [dateState, setDateState] = useState(new Date());
+    const [isVisibleEditItem,setIsVisibleEditItem]=useState(false)
 
     useEffect(() => {
       if (refundcart!=[])
       {
-        const totalAmount = refundcart.map(item => item.amount*item.quantity).reduce((acc, amount) => acc + amount, 0);
+        const totalAmount = refundcart.map(item => item.amount).reduce((acc, amount) => acc + amount, 0);
         console.log(totalAmount); 
         setTotal(totalAmount)
       }
   }, [refundcart]);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // Update the date state every minute
+      setDateState(new Date());
+    }, 60 * 1000);
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedDate = dateState.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+
+  const formattedTime = dateState.toLocaleString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  });
+
+  const [cashierID, setCashierID] = useState('');
+
+async function getCashierID() {
+  try {
+    console.log('Getting cashier name...');
+    const ID = await window.WINDOW_API.getCashierID();
+    setCashierID(ID);
+  } catch (error) {
+    console.error('Error fetching cashier name:', error);
+  }
+}
+
+useEffect(() => {
+  getCashierID();
+}, []);
+
+  
+  const handleEdit=(editIndex)=>{
+    setIsVisibleEditItem(true)
+  }
 
     const handlePay=()=>{
       if(maxtotal==0){
@@ -111,9 +156,10 @@ function refund() {
       console.log("ok");
   
       if (c1 && c2 && c3) {
+        console.log(c1)
           const newItem = {
               snumber: barcode,
-              name: itemName,
+              name: c1,
               quantity: quantityOfItem,
               amount: amount,
               reason: reason,
@@ -143,6 +189,11 @@ function refund() {
       return true;
 
   };
+
+  const deletItem=(deleteIndex)=>{
+    const updateCart=refundcart.filter((item,index)=>index !==deleteIndex);
+    setRefundCard(updateCart)
+  }
   
   const verifyBarcode = async () => {
       try {
@@ -157,8 +208,9 @@ function refund() {
           } else {
               console.log(result.name);
               setItemName(result.name);
+              console.log(itemName)
               setErrorInWrongBarCode("")
-              return true
+              return result.name
           }
       } catch (error) {
           console.error(error);
@@ -184,6 +236,7 @@ function refund() {
 
   return (
     <div>
+      
       <div >
       <Menubar/>
       </div>
@@ -329,6 +382,57 @@ function refund() {
 
         </div>
         <div className='col-span-1  h-screen w-full'>
+        <div className=" text-center font-bold m-1 p-1  flex item-center justify-center">
+        <div>Return Bill Area</div>
+    </div>
+        <div className='border-b-2 border-slate-400 '>
+          <table className="w-full mx-4 h-20 pb-1">
+                    <tr>
+                        <td className="py-1"><strong>Date:</strong> {formattedDate}</td>
+                        <td className="py-1"><strong>Cashier ID:</strong> {cashierID}</td>
+                    </tr>
+                    <tr>
+                        <td className="py-1"><strong>Time:</strong> {formattedTime}</td>
+                        <td className="py-1"><strong>Return No:</strong> 123234</td>
+                    </tr>
+                    
+                </table>
+      </div>
+        <div className=' max-h-[calc(100vh-150px)] overflow-auto  p-2 w-full'>
+            {refundcart.map((item, index) => {
+        
+
+
+              return (
+                <div key={index} >
+                <table className="table-auto w-full ">
+                    <tbody className=' border-b-2 text-sm  border-slate-400'>
+                        <tr className="flex w-full justify-between">
+                            <td className='w-4/10  '>{index+1}. {item.name}</td>
+                            <td className='w-3/10 mr-4 '>{item.snumber}</td>
+                            
+                            
+                             <td className='w-4/10 '>
+                            
+                           
+                            <button onClick={()=>deletItem(index)} className=" p-1 mx-1 border-2 border-slate-400 hover:bg-slate-400 transition duration-150 "><img className="h-4 w-4 " src={deleteIcon} alt="Delete" /></button>
+                            </td>
+                        </tr>
+                        <tr className="flex w-full justify-between ">
+                            <td className='w-1/4  text-right '>{item.amount.toFixed(2)}</td>
+                            
+                            <td className='w-1/4 text-right '>{item.quantity}</td>
+                            <td className='w-2/4 text-right '> </td>
+                            
+                        </tr>
+                    </tbody>
+                </table>
+                
+            </div>
+                
+              );
+             })}
+          </div>
         </div>
         
       </div>
