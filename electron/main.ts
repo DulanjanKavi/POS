@@ -385,6 +385,21 @@ ipcMain.handle('processBill', async (event, total, pMethod, customerID, discount
   }
 });
 
+ipcMain.handle('returnBill', async (event,OldBillNumber,total,cart) => {
+  console.log(cart)
+  try {
+    const currentDate = new Date();
+    const currentTime = currentDate.toLocaleTimeString(); 
+    const currentDateFormatted = currentDate.toLocaleDateString(); 
+    
+      await db.run("INSERT INTO ReturnItems (OldBillNumber, total, cashierID, date, time, cart  ) VALUES (?, ?, ?, ?, ?, ?)",
+          [OldBillNumber,total,cashierID,currentDateFormatted,currentTime,cart]);
+  } catch (error) {
+      console.error(error);
+      return null;
+  }
+});
+
 ipcMain.handle('verifyBillNumber', async (event, billNumber) => {
   try {
     console.log('Bill Number:', billNumber);
@@ -465,7 +480,34 @@ ipcMain.handle('getTotalBankPayment', async () => {
     const row = await new Promise((resolve, reject) => {
       const currentDate = new Date();
     const currentDateFormatted = currentDate.toLocaleDateString(); 
+    console.log(cashierID)
+    console.log(typeof(cashierID))
       db.get("SELECT SUM(total) FROM bill WHERE cashierID=? AND pMethod=? AND date=?", [cashierID,'Bank',currentDateFormatted], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+    if (row) {
+      console.log(row);
+      return row;
+    } else {
+      console.log('No matching item found.');
+      return null;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+ipcMain.handle('getTotalReturnPayment', async () => {
+  try {
+    const row = await new Promise((resolve, reject) => {
+      const currentDate = new Date();
+    const currentDateFormatted = currentDate.toLocaleDateString(); 
+      db.get("SELECT SUM(total) FROM ReturnItems Where cashierID=?",[cashierID], (err, row) => {
         if (err) {
           reject(err);
         } else {
@@ -645,6 +687,32 @@ ipcMain.handle('getAllBankPayment', async () => {
     const currentDateFormatted = currentDate.toLocaleDateString(); 
     const rows = await new Promise((resolve, reject) => {
       db.all("SELECT total, biiNumber,aditionalDetails FROM bill WHERE cashierID=? AND date=? AND pMethod=?", [cashierID, currentDateFormatted,'Bank'], (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+
+    if (rows.length > 0) {
+      console.log(rows); 
+      return rows;
+    } else {
+      console.log('No matching items found.');
+      return null;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+ipcMain.handle('getAllReturnPayment', async () => {
+  try {
+    const currentDate = new Date();
+    const currentDateFormatted = currentDate.toLocaleDateString(); 
+    const rows = await new Promise((resolve, reject) => {
+      db.all("SELECT total, OldBillNumber,ReturnBillNumber FROM ReturnItems WHERE cashierID=? AND date=? ", [cashierID, currentDateFormatted], (err, rows) => {
         if (err) {
           reject(err);
         } else {

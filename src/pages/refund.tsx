@@ -27,7 +27,7 @@ function refund() {
     const [total,setTotal]=useState(0)
     const [errorInPay,setErrorInPay]=useState('')
     const [dateState, setDateState] = useState(new Date());
-    const [isVisibleEditItem,setIsVisibleEditItem]=useState(false)
+    
 
     useEffect(() => {
       if (refundcart!=[])
@@ -76,10 +76,19 @@ useEffect(() => {
   getCashierID();
 }, []);
 
+const addReturnBillDataisToDatabase=(OldBillNumber,total,cart)=>{
+  try {
+    console.log(cart)
+    window.BILL_API.returnBill(OldBillNumber,total,cart);
   
-  const handleEdit=(editIndex)=>{
-    setIsVisibleEditItem(true)
-  }
+    
+ } catch (error) {
+   console.error(error);
+ }
+}
+
+  
+  
 
     const handlePay=()=>{
       if(maxtotal==0){
@@ -93,7 +102,8 @@ useEffect(() => {
       }
       else{
         console.log("refund sucsess")
-        //update database
+        //OldBillNumber,total,cashierID,cart
+        addReturnBillDataisToDatabase(billNumber,total,refundcart)
         cancelPay()
       }
     }

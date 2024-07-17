@@ -20,7 +20,7 @@ function cashPayment() {
       return (
         <div className='m-1 h-screen '>
           <div className="bg-white p-1 ">
-          <div className='flex justify-center items-center text-center p-1 mb-2  border-b-2 text-2xl font-bold'>
+          <div className='flex justify-center items-center text-center p-1 mb-2  border-b-2 border-slate-400 text-2xl font-bold'>
         Cash Payment
     </div>
     

@@ -163,6 +163,15 @@ const BILL_API={
       console.error(error);
     }
   },
+  returnBill:async(OldBillNumber,total,cart)=>{
+    try {
+      console.log("return bill process");
+      await ipcRenderer.invoke('returnBill', OldBillNumber,total,cart);
+      
+    } catch (error) {
+      console.error(error);
+    }
+  },
   verifyBillNumber:async(billNumber)=>{
     try {
       console.log("verify bill");
@@ -194,9 +203,18 @@ const REPORT_API={
       console.error(error);
     }
   },
+  
   getTotalBankPayment:async()=>{
     try {
       const bankPayment=await ipcRenderer.invoke('getTotalBankPayment');
+      return bankPayment
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getTotalReturnPayment:async()=>{
+    try {
+      const bankPayment=await ipcRenderer.invoke('getTotalReturnPayment');
       return bankPayment
     } catch (error) {
       console.error(error);
@@ -253,6 +271,14 @@ const REPORT_API={
   getAllBankPayment:async()=>{
     try {
       const result=await ipcRenderer.invoke('getAllBankPayment');
+      return result
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getAllReturnPayment:async()=>{
+    try {
+      const result=await ipcRenderer.invoke('getAllReturnPayment');
       return result
     } catch (error) {
       console.error(error);

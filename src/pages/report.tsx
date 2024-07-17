@@ -13,6 +13,7 @@ function report() {
   const [cardPayment,setCardPayment]=useState(zero.toFixed(2))
   const [bankPayment,setBankPayment]=useState(zero.toFixed(2))
   const [checkPayment,setCheckPayment]=useState(zero.toFixed(2))
+  const [returnPayment,setReturnPayment]=useState(zero.toFixed(2))
   const [total,setTotal]=useState(zero.toFixed(2))
   const [cashierName,setCashierName]=useState('')
   const date = new Date();
@@ -37,7 +38,9 @@ function report() {
           {
             const sumValue = result['SUM(total)'];
             setCashPayment(sumValue.toFixed(2)) 
-          } 
+          } else{
+            setCashPayment((0).toFixed(2))
+          }
     }catch(error){
         console.error()
     }
@@ -51,7 +54,9 @@ function report() {
           {
             const sumValue = result['SUM(total)'];
             setTotal(sumValue.toFixed(2)) 
-          } 
+          } else{
+            setTotal((0).toFixed(2)) 
+          }
     }catch(error){
         console.error()
     }
@@ -65,7 +70,9 @@ function report() {
           {
             const sumValue = result['SUM(total)'];
             setCheckPayment(sumValue.toFixed(2)) 
-          } 
+          } else{
+            setCheckPayment((0).toFixed(2))
+          }
     }catch(error){
         console.error()
     }
@@ -78,6 +85,8 @@ function report() {
         if(result!=null){
           const sumValue = result['SUM(total)'];
         setCardPayment(sumValue.toFixed(2)) 
+        }else{
+          setCardPayment((0).toFixed(2)) 
         }
         
     }catch(error){
@@ -93,6 +102,8 @@ function report() {
           {
             const sumValue = result['SUM(total)'];
         setBankPayment(sumValue.toFixed(2)) 
+          }else{
+            setBankPayment((0).toFixed(2))
           }
         
     }catch(error){
@@ -100,6 +111,24 @@ function report() {
     }
   }  
   getBankPayment();
+
+  const getreturn=async()=>{
+    console.log("return total in page")
+    try{
+        const result=await window.REPORT_API.getTotalReturnPayment();
+        if(result!=null)
+          {
+            const sumValue = result['SUM(total)'];
+            setReturnPayment(sumValue.toFixed(2)) 
+          }else{
+            setReturnPayment((0).toFixed(2)) 
+          }
+        
+    }catch(error){
+        console.error()
+    }
+  }  
+  getreturn()
 
 
 
@@ -242,10 +271,10 @@ function report() {
       <div className='row-span-1 flex justify-between px-4 py-2 border-t-2 border-slate-800 items-center'>
     <button onClick={onClikeRefund} className="flex justify-between w-full">
         <div>
-            <p>Refund payment</p>
+            <p>Return payment</p>
         </div>
         <div>
-            <p>150.00</p>
+            <p>{returnPayment}</p>
         </div>
     </button>
 </div>

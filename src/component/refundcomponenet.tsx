@@ -1,20 +1,40 @@
-
+import React, { useState,useEffect } from 'react'
 
 function refundcomponent() {
+    const [refundPayment,setDetails]=useState([])
+    const getAllDetails=async()=>{
+        try{
+            const result=await window.REPORT_API.getAllReturnPayment();
+            if(result!=null)
+              {
+                setDetails(result)
+              } 
+        }catch(error){
+            console.error()
+        }
+      }  
+      useEffect(() => {
+        getAllDetails();
+      }, []);
+
+
+
+
+
   return (
-    <div className='border-l-2 border-black h-screen m-1'>
-      <div className="bg-white p-1 rounded-lg">
-      <div className='flex justify-center items-center text-center p-1 mb-2  border-b-2 text-2xl'>
+    <div className='  h-screen m-1'>
+      <div className="bg-white p-1 ">
+      <div className='flex justify-center items-center text-center p-1 mb-2  border-b-2 border-slate-400 text-2xl font-bold'>
     Refund Details
 </div>
 
-    <table className="table-auto w-full">
+    <table className="table-auto w-full font-semibold">
                     <tbody>
-                        <tr className="flex w-full justify-between  border-b-2 text-xl ">
+                        <tr className="  justify-between border-b-2 border-slate-400 text-xl p-2 ">
                             
-                            <td className='w-3/10 p-2 '>Case no.</td>
-                            <td className='w-3/10 p-2 '>Amount</td>
-                            <td className='w-3/10 p-2 '>&nbsp;</td>
+                            <td className='w-3/1 px-2 mr-20 text-right'>Return no.</td>
+                            <td className='w-1/3 px-2 mx-2 text-center'>Old Bill no.</td>
+                            <td className='w-1/3 px-2 mx-10 text-right'>Amount</td>
                             
                             
                             
@@ -22,20 +42,16 @@ function refundcomponent() {
                     </tbody>
                 </table>
     </div>
-    <div className='max-h-[70vh] overflow-y-auto overflow-x-hidden text-lg p-2 m-2 '>
-    <div className="">
-    {/*{refundPayment.map((item, index) => (
-        <div key={index} className="flex justify-between w-full p-2 m-1 mx-4 border rounded-lg hover:bg-gray-200 relative group">
-            <div>{item.caseNumber}</div>
-            <div>{item.amount}</div>
-            <div className="relative cursor-pointer">
-                
-                <span className="absolute right-0 top-full mb-2 w-56 text-center bg-black text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out z-10">
-                    {item.reason}
-                </span>
-            </div>
+    <div className='max-h-[calc(100vh-50px)] text-lg   overflow-y-auto '>
+    <div className="w-full text-sm">
+    {refundPayment.map((item, index) => (
+        <div key={index} className="flex justify-between border-b-2">
+            <div className='w-1/3 mr-20 text-right'>{item.ReturnBillNumber}</div>
+            <div className='w-1/3 mx-2 text-center'>{item.OldBillNumber}</div>
+            <div className='w-1/3 mx-10 text-right'>{(item.total).toFixed(2)}</div>
+            
         </div>
-    ))}*/}
+    ))}
 </div>
 
 
