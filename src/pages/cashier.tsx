@@ -1,10 +1,10 @@
-import React,{useEffect,useState} from 'react'
+import {useEffect,useState} from 'react'
 import Menubar from '../component/menubar'
 import cashierIcon from '../assets/icons/user.png'
 import logOutIcon1 from '../assets/icons/logOut.png'
 import { useNavigate } from 'react-router-dom';
 
-function cashier() {
+function Cashier() {
   const [cashierID, setCashierID] = useState('');
   const [isVisibleLogOut,setIsVisibleLogOut]=useState(false)
 
@@ -142,4 +142,4 @@ function cashier() {
   )
 }
 
-export default cashier
+export default Cashier
