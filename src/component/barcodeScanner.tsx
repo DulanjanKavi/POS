@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 /**
@@ -7,7 +8,8 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 const BarcodeScannerContext = createContext({
     barcode: "",
     isScanning: false,
-    toggle_scanning: (scan:boolean)=>{},
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toggle_scanning: (_scan:boolean)=>{},
 });
 
 export class BarcodeScannerEvent extends Event {
@@ -17,7 +19,7 @@ export class BarcodeScannerEvent extends Event {
         super("barcode_scanned");
         this.barcode = barcode;
     }
-};
+}
 
 
 export function BarcodeScannerProvider({children, default_scanner_on}:{children: React.ReactNode, default_scanner_on?:boolean}){
@@ -55,20 +57,22 @@ export function BarcodeScannerProvider({children, default_scanner_on}:{children:
 
     }, [current_text]);
 
-    useEffect(()=>{
-        var interval:NodeJS.Timer|null = null;
-        if (isScanning){
-            document.addEventListener("keydown", ListenToKeys);
-            interval = setInterval(timeout_current_text, 150);
+    useEffect(() => {
+        let interval: NodeJS.Timer | null = null; 
+      
+        if (isScanning) {
+          document.addEventListener("keydown", ListenToKeys);
+          interval = setInterval(timeout_current_text, 150);
         }
-
-        return ()=>{
-            document.removeEventListener("keydown", ListenToKeys);
-            if (interval !== null) {
-                clearInterval(interval);
-            }
-        }
-    }, [ListenToKeys, isScanning])
+      
+        return () => {
+          document.removeEventListener("keydown", ListenToKeys);
+          if (interval !== null) {
+            clearInterval(Number(interval));
+          }
+        };
+      }, [ListenToKeys, isScanning]);
+      
 
     return (
         <BarcodeScannerContext.Provider value={{
@@ -83,6 +87,7 @@ export function BarcodeScannerProvider({children, default_scanner_on}:{children:
 
 export function BarcodeScannerButton() {
     const {isScanning, toggle_scanning} = useContext(BarcodeScannerContext);
+    // eslint-disable-next-line prefer-const
     let title = (isScanning)?"Barcode Scanner is ON":"Barcode Scanner is OFF";
     const icon_ref = useRef<SVGSVGElement>(null);
 
@@ -105,5 +110,4 @@ export function BarcodeScannerButton() {
             Barcode Scanner {(isScanning) ? "ON" : "OFF"}
         </button>
     )
-}
-
+} 
