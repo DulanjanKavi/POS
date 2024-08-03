@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ipcRenderer, contextBridge } from 'electron'
 
 // --------- Expose some API to the Renderer process ---------
@@ -66,7 +67,7 @@ const WINDOW_API = {
           console.error(error);
         }
         },
-        setHoldArray: (array)=>{
+        setHoldArray: (array: any)=>{
           try{
             ipcRenderer.invoke('setHoldArray',array);
             console.log(array)
@@ -85,7 +86,7 @@ const WINDOW_API = {
 contextBridge.exposeInMainWorld('WINDOW_API', WINDOW_API)
 
 const LOGIN_API = {
-  getUserID: async (userName, password) => {
+  getUserID: async (userName:string, password:string) => {
     try {
       console.log("check user id and password");
       const result = await ipcRenderer.invoke('getUserID', { userName, password });
@@ -99,7 +100,7 @@ const LOGIN_API = {
 contextBridge.exposeInMainWorld('LOGIN_API', LOGIN_API);
 
 const ITEM_API={
-  getItem:async(snumber)=>{
+  getItem:async(snumber:string)=>{
     try {
       console.log("check item detais");
       const result = await ipcRenderer.invoke('getItemDetails', snumber);
@@ -108,7 +109,7 @@ const ITEM_API={
       console.error(error);
     }
   },
-  verifyItem:async(snumber)=>{
+  verifyItem:async(snumber:string)=>{
     try {
       console.log("check item detais");
       const result = await ipcRenderer.invoke('verifyItem', snumber);
@@ -121,7 +122,7 @@ const ITEM_API={
 contextBridge.exposeInMainWorld('Item_API', ITEM_API);
 
 const Loyal_API={
-  getCustemorData:async(tp)=>{
+  getCustemorData:async(tp:any)=>{
     try {
       console.log("check  loyal customer data");
       const result = await ipcRenderer.invoke('getCustemorData', tp);
@@ -130,7 +131,7 @@ const Loyal_API={
       console.error(error);
     }
   },
-  updateLoyalPoints:async(tp,newPoint)=>{
+  updateLoyalPoints:async(tp:any,newPoint:any)=>{
     try {
       await ipcRenderer.invoke('updateLoyalPoints', tp, newPoint);
       console.log(`Points updated for TP ${tp}. New points: ${newPoint}`);
@@ -139,7 +140,7 @@ const Loyal_API={
     }
 
   },
-  addLoyalCustomer:async(tp, name, points)=>{
+  addLoyalCustomer:async(tp:any, name:any, points:any)=>{
     try {
       await ipcRenderer.invoke('addLoyalCustomer', tp,name, points);
       console.log(`new customer add ${tp}. New points: ${name}`);
@@ -154,7 +155,7 @@ contextBridge.exposeInMainWorld('Loyal_API', Loyal_API);
 
 
 const BILL_API={
-  processBill:async(total,pMethod,customerID,discount,withdrowPoints,additionalDetails)=>{
+  processBill:async(total:any,pMethod:any,customerID:any,discount:any,withdrowPoints:any,additionalDetails:any)=>{
     try {
       console.log("billl process");
       await ipcRenderer.invoke('processBill', total,pMethod,customerID,discount,withdrowPoints,additionalDetails);
@@ -163,7 +164,7 @@ const BILL_API={
       console.error(error);
     }
   },
-  returnBill:async(OldBillNumber,total,cart)=>{
+  returnBill:async(OldBillNumber:any,total:any,cart:any)=>{
     try {
       console.log("return bill process");
       await ipcRenderer.invoke('returnBill', OldBillNumber,total,cart);
@@ -172,7 +173,7 @@ const BILL_API={
       console.error(error);
     }
   },
-  verifyBillNumber:async(billNumber)=>{
+  verifyBillNumber:async(billNumber:any)=>{
     try {
       console.log("verify bill");
       console.log(billNumber)
