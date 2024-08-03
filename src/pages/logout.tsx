@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import Menubar from '../component/menubar';
 
 
-function logout() {
+function Logout() {
   const navigate=useNavigate();
 
   const handleConfirm=()=>{
@@ -42,4 +42,4 @@ function logout() {
   )
 }
 
-export default logout
+export default Logout
