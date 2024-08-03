@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import {useState} from 'react'
 import Menubar from '../component/menubar'
 import CheckDetailComponenet from '../component/checkDetailComponenet';
 import Refundcomponent from '../component/refundcomponenet';
@@ -7,7 +7,7 @@ import CashPayment from '../component/cashPayment';
 import CardPayment from '../component/cardPayment';  
 import OnlinePayment from '../component/onlinePayment';
 
-function report() {
+function Report() {
   const zero=0
   const [cashPayment,setCashPayment]=useState(zero.toFixed(2))
   const [cardPayment,setCardPayment]=useState(zero.toFixed(2))
@@ -332,4 +332,4 @@ function report() {
       )
 }
 
-export default report
+export default Report
