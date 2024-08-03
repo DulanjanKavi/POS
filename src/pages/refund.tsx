@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import Menubar from '../component/menubar'
 import deleteIcon from '../assets/icons/delete.png'
 import ferifyIcon from '../assets/icons/veryfyIcon.png'
 import addIcon from '../assets/icons/addIcon.png'
 import payIcon from '../assets/icons/payIcon.png'
-import editIcon from '../image/Edit.png'
 
 
 
-function refund() {
+
+function Refund() {
 
 
     const [billNumber,setBillNumber]=useState("");
@@ -22,7 +23,7 @@ function refund() {
     const [amount,setAmmount]=useState("")
     const [errorInWrongAmount,setErrorInWrongAmount]=useState("")
     const [reason,setReason]=useState("")
-    const [refundcart,setRefundCard]=useState([])
+    const [refundcart,setRefundCard]=useState<any>([])
     const [itemName,setItemName]=useState('')
     const [total,setTotal]=useState(0)
     const [errorInPay,setErrorInPay]=useState('')
@@ -30,12 +31,11 @@ function refund() {
     
 
     useEffect(() => {
-      if (refundcart!=[])
-      {
-        const totalAmount = refundcart.map(item => item.amount).reduce((acc, amount) => acc + amount, 0);
+      
+        const totalAmount = refundcart.map((item: { amount: any; }) => item.amount).reduce((acc:any, amount:any) => acc + amount, 0);
         console.log(totalAmount); 
         setTotal(totalAmount)
-      }
+      
   }, [refundcart]);
 
   useEffect(() => {
@@ -76,7 +76,7 @@ useEffect(() => {
   getCashierID();
 }, []);
 
-const addReturnBillDataisToDatabase=(OldBillNumber,total,cart)=>{
+const addReturnBillDataisToDatabase=(OldBillNumber: string,total: number,cart: never[])=>{
   try {
     console.log(cart)
     window.BILL_API.returnBill(OldBillNumber,total,cart);
@@ -189,7 +189,7 @@ const addReturnBillDataisToDatabase=(OldBillNumber,total,cart)=>{
   };
   
   const verifyQuantity = async () => {
-      if (!Number.isInteger(quantityOfItem) || quantityOfItem<=0) {
+      if (!Number.isInteger(quantityOfItem) || Number(quantityOfItem)<=0) {
           setErrorInWrongQuntity("Quantity value is wrong. Enter a positive integer value.");
           console.log("error verify quantity");
           return false;
@@ -200,8 +200,8 @@ const addReturnBillDataisToDatabase=(OldBillNumber,total,cart)=>{
 
   };
 
-  const deletItem=(deleteIndex)=>{
-    const updateCart=refundcart.filter((item,index)=>index !==deleteIndex);
+  const deletItem=(deleteIndex: any)=>{
+    const updateCart=refundcart.filter((_item: any,index: any)=>index !==deleteIndex);
     setRefundCard(updateCart)
   }
   
@@ -232,7 +232,7 @@ const addReturnBillDataisToDatabase=(OldBillNumber,total,cart)=>{
   };
   
   const verifyAmoun = async () => {
-      if (amount <= 0) {
+      if (Number(amount) <= 0) {
           setErrorInWrongAmount('Amount cannot be less than or equal to 0.00');
           console.log("Error on set amount");
           return false;
@@ -310,7 +310,7 @@ const addReturnBillDataisToDatabase=(OldBillNumber,total,cart)=>{
                 min={1}
                 value={quantityOfItem}
                 onChange={(e)=>{
-                  setQuantityOfItem(parseFloat(e.target.value))
+                  setQuantityOfItem(e.target.value)
                 }}>
                 </input>
             </div>
@@ -325,7 +325,7 @@ const addReturnBillDataisToDatabase=(OldBillNumber,total,cart)=>{
                 min={0}
                 value={amount}
                 onChange={(e)=>{
-                  setAmmount(parseFloat(e.target.value))
+                  setAmmount(e.target.value)
                 }}>
                 </input>
             </div>
@@ -409,7 +409,7 @@ const addReturnBillDataisToDatabase=(OldBillNumber,total,cart)=>{
                 </table>
       </div>
         <div className=' max-h-[calc(100vh-150px)] overflow-auto  p-2 w-full'>
-            {refundcart.map((item, index) => {
+            {refundcart.map((item:any, index:any) => {
         
 
 
@@ -450,4 +450,4 @@ const addReturnBillDataisToDatabase=(OldBillNumber,total,cart)=>{
   )
 }
 
-export default refund
+export default Refund
