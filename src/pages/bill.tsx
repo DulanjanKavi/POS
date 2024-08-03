@@ -1,9 +1,9 @@
-import React, { useState,useEffect } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import  { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import editIcon from '../image/Edit.png'
 import starIcon from'../image/star.png'
-import { Link } from 'react-router-dom';
-import Menubar from '../component/menubar';
 import addIcon from '../assets/icons/addIcon.png'
 import deleteIcon from '../assets/icons/delete.png'
 import holdIcon from '../assets/icons/holdIcon.png'
@@ -19,11 +19,24 @@ import logOutIcon1 from '../assets/icons/logOut.png'
 import plant2 from '../assets/products/2.png'
 import sellIcon from '../assets/icons/sell.png'
 import returnIcon from '../assets/icons/delivery-status.png' 
-import payOutIcon from '../assets/icons/withdraw.png'
 import reportIcon from '../assets/icons/report.png'
 import userIcon from '../assets/icons/user.png'
 import coutinueIcon from '../assets/icons/continue.png'
-let paymentMethod=[]
+let paymentMethod: any[]=[]
+
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    WINDOW_API: any; // Adjust the type as needed
+    Loyal_API:any;
+    BILL_API:any;
+    Item_API:any;
+  }
+}
+
+
+
+
 
 async function fetchPaymentMethod() {
   try {
@@ -44,17 +57,14 @@ const Bill = () => {
   const [inputText, setInputText] = useState('');
   const [total, setTotal] = useState(0);
   const [error, setError] = useState('');
-  const [cardArray, setCardArray] = useState([]);
-  const [editItem,setEditItem]=useState('')
-  const [noOfitem,setNoOfitem]=useState(0);
+  const [cardArray, setCardArray] = useState<any>([]);
+  const [editItem,setEditItem]=useState<any>('')
+  const [noOfitem,setNoOfitem]=useState<number>(0);
   const [itemInndex,setItemIndex]=useState(-1);
-  const [temps,setTemps]=useState('')
   const [isVisiblePayMethod,setIsVisiblePayMethod]=useState(false)
-  const [pArray, setPArray] = useState([]);
-  const [priceArray,setPriceArray]=useState([])
   const [isConfermLoyalNumber,setIsConfermLoyalNumber]=useState(false)
   const [customerTP, setCustomerTP] = useState(0);
-  const [loyalCustomerDetails,setLoyalCustomerDetails]=useState('')
+  const [loyalCustomerDetails,setLoyalCustomerDetails]=useState<any>('')
   const [isCollectOrWithdraw,setIsCollectOrWithdraw]=useState(false)
   const [maxWithdrawPoint,setMaxWithdrawPoint]=useState(0)
   const [collectPoint,setCollectPoint]=useState(0)
@@ -63,10 +73,9 @@ const Bill = () => {
   const [payStep,setPayStep]=useState('quickPay')
   const [dateState, setDateState] = useState(new Date());
   const navigate = useNavigate(); 
-  const [holdArray,setHoldArray]=useState([])
+  const [holdArray,setHoldArray]=useState<any>([])
   const [isVisibleHoldArray,setIsVisibleHoldArray]=useState(false)
   const [isVisibleLogOut,setIsVisibleLogOut]=useState(false)
-
   const handleLogOut=()=>{
     setIsVisibleLogOut(true)
   }
@@ -142,7 +151,7 @@ const Bill = () => {
     }
   }
 
-  const updateHoldArrayInMain=(array)=>{
+  const updateHoldArrayInMain=(array:any)=>{
     window.WINDOW_API.setHoldArray(array);
     
   
@@ -176,7 +185,7 @@ const Bill = () => {
     
   }
 
-  const getCustomerDetails = async (event,tp) => {
+  const getCustomerDetails = async (event:any,tp:any) => {
     if (event) {
       event.preventDefault();
     }
@@ -195,7 +204,7 @@ const Bill = () => {
     }
   };
 
-  const updateUserPoint=(tp,points)=>{
+  const updateUserPoint=(tp:any,points:any)=>{
     try {
        window.Loyal_API.updateLoyalPoints(tp,points);
        console.log("call update function on bill")
@@ -207,9 +216,9 @@ const Bill = () => {
 
 
 
-  const billProcess=async (total,pMethod,customerID,discount,withdrowPoints,additionalDetails)=>{
+  const billProcess=async (total:any,pMethod:any,customerID:any,discount:any,withdrowPoints:any,additionalDetails:any)=>{
     try{
-      const result=await window.BILL_API.processBill(total,pMethod,customerID,discount,withdrowPoints,additionalDetails);
+      await window.BILL_API.processBill(total,pMethod,customerID,discount,withdrowPoints,additionalDetails);
     }
     catch(error){
       console.error(error);
@@ -235,7 +244,7 @@ const Bill = () => {
   };
   
 
-  const handleCollectPoint=(type)=>{
+  const handleCollectPoint=(type:any)=>{
     if(type=="c")
       {
         setIsCollectPoint(true)
@@ -303,7 +312,7 @@ const Bill = () => {
     setError("")
   }
 
-  const addNewLoyalCustomerToDatabase=(tp, name, points)=>{
+  const addNewLoyalCustomerToDatabase=(tp:any, name:any, points:any)=>{
     try {
       window.Loyal_API.addLoyalCustomer(tp, name, points);
       console.log("add new loyal customer")
@@ -322,19 +331,10 @@ const Bill = () => {
   
 
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e:any) => {
     setInputText(e.target.value);
-    setTemps(e.target.value)
   };
 
-  const handleNoOfItem = (e) => {
-    setNoOfitem(e.target.value);
-  };
-
-  const handleClear = () => {
-    setInputText('');
-    setError('');
-  };
 
   const handleRemoveBill=()=>{
     setInputText('');
@@ -348,12 +348,12 @@ const Bill = () => {
     setError("")
   
     if (matchingData) {
-      const existingItem = cardArray.find((item) => item.snumber === inputText);
+      const existingItem = cardArray.find((item:any) => item.snumber === inputText);
       const priceArray = matchingData.price.split(',').map(Number);
       const discountArray = matchingData.discount.split(',').map(Number);
       const itemsnumber=matchingData.snumber;
       const itemname=matchingData.name;
-      setPriceArray(priceArray)
+    
 
 
       if (existingItem  && priceArray.length===1) {
@@ -369,7 +369,7 @@ const Bill = () => {
         setError('');
         setInputText('')
         // Replace the existing item with the updated one
-        setCardArray(cardArray.map((item) => (item.snumber === inputText ? updatedData : item)));
+        setCardArray(cardArray.map((item:any) => (item.snumber === inputText ? updatedData : item)));
       }
       else if(existingItem  && priceArray.length!==1)
       {
@@ -479,7 +479,7 @@ const Bill = () => {
   const [isVisibleMultiValueAddItem,setIsVisibleMultiValueAddItem]=useState(false)
 
 
-  const handleEditItem=(index)=>{
+  const handleEditItem=(index:any)=>{
       setIsVisibleEditItem(!isVisibleEditItem)
       setItemIndex(index)
     }
@@ -490,9 +490,9 @@ const Bill = () => {
   const successPopupEditItem= () => {
     const lastQut=cardArray[itemInndex].Amount
 
-    cardArray[itemInndex].NoOfItems=parseInt(noOfitem, 10)
-    cardArray[itemInndex].discount=cardArray[itemInndex].selectedValue*cardArray[itemInndex].selectedDiscount*parseInt(noOfitem, 10)/100
-    cardArray[itemInndex].Amount=cardArray[itemInndex].selectedValue*parseInt(noOfitem, 10)-(cardArray[itemInndex].selectedValue*cardArray[itemInndex].selectedDiscount*parseInt(noOfitem, 10)/100)
+    cardArray[itemInndex].NoOfItems=noOfitem
+    cardArray[itemInndex].discount=cardArray[itemInndex].selectedValue*cardArray[itemInndex].selectedDiscount*noOfitem/100
+    cardArray[itemInndex].Amount=cardArray[itemInndex].selectedValue*noOfitem-(cardArray[itemInndex].selectedValue*cardArray[itemInndex].selectedDiscount*noOfitem/100)
     
   
     setTotal(total + cardArray[itemInndex].Amount-lastQut)
@@ -530,9 +530,9 @@ const Bill = () => {
     setIsVisibleMultiValueAddItem(true)
   }
 
-  const handlAddItemOrUpdateToCardWithMultiValue=(index)=>{
+  const handlAddItemOrUpdateToCardWithMultiValue=(index:any)=>{
     setIsVisibleMultiValueAddItem(false)
-    const matchingData = cardArray.find((item) => item.snumber === editItem.snumber && item.selectedValue === editItem.Values[index]);
+    const matchingData = cardArray.find((item:any) => item.snumber === editItem.snumber && item.selectedValue === editItem.Values[index]);
     if(matchingData){
       console.log("new item in card with selected value")
       const updatedData = {
@@ -543,7 +543,7 @@ const Bill = () => {
       };
       setTotal(total + matchingData.selectedValue-matchingData.selectedDiscount);
         setError('');
-        setCardArray(cardArray.map((item) => (item.snumber === inputText && item.selectedValue === editItem.Values[index] ? updatedData : item)));
+        setCardArray(cardArray.map((item:any) => (item.snumber === inputText && item.selectedValue === editItem.Values[index] ? updatedData : item)));
     }
     else{
       console.log("new item in card with another value")
@@ -569,7 +569,7 @@ const Bill = () => {
  
 
 
-  const handleAddItemToCardWithMultiValue=(index)=>{
+  const handleAddItemToCardWithMultiValue=(index:any)=>{
     setIsVisibleAddItem(false);
     const newItem = {
         snumber: editItem.snumber,
@@ -590,18 +590,15 @@ const Bill = () => {
   }
   const[isVisibleDeleteItem,setIsVisibleDeleteItem]=useState(false)
   const[deleteItemSnumber,setDdeleteItemSnumber]=useState('')
-  const[deleteItemValue,setDeleteItemValue]=useState(0)
-  const[deleteItemNoOfItem,setDeleteItemNoOfItem]=useState(0)
+  
 
-  const handleDeleteItem=(index)=>{
+  const handleDeleteItem=(index:any)=>{
       setIsVisibleDeleteItem(true)
       setDdeleteItemSnumber(index)
   }
 
   const handleCloseDeleteWindow=()=>{
-    setIsVisibleDeleteItem(false)
-    setDdeleteItemSnumber(0)
-    setDeleteItemValue('')
+    setIsVisibleDeleteItem(false) 
   }
 
   const deleteItem=()=>{
@@ -610,11 +607,9 @@ const Bill = () => {
 
     
     
-    const updatedCardArray = cardArray.filter((item,index)=>index!==deleteItemSnumber);
+    const updatedCardArray = cardArray.filter((_item:any,index:any)=>index!==deleteItemSnumber);
     console.log("deleteitem")
     setCardArray(updatedCardArray);
-    setDdeleteItemSnumber(0)
-    setDeleteItemValue('')
     console.log(cardArray)
 
   }
@@ -627,19 +622,19 @@ const Bill = () => {
   const [isVisiblePayMethodcash,setIsVisiblePayMethodCash]=useState(false)
   const [isPayMethodCash,setIsPayMethodCash]=useState(false)
   const [isVisiblePayMethodCard,setIsVisiblePayMethodCard]=useState(false)
-  const [isPayMethodCard,setIsPayMethodCard]=useState(false)
+  const [,setIsPayMethodCard]=useState(false)
   const [errorOnPayCard,setErrorOnPayCard]=useState('')
   const [isVisiblePayMethodBank,setIsVisiblePayMethodBank]=useState(false)
-  const [isPayMethodBank,setIsPayMethodBank]=useState(false)
+  const [,setIsPayMethodBank]=useState(false)
   const [transferID,setTransferID]=useState(0)
   const [errorOnPayBank,setErrorOnPayBank]=useState('')
   const [isVisiblePayMethodCheque,setIsVisiblePayMethodCheque]=useState(false)
-  const [isPayMethodCheque,setIsPayMethodCheque]=useState(false)
+  const [,setIsPayMethodCheque]=useState(false)
   const [chequeNumber,setChequeNumber]=useState(0)
   const [errorOnPayCheque,setErrorOnPayCheque]=useState('')
   
 
-  const navigateToPatMethod = (method) => {
+  const navigateToPatMethod = (method:string) => {
     setIsVisiblePayMethod(false)
     if (method === 'Cash') {
       setIsPayMethodCash(true)
@@ -721,8 +716,8 @@ const Bill = () => {
   }
 
   const [errorOnPayCash,setErrorOnPayCash]=useState("")
-  const zero=0
-  const [payAmount,setPayAmount]=useState(zero.toFixed(2))
+  
+  const [payAmount,setPayAmount]=useState<number>(0.00)
   
 
   const [isVisibleLoyalCustomer,SetIsVisibleLoyalCustomer]=useState(false)
@@ -801,7 +796,7 @@ const Bill = () => {
 
   const handlePayCard = () => {
     setIsPayMethodCash(false)
-    if (cardNumber.length!==4) {
+    if (String(cardNumber).length!==4) {
       setErrorOnPayCard('Card number last 4 digits are wrong. ');
     } 
     else {
@@ -845,7 +840,7 @@ const Bill = () => {
 
   const handlePayBank = () => {
     setIsPayMethodBank(false)
-    if (transferID.length!==10) {
+    if (String(transferID).length!==10) {
       setErrorOnPayCard('Bank transfer number is wrong. ');
     } 
     else {
@@ -889,7 +884,7 @@ const Bill = () => {
 
   const handlePayCheque = () => {
     setIsPayMethodCheque(false)
-    if (transferID.length<=10) {
+    if (String(transferID).length<=10) {
       setErrorOnPayCard('Cheque number is wrong. ');
     } 
     else {
@@ -952,10 +947,6 @@ const Bill = () => {
     setIsConfermLoyalNumber(true)
   }
 
-  const confermAndPay=()=>{
-    setIsConfermLoyalNumber(false)
-    payBillSuccess()
-  }
 
   const handleEditInConfermLoyalNumber=()=>{
     SetIsVisibleLoyalCustomer(true)
@@ -1003,17 +994,13 @@ const Bill = () => {
   const closeProcessBill = () => {
     setIsVisibleProcessBill(false);
     setCardArray([])
-    setDdeleteItemSnumber('')
-    setDeleteItemNoOfItem(0)
-    setDeleteItemValue(0)
     setEditItem('')
     setError('')
     setErrorOnPayCash('')
     setInputText('')
     setItemIndex(-1)
     setNoOfitem(0)
-    setPayAmount(0)
-    setTemps('')
+    setPayAmount(0.00)
     setCustomerTP(0)
     setTotal(0)
     setLoyalCustomerDetails('')
@@ -1028,12 +1015,12 @@ const Bill = () => {
 
 
 
-const processHoldcrat=(holdTotal,holdCard,i)=>{
+const processHoldcrat=(holdTotal:any,holdCard:any,i:any)=>{
   setTotal(holdTotal)
   setCardArray(holdCard)
   setIsVisibleHoldArray(false)
-  updateHoldArrayInMain(holdArray.filter((item,index)=>index!==i))
-  const updatedHoldArray = holdArray.filter((item,index)=>index!==i);
+  updateHoldArrayInMain(holdArray.filter((_item:any,index:any)=>index!==i))
+  const updatedHoldArray = holdArray.filter((_item:any,index:any)=>index!==i);
   setHoldArray(updatedHoldArray)
   console.log(updatedHoldArray)
 }
@@ -1103,7 +1090,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
                               Select The Price
                             </div>
                           <div className='flex items-center justify-center font-semibold'>
-                          {editItem.Values.map((value, index) => (
+                          {editItem.Values.map((value:any, index:any) => (
                                 <div key={index}>
                                     <button onClick={() => handleAddItemToCardWithMultiValue(index)} className="bg-slate-400  text-black hover:bg-slate-600 hover:text-slate-100 p-2 rounded m-2">
                                     {value.toFixed(2)}
@@ -1206,7 +1193,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
                 </table>
     </div>
     <div className=' max-h-[calc(100vh-400px)] overflow-auto  p-2 w-full'>
-    {cardArray.map((item, index) => {
+    {cardArray.map((item:any, index:any) => {
         // Generate a unique key for each item
         const uniqueKey = `${item.snumber}-${index}`;
 
@@ -1254,8 +1241,8 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
                           </div>
                           
                           <div className="max-h-[calc(100vh-50px)] overflow-auto w-full">
-    {holdArray.map((item, index) => {
-        const holdCardTitle = item.holdCard.map((cardItem) => cardItem.iname).join(', ');
+    {holdArray.map((item:any, index:any) => {
+        const holdCardTitle = item.holdCard.map((cardItem:any) => cardItem.iname).join(', ');
         return (
             <div key={index} className="m-1 rounded-lg overflow-auto">
                 <table className="table-auto w-full">
@@ -1339,7 +1326,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
                               Select The Price
                             </div>
                           <div className='flex items-center justify-center  font-semibold'>
-                          {editItem.Values.map((value, index) => (
+                          {editItem.Values.map((value:any, index:any) => (
                               <div key={index}>
                                 <button onClick={()=>handlAddItemOrUpdateToCardWithMultiValue(index)} className="bg-slate-400  text-black hover:bg-slate-600 hover:text-slate-100 p-2 rounded m-2 ">
                                 {value.toFixed(2)}
@@ -1418,7 +1405,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
                           type="number"
                           min={0.00}
                           onChange={(e) => {
-                            setPayAmount(e.target.value);
+                            setPayAmount(Number(e.target.value));
                             setError('');
                           }}
                         />
@@ -1463,7 +1450,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
                           type="number"
                           min={0}
                           onChange={(e) => {
-                            SetCardNumber(e.target.value);
+                            SetCardNumber(Number(e.target.value));
                             setError('');
                           }}
                         />
@@ -1509,7 +1496,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
                           type="number"
                           min={0}
                           onChange={(e) => {
-                            setTransferID(e.target.value);
+                            setTransferID(Number(e.target.value));
                             setError('');
                           }}
                         />
@@ -1555,7 +1542,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
                           type="number"
                           min={0}
                           onChange={(e) => {
-                            setChequeNumber(e.target.value);
+                            setChequeNumber(Number(e.target.value));
                             setError('');
                           }}
                         />
@@ -1586,7 +1573,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
           className="m-1  rounded border-2 border-slate-400 text-right focus:outline-none"
           type="number"
           onChange={(e) => {
-            setCustomerTP(e.target.value);
+            setCustomerTP(Number(e.target.value));
             setError(''); 
           }}
         />
@@ -1602,7 +1589,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
         </button>
         <button
           onClick={() => {
-            if (customerTP.length !== 10) {
+            if (String(customerTP).length !== 10) {
               setError('Please enter a 10-digit TP number.');
             } else {
               setError(''); // Clear any previous error
@@ -1841,7 +1828,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
                             defaultValue={cardArray[itemInndex].NoOfItems}
                             
                             onChange={(e)=>{
-                              setNoOfitem(e.target.value);
+                              setNoOfitem(Number(e.target.value));
                               setError('');
                             }}
                             min={1}
@@ -1855,7 +1842,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
 
                         <div className='flex justify-center items-center mt-2 pt-5 border-t-2 border-slate-400'>
                           <button onClick={()=>{
-                            if(parseInt(noOfitem, 10)<1){
+                            if(noOfitem<1){
                               setError('Minimum item quntity is 1');
                             }else{
                               setError('')
@@ -2242,7 +2229,7 @@ const processHoldcrat=(holdTotal,holdCard,i)=>{
 
       {/* Display cardArray */}
     
-    {cardArray.map((item, index) => {
+    {cardArray.map((item:any, index:any) => {
         // Generate a unique key for each item
         
 
