@@ -303,6 +303,32 @@ ipcMain.handle('verifyItem', async (_event, snumber) => {
   }
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ipcMain.handle('searchItem', async (_event, snumber) => {
+  try {
+    console.log(snumber)
+    const rows:any = await new Promise((resolve, reject) => {
+      db.all("SELECT name,snumber,SKU FROM items WHERE name LIKE CONCAT('%',?,'%') OR snumber LIKE CONCAT('%',?,'%') OR SKU LIKE CONCAT('%',?,'%')",[snumber,snumber,snumber], (err: any, rows: unknown) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+
+    if (rows.length > 0) {
+      console.log(rows); 
+      return rows;
+    } else {
+      console.log('No matching items found.');
+      return [];
+    }
+  } catch (error) {
+    throw new Error();
+  }
+});
+
 
 ipcMain.handle('getCustemorData', async (_event, tp) => {
   try {

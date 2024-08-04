@@ -117,6 +117,16 @@ const ITEM_API={
     } catch (error) {
       console.error(error);
     }
+  },
+  searchItem:async(searchTearm:string)=>{
+    try{
+      const result=await ipcRenderer.invoke('searchItem',searchTearm);
+      return result;
+      
+      
+    }catch(error){
+      console.error(error);
+    }
   }
 }
 contextBridge.exposeInMainWorld('Item_API', ITEM_API);

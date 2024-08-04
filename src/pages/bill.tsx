@@ -58,6 +58,8 @@ const Bill = () => {
   const [total, setTotal] = useState(0);
   const [error, setError] = useState('');
   const [cardArray, setCardArray] = useState<any>([]);
+  const [searchItems,setSearchItems]=useState<any>([])
+  const [searchItem,setSearchItem]=useState<any>('')
   const [editItem,setEditItem]=useState<any>('')
   const [noOfitem,setNoOfitem]=useState<number>(0);
   const [itemInndex,setItemIndex]=useState(-1);
@@ -161,6 +163,25 @@ const Bill = () => {
     getCashierID();
     getHoldArray();
   }, []);
+
+  const setSearchItemArray=async()=>{
+    try {
+      // eslint-disable-next-line prefer-const
+      let result:any = await window.Item_API.searchItem(searchItem);
+      setSearchItems(result)
+    
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(()=>{
+    setSearchItemArray()
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[searchItem])
+
+ 
 
 
   
@@ -343,7 +364,7 @@ const Bill = () => {
     setCardArray([])
   }
   
-  const handleEnter = async () => {
+  const handleEnter = async (inputText:any) => {
     const matchingData = await window.Item_API.getItem(inputText);
     setError("")
   
@@ -2016,6 +2037,9 @@ const processHoldcrat=(holdTotal:any,holdCard:any,i:any)=>{
                 <input type="text"
                         className="w-full  h-10 px-3 bg-gray-100  focus:outline-none focus:border-none"
                         placeholder="Search for products (Name, SKU or Barcode)"
+                        onChange={(e)=>{
+                          setSearchItem(e.target.value)
+                        }}
                 />
                 <button type="button" className="w-20 h-10 border-r-2 border-slate-400 bg-slate-200 flex items-center justify-center hover:bg-slate-400 transition duration-150"><img src={searchIcon} className="w-6" alt="Search" /></button>
             </div>
@@ -2031,119 +2055,20 @@ const processHoldcrat=(holdTotal:any,holdCard:any,i:any)=>{
           
           <div className="grid grid-cols-12 ">
           
-          
+          {searchItems.map((item:any)=>(
+            <div className='col-span-4 lg:col-span-3 xl:col-span-3 flex items-center justify-center'>
+            <button onClick={()=>handleEnter(item.snumber)} className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
+                <div className="border-b-2 border-slate-200 h-32">
+                    <img src={plant2} alt={plant2} className="w-full h-32" />
+                </div>
+                <div className="text-center h-8 overflow-hidden">
+                    {item.name}
+                </div>
+            </button>
+        </div>
+          ))
 
-         
-          
-              
-                
-
-                
-
-          <div className='col-span-4 lg:col-span-3 xl:col-span-2 flex items-center justify-center'>
-    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
-        <div className="border-b-2 border-slate-200 h-32">
-            <img src={plant2} alt={plant2} className="w-full h-32" />
-        </div>
-        <div className="text-center h-8">
-            plant
-        </div>
-    </button>
-</div>
-                <div className='col-span-4 lg:col-span-3 xl:col-span-2  flex items-center justify-center'>
-    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
-        <div className="border-b-2 border-slate-200 h-32">
-            <img src={plant2} alt={plant2} className="w-full h-32" />
-        </div>
-        <div className="text-center h-8">
-            plant
-        </div>
-    </button>
-</div>
-                <div className='col-span-4 lg:col-span-3 xl:col-span-2  flex items-center justify-center'>
-    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
-        <div className="border-b-2 border-slate-200 h-32">
-            <img src={plant2} alt={plant2} className="w-full h-32" />
-        </div>
-        <div className="text-center h-8">
-            plant
-        </div>
-    </button>
-</div>
-
-
-<div className='col-span-4  lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
-    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
-        <div className="border-b-2 border-slate-200 h-32">
-            <img src={plant2} alt={plant2} className="w-full h-32" />
-        </div>
-        <div className="text-center h-8">
-            plant
-        </div>
-    </button>
-</div>
-                <div className='col-span-4 lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
-    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
-        <div className="border-b-2 border-slate-200 h-32">
-            <img src={plant2} alt={plant2} className="w-full h-32" />
-        </div>
-        <div className="text-center h-8">
-            plant
-        </div>
-    </button>
-</div>
-                <div className='col-span-4 lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
-    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
-        <div className="border-b-2 border-slate-200 h-32">
-            <img src={plant2} alt={plant2} className="w-full h-32" />
-        </div>
-        <div className="text-center h-8">
-            plant
-        </div>
-    </button>
-</div>
-
-<div className='col-span-4 lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
-    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
-        <div className="border-b-2 border-slate-200 h-32">
-            <img src={plant2} alt={plant2} className="w-full h-32" />
-        </div>
-        <div className="text-center h-8">
-            plant
-        </div>
-    </button>
-</div>
-                <div className='col-span-4 lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
-    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
-        <div className="border-b-2 border-slate-200 h-32">
-            <img src={plant2} alt={plant2} className="w-full h-32" />
-        </div>
-        <div className="text-center h-8">
-            plant
-        </div>
-    </button>
-</div>
-                <div className='col-span-4 lg:col-span-3  xl:col-span-2 flex items-center justify-center'>
-    <button className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
-        <div className="border-b-2 border-slate-200 h-32">
-            <img src={plant2} alt={plant2} className="w-full h-32" />
-        </div>
-        <div className="text-center h-8">
-            plant
-        </div>
-    </button>
-</div>
-                
-                
-               
-               
-          
-          
-          
-          
-          
-          
-
+          }
 
       </div>
           </div>
@@ -2278,7 +2203,7 @@ const processHoldcrat=(holdTotal:any,holdCard:any,i:any)=>{
             />
             {/*<button className="bg-blue-500 rounded p-2 m-1 " onClick={handleEnter}>Add Item</button>
             <button className="bg-yellow-500  rounded p-2 m-1 " onClick={handleClear}>Clear</button>*/}
-            <button onClick={handleEnter} className="w-12 h-12  border-2 border-l-0 border-gray-400 bg-slate-200 flex items-center justify-center hover:bg-slate-400 transition duration-150"><img src={addIcon} className="w-6 h-6 " alt="Search" /></button>
+            <button onClick={()=>handleEnter(inputText)} className="w-12 h-12  border-2 border-l-0 border-gray-400 bg-slate-200 flex items-center justify-center hover:bg-slate-400 transition duration-150"><img src={addIcon} className="w-6 h-6 " alt="Search" /></button>
             
             
           </div>
