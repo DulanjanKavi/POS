@@ -1,27 +1,35 @@
-import React, { useState, createContext, useContext, useEffect } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import React, { useState, createContext, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    LOGIN_API: any; // Adjust the type as needed
+  }
+}
 
 
 // Create a context for the user ID
-export const UserIDContext = createContext();
+export const UserIDContext = createContext<{ userID: string | null; setUserID: React.Dispatch<React.SetStateAction<string | null>> } | undefined>(undefined);
 
 // Create a custom hook to use the UserIDContext
-export const useUserID = () => useContext(UserIDContext);
+export const useUserID = () => {
+  const context = useContext(UserIDContext);
+  if (!context) {
+    throw new Error('useUserID must be used within a UserIDContext.Provider');
+  }
+  return context;
+};
 
 function Login() {
-  
-
-
-
-
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const [loginStatus, setLoginStatus] = useState(null);
-  const [userID, setUserID] = useState(null);
+  const [loginStatus, setLoginStatus] = useState<string | null>(null);
+  const [userID, setUserID] = useState<string | null>(null);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       const result = await window.LOGIN_API.getUserID(username, password);
@@ -41,9 +49,7 @@ function Login() {
 
   return (
     <UserIDContext.Provider value={{ userID, setUserID }}>
-      
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 ">
-      
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
         <div className="max-w-sm w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -63,7 +69,7 @@ function Login() {
                   name="username"
                   type="text"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 "
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -78,7 +84,7 @@ function Login() {
                   name="password"
                   type="password"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 "
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -101,25 +107,3 @@ function Login() {
 }
 
 export default Login;
-
-
-
-
-
-  //const [paymentMethod, setPaymentMethod] = useState([]);
-
- /*} useEffect(() => {
-    async function fetchPaymentMethod() {
-      try {
-        const methods = await window.WINDOW_API.getPayMethodFromMain();
-        setPaymentMethod(methods);
-        console.log(methods);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchPaymentMethod();
-  }, []);
-  */
-
- 
