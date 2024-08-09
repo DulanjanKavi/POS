@@ -70,12 +70,21 @@ def add_ex():
     conn.commit()
     conn.close()
 
+def add_ex3():
+    current_directory = os.getcwd()
+    db_path = os.path.join(current_directory, '..', 'pos.db')
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO queue (action, data, status) VALUES ('get_all_products', '{\"status\":\"all\"}', 'pending')")
+    conn.commit()
+    conn.close()
+
 def add_ex2():
     current_directory = os.getcwd()
     db_path = os.path.join(current_directory, '..', 'pos.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO queue (action, data, status) VALUES ('get_company_info', '{\"id\":\"12398279823479283\"}', 'pending')")
+    cursor.execute("INSERT INTO queue (action, data, status) VALUES ('get_company_info', '{\"id\":\"66ac6972c885fbc0c381f27b\"}', 'pending')")
     conn.commit()
     conn.close()
 
@@ -83,7 +92,7 @@ def add_ex2():
 def run_scheduler():
     while True:
         process_queue()
-        add_ex()
+        add_ex3()
         add_ex2()
         time.sleep(30)  # Sleep for 30 seconds for testing (change to 300 for production)
 

@@ -2,9 +2,9 @@ import requests
 import json
 from config import BASE_URL
 
-def get_company_info(data):
+def get_all_products(data):
     # URL of the API endpoint
-    url = f'{BASE_URL}/get-company?id={data["id"]}'
+    url = f'{BASE_URL}/get-products?status={data["status"]}'
 
     # Commented-out part to fetch JWT token from the system
     # with open('/path/to/jwt/token/file', 'r') as f:
@@ -22,13 +22,13 @@ def get_company_info(data):
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        company_info = response.json()
+        products = response.json()
 
         # Save the company info to a .js file
-        with open('company_info.js', 'w') as f:
-            f.write(f'const companyInfo = {json.dumps(company_info, indent=4)};\n')
-            f.write('module.exports = companyInfo;\n')
+        with open('all_products.js', 'w') as f:
+            f.write(f'const products = {json.dumps(products, indent=4)};\n')
+            f.write('module.exports = products;\n')
         
-        print("Company information has been saved to company_info.js")
+        print("Products has been saved to all_products.js")
     else:
         print(f"Failed to fetch company information. Status code: {response.status_code}, Message: {response.text}")
