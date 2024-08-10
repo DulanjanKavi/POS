@@ -8,7 +8,7 @@ def get_all_products(data):
     url = f'{BASE_URL}/get-products?status={data["status"]}'
 
     # Hardcoded JWT token for testing
-    jwt_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmFjNzNlZmM4ODVmYmMwYzM4MWYyZWYiLCJmaXJzdF9uYW1lIjoiZGVtbzIiLCJsYXN0X25hbWUiOiJkZW0iLCJlbWFpbCI6ImRlbW9kZW1AZ21haWwuY29tIiwicm9sZSI6IjY2OWUwNDNjOGJkMTUxMmQwNzgzMjBjZSIsImNvbXBhbnkiOiI2NmFjNjk3MmM4ODVmYmMwYzM4MWYyN2IiLCJpYXQiOjE3MjMyMDQ4ODksImV4cCI6MTcyNDY0NDg4OX0.8SKzLx8abqUXopON7Z02ekle2DGPm_cELSFc8It7tak'
+    jwt_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmFjNzNlZmM4ODVmYmMwYzM4MWYyZWYiLCJmaXJzdF9uYW1lIjoiZGVtbzIiLCJsYXN0X25hbWUiOiJkZW0iLCJlbWFpbCI6ImRlbW9kZW1AZ21haWwuY29tIiwicm9sZSI6IjY2OWUwNDNjOGJkMTUxMmQwNzgzMjBjZSIsImNvbXBhbnkiOiI2NmFjNjk3MmM4ODVmYmMwYzM4MWYyN2IiLCJpYXQiOjE3MjMyODI1MTYsImV4cCI6MTcyNDcyMjUxNn0.zJT8qX-r6FvfglTt9oK7bWvlqVqAIAopCL5LlbsZUWU'
 
     # Headers
     headers = {
@@ -29,24 +29,38 @@ def get_all_products(data):
 
         for product in products:
             # Convert lists to comma-separated strings
-            barcodes = ', '.join(product['barcodes'])
-            prices = ', '.join(product['prices'])
+            barcodes = product['barcodes']
+            prices = product['prices']
+            
+            # Handling barcodes
+            snumber = barcodes[0] if len(barcodes) > 0 else None
+            snumber2 = barcodes[1] if len(barcodes) > 1 else None
+            
+            # Handling prices and discounts
+            prices_str = ', '.join(prices)
+            discounts_str = ', '.join(['0'] * len(prices))
 
-            cursor.execute('''
-                INSERT INTO items (snumber, name, SKU, thumbnail, inventry_type, IS_active, price, discount)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 0)
-            ''', (
-                product['id'],
-                product['name'],
-                product['sku'],
-                product['thumbnail'],
-                product['inventory_type'],
-                product['is_active'],
-                # barcodes,  # Comma-separated string
-                prices     # Comma-separated string
-            ))
+            try:
+                cursor.execute('''
+                    INSERT INTO items (snumber, snumber2, name, SKU, thumbnail, inventry_type, IS_active, price, discount)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    snumber,
+                    snumber2,
+                    product['name'],
+                    product['sku'],
+                    product['thumbnail'],
+                    product['inventory_type'],
+                    product['is_active'],
+                    prices_str,
+                    discounts_str
+                ))
 
-        conn.commit()
+                conn.commit()
+            except sqlite3.IntegrityError as e:
+                print(f"Failed to insert product {product['name']}: {e}. Moving to the next product.")
+                continue
+
         conn.close()
 
         print("Products have been successfully saved to the database.")
