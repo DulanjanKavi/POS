@@ -260,7 +260,7 @@ ipcMain.handle('getUserID', async (_event, args) => {
 ipcMain.handle('getItemDetails', async (_event, snumber) => {
   try {
     const row = await new Promise((resolve, reject) => {
-      db.get("SELECT * FROM items WHERE snumber = ?", [snumber], (err: any, row: unknown) => {
+      db.get("SELECT * FROM items WHERE snumber = ? OR snumber2=?", [snumber,snumber], (err: any, row: unknown) => {
         if (err) {
           reject(err);
         } else {
@@ -283,7 +283,7 @@ ipcMain.handle('getItemDetails', async (_event, snumber) => {
 ipcMain.handle('verifyItem', async (_event, snumber) => {
   try {
     const row = await new Promise((resolve, reject) => {
-      db.get("SELECT name FROM items WHERE snumber = ?", [snumber], (err: any, row: unknown) => {
+      db.get("SELECT name FROM items WHERE snumber = ? OR snumber2=?", [snumber,snumber], (err: any, row: unknown) => {
         if (err) {
           reject(err);
         } else {
@@ -304,11 +304,11 @@ ipcMain.handle('verifyItem', async (_event, snumber) => {
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-ipcMain.handle('searchItem', async (_event, snumber) => {
+ipcMain.handle('searchItem', async (_event, searchTearm) => {
   try {
-    console.log(snumber)
+
     const rows:any = await new Promise((resolve, reject) => {
-      db.all("SELECT name,snumber,SKU FROM items WHERE name LIKE CONCAT('%',?,'%') OR snumber LIKE CONCAT('%',?,'%') OR SKU LIKE CONCAT('%',?,'%')",[snumber,snumber,snumber], (err: any, rows: unknown) => {
+      db.all("SELECT name,snumber,SKU FROM items WHERE name LIKE CONCAT('%',?,'%') OR snumber LIKE CONCAT('%',?,'%') OR snumber2 LIKE CONCAT('%',?,'%') OR SKU LIKE CONCAT('%',?,'%')",[searchTearm,searchTearm,searchTearm,searchTearm], (err: any, rows: unknown) => {
         if (err) {
           reject(err);
         } else {
