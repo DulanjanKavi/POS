@@ -78,6 +78,8 @@ const Bill = () => {
   const [holdArray,setHoldArray]=useState<any>([])
   const [isVisibleHoldArray,setIsVisibleHoldArray]=useState(false)
   const [isVisibleLogOut,setIsVisibleLogOut]=useState(false)
+
+  console.log(searchItems);
   const handleLogOut=()=>{
     setIsVisibleLogOut(true)
   }
@@ -1036,16 +1038,16 @@ const Bill = () => {
 
 
 
-const processHoldcrat=(holdTotal:any,holdCard:any,i:any)=>{
-  setTotal(holdTotal)
-  setCardArray(holdCard)
-  setIsVisibleHoldArray(false)
-  updateHoldArrayInMain(holdArray.filter((_item:any,index:any)=>index!==i))
-  const updatedHoldArray = holdArray.filter((_item:any,index:any)=>index!==i);
-  setHoldArray(updatedHoldArray)
-  console.log(updatedHoldArray)
-}
-
+  const processHoldcrat=(holdTotal:any,holdCard:any,i:any)=>{
+    setTotal(holdTotal)
+    setCardArray(holdCard)
+    setIsVisibleHoldArray(false)
+    updateHoldArrayInMain(holdArray.filter((_item:any,index:any)=>index!==i))
+    const updatedHoldArray = holdArray.filter((_item:any,index:any)=>index!==i);
+    setHoldArray(updatedHoldArray)
+    console.log(updatedHoldArray)
+  }
+  
 
 
 
@@ -2053,20 +2055,22 @@ const processHoldcrat=(holdTotal:any,holdCard:any,i:any)=>{
           
           
           
-          <div className="grid grid-cols-12 ">
+          <div className="grid grid-cols-12  gap-8 p-6">
           
           {searchItems.map((item:any)=>(
             <div className='col-span-4 lg:col-span-3 xl:col-span-3 flex items-center justify-center'>
-            <button onClick={()=>handleEnter(item.snumber)} className="border-slate-200 border-2 m-1 hover:bg-slate-200 transition duration-150 h-40">
-                <div className="border-b-2 border-slate-200 h-32">
-                    <img src={plant2} alt={plant2} className="w-full h-32" />
-                </div>
-                <div className="text-center h-8 overflow-hidden">
-                    {item.name}
-                </div>
-            </button>
-        </div>
-          ))
+              <button onClick={()=>handleEnter(item.snumber)} className="hover:bg-slate-200 transition duration-150">
+                  <div className="mb-2">
+                      <img src={
+                        (item.thumbnail)? `https://pos-server.namisweb.lk/api/v1/product-manager/products/get-thumbnail?image_file=${item.thumbnail}` : plant2
+                      } alt={plant2} className="w-full aspect-square object-contain" />
+                  </div>
+                  <div className="text-center line-clamp-2 overflow-hidden">
+                      {item.name}
+                  </div>
+              </button>
+          </div>
+            ))
 
           }
 
@@ -2213,9 +2217,9 @@ const processHoldcrat=(holdTotal:any,holdCard:any,i:any)=>{
 
 
           <div className="action-buttons gap-1 grid grid-cols-2 divide-x bg-slate-100 pt-1  ">
-                <button onClick={handleRemove} className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center "><img src={deleteIcon} className="w-5 mr-2" alt="Add customer" />  Cancel</button>
-                <button onClick={handleHold} className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center "><img src={holdIcon} className="w-5 mr-2" alt="Add customer" /> Hold</button>
-                <button onClick={handlePayButton} className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center  col-span-2"><img src={payIcon} className="w-5 mr-2" alt="Add customer" />  Pay</button>
+                <button onClick={handleRemove} className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center "><img src={deleteIcon} className="w-5 mr-2 py-2" alt="Add customer" />  Cancel</button>
+                <button onClick={handleHold} className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center "><img src={holdIcon} className="w-5 mr-2 py-2" alt="Add customer" /> Hold</button>
+                <button onClick={handlePayButton} className="p-1  bg-slate-200  w-full hover:bg-slate-400 transition duration-150 flex items-center justify-center  col-span-2"><img src={payIcon} className="w-5 mr-2 py-3" alt="Add customer" />  Pay</button>
             </div>
             <div className="text-center text-xl font-bold py-2 bg-slate-800 text-white">
                 Total: {(total).toFixed(2)}

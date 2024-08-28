@@ -3,25 +3,16 @@ import { app, BrowserWindow,ipcMain } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-
+import { loadBgSyncService } from './fnServer/loadBgSyncService'
+import * as dotenv from 'dotenv'
+import { saveUserData } from './fnServer/handleUserData'
+dotenv.config()
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 let cashierID: any;
 let ID: any;
 let holdArray: never[]=[];
-
-const sqlite3 = require('sqlite3').verbose();
-const dbPath='pos.db'
-
-const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err: { message: any }) => {
-  if (err) {
-    console.error(err.message);
-  } else {
-    console.log('Connected to the SQLite database.');
-  }
-});
-
 
 
 
@@ -34,39 +25,103 @@ const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CR
 // │ │ ├── main.js
 // │ │ └── preload.mjs
 // │
-process.env.APP_ROOT = path.join(__dirname, '..')
+process.env.APP_ROOT = path.join(__dirname||"D:\\websites\\POS\\POS.k\\ss", '..');
+process.env.JWT_TOKEN = "";
+
 
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 
+
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
 let win: BrowserWindow | null
 
+
+const sqlite3 = require('sqlite3').verbose();
+const dbPath=path.join(process.env.APP_ROOT, 'pos.db')
+
+var db:any = null;
+
+async function initialLoadingProcess() {
+  // start the queue manager
+  return new Promise(async (resolve, reject) => {
+    console.log(process.env.APP_NAME);
+    console.log('starting Sync Tool')
+    await loadBgSyncService().catch((err) => {
+      console.error("Sync Tool", err)
+      reject(err)
+    });
+    console.log('Sync Tool started')
+    try {
+      db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err: { message: any }) => {
+        if (err) {
+          console.error(err.message);
+        } else {
+          console.log('Connected to the SQLite database.');
+        }
+      });
+      console.log('Database connected');
+    } catch (error) {
+      console.error("SQLite", error);
+    }
+    console.log('Ready to serve')
+    
+    setTimeout(() => {
+      resolve('done')
+    }, 4000);
+  });
+}
+
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    icon: path.join(process.env.VITE_PUBLIC, 'icon.ico'),
     minWidth:950,
     minHeight:750,
+    show: false,
+    title: process.env.APP_NAME||"TEST POS",
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
   })
 
-  // Test active push message to Renderer-process.
-  win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', (new Date).toLocaleString())
+  // adding a splash screen
+  const splash = new BrowserWindow({
+    icon: path.join(process.env.VITE_PUBLIC, 'icon.ico'),
+    width: 600,
+    height: 350,
+    frame: false,
+    title: process.env.APP_NAME||"TEST POS",
   })
-  win.maximize();
+  splash.loadFile(path.join(process.env.APP_ROOT, 'html/splash.html'))
+  splash.center()
+  // splash.webContents.openDevTools()
 
-  if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL)
-  } else {
-    // win.loadFile('dist/index.html')
-    win.loadFile(path.join(RENDERER_DIST, 'index.html'))
-  }
+  initialLoadingProcess().then(() => {
+    if (!win) {
+      console.error('Window is not defined')
+      return
+    }
+    win.show()
+    win.webContents.on('did-finish-load', () => {
+      win?.webContents.send('main-process-message', (new Date).toLocaleString())
+    })
+    win.maximize();
+  
+    if (VITE_DEV_SERVER_URL) {
+      win.loadURL(VITE_DEV_SERVER_URL)
+    } else {
+      // win.loadFile('dist/index.html')
+      win.loadFile(path.join(RENDERER_DIST, 'index.html'))
+    }
+    win.webContents.openDevTools()
+    splash.destroy()
+  }).catch((err) => {
+    console.error(err)
+    splash.destroy()
+  })
 }
 /*
 const template = [
@@ -238,8 +293,47 @@ ipcMain.handle('setHoldArray',async(_event,array)=>{
 
 ipcMain.handle('getUserID', async (_event, args) => {
   const { userName, password } = args;
-  return new Promise((resolve, reject) => {
-    db.get("SELECT userID FROM user WHERE userName = ? AND password = ?", [userName, password], (err: { message: any }, row: { userID: unknown }) => {
+  return new Promise(async(resolve, reject) => {
+    const url = process.env.SERVER_URL + "/login";
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email:userName, password }),
+    });
+
+    if (!response.ok) {
+      resolve(null);
+    }
+
+    const data = await response.json();
+
+    console.log(data);
+    if (!data.token) {
+      resolve(null);
+      return;
+    }
+
+
+    // update user_data.json
+    saveUserData({
+      company_id: data.user.comapny,
+      user_id: data.user._id,
+      first_name: data.user.first_name,
+      last_name: data.user.last_name,
+      role: data.user.role,
+      email: data.user.email,
+      token: data.token,
+    });
+
+    ID=data.user._id
+    cashierID=data.user.first_name
+    process.env.JWT_TOKEN = data.token;
+    resolve(data.user._id);
+
+
+    /*db.get("SELECT userID FROM user WHERE userName = ? AND password = ?", [userName, password], (err: { message: any }, row: { userID: unknown }) => {
       if (err) {
         reject(err.message);
       } else if (row) {
@@ -251,11 +345,16 @@ ipcMain.handle('getUserID', async (_event, args) => {
         console.log('No matching user found.');
         resolve(null);
       }
-    });
+    });*/
   });
 });
 
 
+ipcMain.handle('userAutoLogin', async () => {
+  return new Promise(async(resolve, reject) => {
+    
+  });
+});
 
 ipcMain.handle('getItemDetails', async (_event, snumber) => {
   try {
@@ -296,7 +395,7 @@ ipcMain.handle('verifyItem', async (_event, snumber) => {
       return row;
     } else {
       console.log('No matching item found.');
-      return null;
+      return [];
     }
   } catch (error) {
     throw new Error();
@@ -306,9 +405,8 @@ ipcMain.handle('verifyItem', async (_event, snumber) => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 ipcMain.handle('searchItem', async (_event, searchTearm) => {
   try {
-
     const rows:any = await new Promise((resolve, reject) => {
-      db.all("SELECT name,snumber,SKU FROM items WHERE name LIKE CONCAT('%',?,'%') OR snumber LIKE CONCAT('%',?,'%') OR snumber2 LIKE CONCAT('%',?,'%') OR SKU LIKE CONCAT('%',?,'%')",[searchTearm,searchTearm,searchTearm,searchTearm], (err: any, rows: unknown) => {
+      db.all("SELECT name,snumber,SKU,thumbnail FROM items WHERE name LIKE CONCAT('%',?,'%') OR snumber LIKE CONCAT('%',?,'%') OR snumber2 LIKE CONCAT('%',?,'%') OR SKU LIKE CONCAT('%',?,'%')",[searchTearm,searchTearm,searchTearm,searchTearm], (err: any, rows: unknown) => {
         if (err) {
           reject(err);
         } else {
@@ -325,6 +423,7 @@ ipcMain.handle('searchItem', async (_event, searchTearm) => {
       return [];
     }
   } catch (error) {
+    console.log(error);
     throw new Error();
   }
 });

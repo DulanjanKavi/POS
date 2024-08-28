@@ -94,6 +94,15 @@ const LOGIN_API = {
     } catch (error) {
       console.error(error);
     }
+  },
+  userAutoLogin: async () => {
+    try {
+      console.log("check user id and password");
+      const result = await ipcRenderer.invoke('userAutoLogin');
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
   }
 };
 

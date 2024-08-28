@@ -4,12 +4,32 @@ import threading
 import time
 import os
 import importlib.util
+from systemTray import start_system_tray_icon
+import ipc_http
+
+is_running = True
+
+"""
+Creating gable queue table if not exists
+DEV --- Namindu
+"""
+def create_queue_table():
+    current_directory = os.getcwd()
+    db_path = os.path.join(current_directory, '..', 'pos.db')
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS queue (action TEXT, data TEXT, status TEXT)")
+    conn.commit()
+    conn.close()
+
+
 
 # Function to load a function from a module
 def load_function(module_name, func_name):
     try:
         # Construct the module path
-        module_path = os.path.join(os.getcwd(), 'functions', f'{module_name}.py')
+        print(os.getcwd())
+        module_path = os.path.join(os.getcwd(), 'Sync Tool', 'functions', f'{module_name}.py')
         spec = importlib.util.spec_from_file_location(module_name, module_path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
@@ -49,7 +69,8 @@ def process_queue():
                 # Update status to 'completed' if successful
                 cursor.execute("UPDATE queue SET status='completed' WHERE rowid=?", (rowid,))
             except Exception as e:
-                print(f"Error executing {action}: {e}")
+                print(f"Error executing {action}: {e} ")
+                print(e.__traceback__)
                 # Update status to 'failed' on error
                 cursor.execute("UPDATE queue SET status='failed' WHERE rowid=?", (rowid,))
         else:
@@ -75,18 +96,34 @@ def add_ex2():
     db_path = os.path.join(current_directory, '..', 'pos.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO queue (action, data, status) VALUES ('get_company_info', '{\"id\":\"12398279823479283\"}', 'pending')")
+    cursor.execute("INSERT INTO queue (action, data, status) VALUES ('get_company_info', '{\"id\":\"66c36557e06473ddfce3245b\"}', 'pending')")
     conn.commit()
     conn.close()
 
 # Function to run the process_queue function every 30 seconds for testing
 def run_scheduler():
-    while True:
+    while is_running:
         process_queue()
-        add_ex()
-        add_ex2()
+        # add_ex()
+        # add_ex2()
         time.sleep(30)  # Sleep for 30 seconds for testing (change to 300 for production)
 
 if __name__ == "__main__":
+    dirname, filename = os.path.split(os.path.abspath(__file__))
+    # add to env
+    os.environ['EXEC_PATH'] = dirname
+
+    create_queue_table()
     scheduler_thread = threading.Thread(target=run_scheduler)
+    scheduler_thread.daemon = True
     scheduler_thread.start()
+
+    httpd_thread = threading.Thread(target=ipc_http.start_server)
+    httpd_thread.daemon = True
+    httpd_thread.start()
+
+    start_system_tray_icon()
+    is_running = False
+    ipc_http.httpd.shutdown()
+    scheduler_thread.join()
+    httpd_thread.join()

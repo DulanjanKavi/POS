@@ -1,0 +1,1 @@
+BASE_URL = "https://pos-server.namisweb.lk/api/v1/pos-software"
