@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 declare global {
@@ -46,6 +46,19 @@ function Login() {
       setLoginStatus('An error occurred during login.');
     }
   };
+
+
+  // check auto login -- if already logged in, redirect to bill page
+  useEffect(() => {
+    window.LOGIN_API.userAutoLogin().then(
+      (result: string | null) => {
+        if (result !== null) {
+          setUserID(result);
+          navigate('/bill');
+        }
+      }
+    )
+  }, [])
 
   return (
     <UserIDContext.Provider value={{ userID, setUserID }}>

@@ -79,7 +79,6 @@ const Bill = () => {
   const [isVisibleHoldArray,setIsVisibleHoldArray]=useState(false)
   const [isVisibleLogOut,setIsVisibleLogOut]=useState(false)
 
-  console.log(searchItems);
   const handleLogOut=()=>{
     setIsVisibleLogOut(true)
   }
@@ -1892,24 +1891,7 @@ const Bill = () => {
         <div className="h-7 bg-slate-800 flex items-center ">
                     <StatusBar />
                 </div>
-          {/*
-          <div className="flex items-center justify-center p-1 m-1  ">
-            <input className='m-1 p-1 rounded border-2 border-black focus:outline-none focus:border-black'
-              type="text"
-              value={inputText}
-              onChange={handleInputChange}
-              placeholder="Enter snumber"
-            />
-            <button className="bg-blue-500 rounded p-2 m-1 " onClick={handleEnter}>Add Item</button>
-            <button className="bg-yellow-500  rounded p-2 m-1 " onClick={handleClear}>Clear</button>
-           
-            
-            
-          </div>
-          <div className="flex items-center justify-center p-1 m-1  ">
-          {error && <p className="text-red-500 text-center">{error}</p>}
-          </div>
-          */}
+
           <div className='h-20 w-full mr-4 flex pr-2 overflow-x-auto '>
           <button onClick={handleRemoveBill}>
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
@@ -2098,7 +2080,7 @@ const Bill = () => {
     </div>*/}
 
     <div className='border-b-2 border-slate-400 '>
-    <table className="w-full mx-4 h-20 pb-1">
+                  <table className="w-full mx-4 h-20 pb-1">
                     <tr>
                         <td className="py-1"><strong>Date:</strong> {formattedDate}</td>
                         <td className="py-1"><strong>Cashier ID:</strong> {cashierID}</td>
@@ -2121,39 +2103,6 @@ const Bill = () => {
     <div>
       
     </div>
-
-
-
-{/*}
-    <div className="border-y-2  mx-1">
-    <table className="table-auto w-full text-md ">
-                    <tbody className=''>
-                    <tr className="flex  justify-between mx-2">
-                            
-                    
-                            <td className='w-3/10 '>S.number</td>
-                            <td className='w-1/10  '>Item name</td>
-                           
-                            <td className='w-3/10  '>&nbsp;</td>
-                            <td className='w-4/10  '>&nbsp;</td>
-                            
-                        </tr>
-                        <tr className="flex  justify-between mx-2">
-                            
-                    
-                            <td className='w-1/10 '>price</td>
-                            <td className='w-1/10  '>Qut.</td>
-                            <td className='w-1/10  '>Dis.</td>
-
-                            <td className='w-1/10  '>Amount</td>
-                            
-                           
-                            
-                        </tr>
-                    </tbody>
-                </table>
-    </div>
-*/}
     <div className=' overflow-auto max-h-[calc(100vh-370px)] ml-4'>
 
       {/* Display cardArray */}
@@ -2224,16 +2173,6 @@ const Bill = () => {
             <div className="text-center text-xl font-bold py-2 bg-slate-800 text-white">
                 Total: {(total).toFixed(2)}
             </div>
-
-
-
-
-
-
-
-
-
-
     </div>
     
 <div>

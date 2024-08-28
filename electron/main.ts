@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { loadBgSyncService } from './fnServer/loadBgSyncService'
 import * as dotenv from 'dotenv'
-import { saveUserData } from './fnServer/handleUserData'
+import { getUserData, saveUserData } from './fnServer/handleUserData'
 dotenv.config()
 
 const require = createRequire(import.meta.url)
@@ -85,8 +85,10 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
+
   })
 
+  
   // adding a splash screen
   const splash = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'icon.ico'),
@@ -294,6 +296,7 @@ ipcMain.handle('setHoldArray',async(_event,array)=>{
 ipcMain.handle('getUserID', async (_event, args) => {
   const { userName, password } = args;
   return new Promise(async(resolve, reject) => {
+
     const url = process.env.SERVER_URL + "/login";
     const response = await fetch(url, {
       method: 'POST',
@@ -349,10 +352,21 @@ ipcMain.handle('getUserID', async (_event, args) => {
   });
 });
 
-
 ipcMain.handle('userAutoLogin', async () => {
-  return new Promise(async(resolve, reject) => {
-    
+  return new Promise(async(resolve, _) => {
+    const userData = getUserData();
+    if (!userData) {
+      resolve(null);
+      return;
+    }
+
+    // validate 
+    // ...
+
+    ID=userData.user_id
+    cashierID=userData.first_name
+    process.env.JWT_TOKEN = userData.token;
+    resolve(userData.user_id);
   });
 });
 
