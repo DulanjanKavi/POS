@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import  { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import editIcon from '../image/Edit.png'
@@ -26,7 +24,6 @@ let paymentMethod: any[]=[]
 
 declare global {
   interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     WINDOW_API: any; // Adjust the type as needed
     Loyal_API:any;
     BILL_API:any;

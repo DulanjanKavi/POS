@@ -10,7 +10,6 @@ interface SaleDetails {
 
 declare global {
   interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     REPORT_API: any; // Adjust the type as needed
   }
 }

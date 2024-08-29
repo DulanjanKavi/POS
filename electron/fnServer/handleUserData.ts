@@ -16,7 +16,7 @@ export interface UserDataInterface {
 
 export function saveUserData(data: UserDataInterface) {
     const userDataPath = path.join(process.env.APP_ROOT, 'userData.json');
-    fs.writeFileSync(userDataPath, JSON.stringify(data));
+    fs.writeFileSync(userDataPath, JSON.stringify(data, null, 4));
 }
 
 export function getUserData(): UserDataInterface | undefined {
@@ -29,20 +29,28 @@ export function getUserData(): UserDataInterface | undefined {
 }
 
 export async function validateUserToken(): Promise<boolean> {
-    return new Promise((resolve, _) => {
-        const userData = getUserData();
-        if (!userData) {
-            return resolve(false);
-        }
+    const userData = getUserData();
+    if (!userData) {
+        return false;
+    }
 
-        const token = userData.token;
-        if (!token) {
-            return resolve(false);
-        }
+    const token = userData.token;
+    if (!token) {
+        return false;
+    }
 
-        const url = `${process.env.API_URL}/auth/validate-token`;
-        return resolve(true);
+    const url = `${process.env.API_URL}/user-manager/is_token_valid`;
+    const resp = await fetch(url, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
     });
+
+    if (resp.status !== 200) {
+        return false;
+    }
+
+    return true;
 }
 
 export function removeUserData() {

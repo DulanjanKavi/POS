@@ -15,7 +15,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 httpd = None
 
 def add_to_queue(action, data):
-    current_directory = os.getcwd()
+    current_directory = os.environ['EXEC_PATH']
     db_path = os.path.join(current_directory, '..', 'pos.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -25,7 +25,7 @@ def add_to_queue(action, data):
 
 
 def get_queue(status):
-    current_directory = os.getcwd()
+    current_directory = os.environ['EXEC_PATH']
     db_path = os.path.join(current_directory, '..', 'pos.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -64,7 +64,7 @@ class request_handler(BaseHTTPRequestHandler):
             status = data.get('status', None)
 
             queue = get_queue(status)
-            response = {'status': 'ok', 'queue': queue}
+            response = {'status': 'ok', 'queue': queue, 'path': os.environ['EXEC_PATH']}
         elif data['action'] == 'check_scheduler':
             response = {'status': 'ok', 'message': 'Scheduler is running.'}
         else:

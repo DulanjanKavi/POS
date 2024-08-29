@@ -14,7 +14,7 @@ Creating gable queue table if not exists
 DEV --- Namindu
 """
 def create_queue_table():
-    current_directory = os.getcwd()
+    current_directory = os.environ['EXEC_PATH']
     db_path = os.path.join(current_directory, '..', 'pos.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -29,7 +29,7 @@ def load_function(module_name, func_name):
     try:
         # Construct the module path
         print(os.getcwd())
-        module_path = os.path.join(os.getcwd(), 'Sync Tool', 'functions', f'{module_name}.py')
+        module_path = os.path.join(os.environ['EXEC_PATH'], 'functions', f'{module_name}.py')
         spec = importlib.util.spec_from_file_location(module_name, module_path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
@@ -39,12 +39,15 @@ def load_function(module_name, func_name):
         return func
     except (FileNotFoundError, AttributeError) as e:
         print(f"Error loading {func_name} from {module_name}: {e}")
+        # write to log file
+        with open(os.path.join(os.environ['EXEC_PATH'], 'log.txt'), 'a') as f:
+            f.write(f"Error loading {func_name} from {module_name}: {e}\n")
         return None
 
 # Function to read the queue and execute actions
 def process_queue():
     # Get the path to the pos.db file
-    current_directory = os.getcwd()
+    current_directory = os.environ['EXEC_PATH']
     db_path = os.path.join(current_directory, '..', 'pos.db')
     
     conn = sqlite3.connect(db_path)
@@ -64,6 +67,8 @@ def process_queue():
         func = load_function(action, action)
         if func:
             try:
+                with open(os.path.join(os.environ['EXEC_PATH'], 'log.txt'), 'a') as f:
+                    f.write(f"Executing {action}\n")
                 func(data)
                 
                 # Update status to 'completed' if successful
@@ -73,6 +78,9 @@ def process_queue():
                 print(e.__traceback__)
                 # Update status to 'failed' on error
                 cursor.execute("UPDATE queue SET status='failed' WHERE rowid=?", (rowid,))
+                # write to log file
+                with open(os.path.join(os.environ['EXEC_PATH'], 'log.txt'), 'a') as f:
+                    f.write(f"Error executing {action}: {e}\n")
         else:
             # Update status to 'failed' if function is not found
             cursor.execute("UPDATE queue SET status='failed' WHERE rowid=?", (rowid,))

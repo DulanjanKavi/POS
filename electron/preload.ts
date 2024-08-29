@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ipcRenderer, contextBridge } from 'electron'
+import { SYNC_TOOL_API } from './ipc_handles/settings/preload_settings';
+
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -23,6 +24,9 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   // You can expose other APTs you need here.
   // ...
 })
+
+contextBridge.exposeInMainWorld('SYNC_TOOL_API', SYNC_TOOL_API);
+
 
 const WINDOW_API = {
   getPayMethodFromMain: async () => {

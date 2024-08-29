@@ -68,6 +68,8 @@ def get_all_products(data):
                 conn.commit()
             except sqlite3.IntegrityError as e:
                 print(f"Failed to insert product {product['name']}: {e}. Moving to the next product.")
+                with open(os.path.join(os.environ['EXEC_PATH'], 'log.txt'), 'a') as f:
+                    f.write(f"Error executing {product['name']}: {e}\n")
                 continue
 
         conn.close()
@@ -75,3 +77,5 @@ def get_all_products(data):
         print("Products have been successfully saved to the database.")
     else:
         print(f"Failed to fetch products. Status code: {response.status_code}, Message: {response.text}")
+        with open(os.path.join(os.environ['EXEC_PATH'], 'log.txt'), 'a') as f:
+            f.write(f"Error fetching products: {response.text}\n")
