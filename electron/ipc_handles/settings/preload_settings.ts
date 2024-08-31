@@ -39,6 +39,15 @@ export const SYNC_TOOL_API = {
         } catch (error) {
             console.error(error);
         }
+    },
+
+    settingsGetUserData: async ()=>{
+        try {
+            const data = ipcRenderer.invoke('getSettingsUserData');
+            return data;
+        } catch (error) {
+            console.error(error);
+        }
     }
 
 }

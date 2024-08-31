@@ -1,6 +1,7 @@
 import { BrowserWindow, IpcMain } from "electron";
 import { createFileRoute, createURLRoute } from "electron-router-dom";
 import path from 'path';
+import { getUserData } from "../../fnServer/handleUserData";
 
 //const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
 
@@ -36,8 +37,7 @@ export function registerSettingsWindowIpc(ipcMain:IpcMain){
             const file_url = `${path.join(RENDERER_DIST, 'index.html')}`;
             settingsWindow.loadFile(...createFileRoute(file_url, "settings"));
         }
-        //settingsWindow.loadFile(path.join(process.env.APP_ROOT, 'html/settings.html'))
-        settingsWindow.webContents.openDevTools();
+         settingsWindow.webContents.openDevTools();
         settingsWindow.show();
     });
 
@@ -70,4 +70,9 @@ export function registerSettingsWindowIpc(ipcMain:IpcMain){
         if (resp.ok) return (await resp.json()).queue;
         return [];
     });
+
+    ipcMain.handle('getSettingsUserData', ()=>{
+        const userData = getUserData();
+        return userData;
+    })
 }

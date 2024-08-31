@@ -89,31 +89,11 @@ def process_queue():
 
     conn.close()
 
-# Function to add an example action to the queue
-def add_ex():
-    current_directory = os.getcwd()
-    db_path = os.path.join(current_directory, '..', 'pos.db')
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO queue (action, data, status) VALUES ('print_word', '{\"word\":\"World\"}', 'pending')")
-    conn.commit()
-    conn.close()
-
-def add_ex2():
-    current_directory = os.getcwd()
-    db_path = os.path.join(current_directory, '..', 'pos.db')
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO queue (action, data, status) VALUES ('get_company_info', '{\"id\":\"66c36557e06473ddfce3245b\"}', 'pending')")
-    conn.commit()
-    conn.close()
 
 # Function to run the process_queue function every 30 seconds for testing
 def run_scheduler():
     while is_running:
         process_queue()
-        # add_ex()
-        # add_ex2()
         time.sleep(30)  # Sleep for 30 seconds for testing (change to 300 for production)
 
 if __name__ == "__main__":

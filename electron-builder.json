@@ -8,7 +8,12 @@
   },
   "files": [
     "dist",
-    "dist-electron"
+    "dist-electron",
+    "html"
+  ],
+  "extraResources": [
+    "user_data.json",
+    "pos.db"
   ],
   "mac": {
     "target": [
@@ -25,7 +30,8 @@
         ]
       }
     ],
-    "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
+    "artifactName": "${productName}-Windows-${version}-Setup.${ext}",
+    "icon": "icon.ico"
   },
   "nsis": {
     "oneClick": false,

@@ -1,5 +1,5 @@
 import { IpcMain } from "electron";
-import { getUserData, saveUserData } from "../../fnServer/handleUserData";
+import { getUserData, saveUserData, validateUserToken } from "../../fnServer/handleUserData";
 
 
 export default function registerPOSHandles(ipcMain:IpcMain, db: any, ipcGlobals: any) {
@@ -53,15 +53,35 @@ ipcMain.handle('getUserID', async (_event, args) => {
 
 
     // update user_data.json
+    const userData = getUserData();
+
     saveUserData({
-    company_id: data.user.comapny,
-    user_id: data.user._id,
-    first_name: data.user.first_name,
-    last_name: data.user.last_name,
-    role: data.user.role,
-    email: data.user.email,
-    token: data.token,
+      company_id: data.user.comapny||userData?.company_id||'',
+      user_id: data.user._id,
+      first_name: data.user.first_name,
+      last_name: data.user.last_name,
+      role: data.user.role,
+      email: data.user.email,
+      token: data.token,
     });
+
+
+    // set sync tool to sync company info
+    try {
+        await fetch(`http://localhost:24332/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'add_to_queue',
+                queue_action: "get_company_info",
+                data: JSON.stringify({ id: data.user.comapny })
+            })
+        });
+    } catch (error) {
+        console.error(error);
+    }
 
     ipcGlobals.ID=data.user._id
     ipcGlobals.cashierID=data.user.first_name
@@ -89,21 +109,22 @@ ipcMain.handle('getUserID', async (_event, args) => {
   });
   
   ipcMain.handle('userAutoLogin', async () => {
-    return new Promise((resolve) => {
       const userData = getUserData();
-      if (!userData) {
-        resolve(null);
-        return;
+      if (!userData || !userData.token || !userData.user_id) {
+        return null;
       }
-  
+      
       // validate 
       // ...
-  
+      const validate = await validateUserToken();
+      if (!validate) {
+        return null;
+      }
+
       ipcGlobals.ID=userData.user_id
       ipcGlobals.cashierID=userData.first_name
       process.env.JWT_TOKEN = userData.token;
-      resolve(userData.user_id);
-    });
+      return userData.user_id;
   });
   
   ipcMain.handle('getItemDetails', async (_event, snumber) => {
@@ -167,10 +188,10 @@ ipcMain.handle('getUserID', async (_event, args) => {
       });
   
       if (rows && rows.length > 0) {
-        console.log(rows); 
+        // console.log(rows); 
         return rows;
       } else {
-        console.log('No matching items found.');
+        // console.log('No matching items found.');
         return [];
       }
     } catch (error) {
@@ -192,10 +213,10 @@ ipcMain.handle('getUserID', async (_event, args) => {
         });
       });
       if (row) {
-        console.log(row);
+        // console.log(row);
         return row;
       } else {
-        console.log('No matching item found for loyal customer.');
+        // console.log('No matching item found for loyal customer.');
         return null;
       }
     } catch (error) {

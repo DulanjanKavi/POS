@@ -12,10 +12,6 @@ dotenv.config()
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-// let cashierID: any;
-// let ID: any;
-// let holdArray: never[]=[];
-
 
 
 // The built directory structure
@@ -27,21 +23,18 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // │ │ ├── main.js
 // │ │ └── preload.mjs
 // │
-process.env.APP_ROOT = path.join(__dirname||"D:\\websites\\POS\\POS.k\\ss", '..');
+process.env.APP_ROOT = path.join(__dirname, '..');
 process.env.JWT_TOKEN = "";
 
 
-// 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
-
-
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
-let win: BrowserWindow | null
 
 
+let win: BrowserWindow | null;
 const sqlite3 = require('sqlite3').verbose();
 const dbPath=path.join(process.env.APP_ROOT, 'pos.db')
 
@@ -56,45 +49,45 @@ const ipcGlobals = {
 async function initialLoadingProcess() {
   // start the queue manager
   console.log(process.env.APP_NAME);
-    console.log('starting Sync Tool')
-    await loadBgSyncService().catch((err) => {
-      console.error("Sync Tool", err)
-      return false;
-    });
-    console.log('Sync Tool started')
-    try {
-      db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err: { message: any }) => {
-        if (err) {
-          console.error(err.message);
-        } else {
-          console.log('Connected to the SQLite database.');
-        }
-      });
-      console.log('Database connected');
-
-    } catch (error) {
-      console.error("SQLite", error);
-    }
-
-    try {
-      if (!db) {
-        throw new Error("Database is not connected");
+  console.log('starting Sync Tool')
+  await loadBgSyncService().catch((err) => {
+    console.error("Sync Tool", err)
+    return false;
+  });
+  console.log('Sync Tool started')
+  try {
+    db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err: { message: any }) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log('Connected to the SQLite database.');
       }
-      // register ipcMain handlers here
-      // we move the handlers to a separate file for better organization
-      registerPOSHandles(ipcMain, db, ipcGlobals);
-      registerSettingsWindowIpc(ipcMain);
-    } catch (error) {
-      console.error("IPC Handlers", error);
+    });
+    console.log('Database connected');
+
+  } catch (error) {
+    console.error("SQLite", error);
+  }
+
+  try {
+    if (!db) {
+      throw new Error("Database is not connected");
     }
-    console.log('Ready to serve')
-    
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(true)
-      }, 4000)
-    })
-    return true;
+    // register ipcMain handlers here
+    // we move the handlers to a separate file for better organization
+    registerPOSHandles(ipcMain, db, ipcGlobals);
+    registerSettingsWindowIpc(ipcMain);
+  } catch (error) {
+    console.error("IPC Handlers", error);
+  }
+  console.log('Ready to serve')
+  
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true)
+    }, 4000)
+  })
+  return true;
 }
 
 function createWindow() {
@@ -107,7 +100,6 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
-
   })
 
   
@@ -116,6 +108,7 @@ function createWindow() {
     icon: path.join(process.env.VITE_PUBLIC, 'icon.ico'),
     width: 600,
     height: 350,
+    transparent: true,
     frame: false,
     title: process.env.APP_NAME||"TEST POS",
   })

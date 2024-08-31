@@ -11,7 +11,7 @@ def get_all_products(data):
 
     # Hardcoded JWT token for testing
     current_directory = os.environ['EXEC_PATH']
-    with open(os.path.join(current_directory, '..', 'userData.json')) as f:
+    with open(os.path.join(current_directory, '..', 'user_data.json')) as f:
         jwt_token = json.load(f)['token']
     print(jwt_token)    
 

@@ -6,7 +6,7 @@ from PIL import Image
 
 def start_system_tray_icon():
 
-    iconPath = __file__.replace("Sync Tool\\systemTray.py", "public\icon.ico")
+    iconPath = __file__.replace("Sync Tool\\systemTray.py", "icon.ico")
 
     icon = Icon(
         name="Sync Tool",

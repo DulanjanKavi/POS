@@ -1892,18 +1892,18 @@ const Bill = () => {
           <div className='h-20 w-full mr-4 flex pr-2 overflow-x-auto '>
           <button onClick={handleRemoveBill}>
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
-    <div>
-        <img src={sellIcon} className="w-10 h-8" alt="New bill" />
-    </div>
-    <div className="text-center">
-        New Bill
-    </div>
-</div>
+              <div>
+                  <img src={sellIcon} className="w-10 h-8 object-contain" alt="New bill" />
+              </div>
+              <div className="text-center">
+                  New Bill
+              </div>
+          </div>
           </button>
           <button onClick={handleReturn}>
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-    <img src={returnIcon} className="w-10 h-8" alt="Return Icon" />
+    <img src={returnIcon} className="w-10 h-8 object-contain" alt="Return Icon" />
     </div>
     <div className="text-center">
         Return
@@ -1913,7 +1913,7 @@ const Bill = () => {
           <button onClick={handlePayout}>
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-    <img src={payIcon} className="w-10 h-8" alt="Pay Icon" />
+    <img src={payIcon} className="w-10 h-8 object-contain" alt="Pay Icon" />
     </div>
     <div className="text-center">
         Payout
@@ -1923,7 +1923,7 @@ const Bill = () => {
           <button onClick={handleOnClickCoutinue} >
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-    <img src={coutinueIcon} className="w-10 h-8" alt="Coutinue Icon" />
+    <img src={coutinueIcon} className="w-10 h-8 object-contain" alt="Coutinue Icon" />
     </div>
     <div className="text-center">
         Coutinue
@@ -1934,7 +1934,7 @@ const Bill = () => {
           <button onClick={handleReports} >
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-    <img src={reportIcon} className="w-10 h-8" alt="Report Icon" />
+    <img src={reportIcon} className="w-10 h-8 object-contain" alt="Report Icon" />
     </div>
     <div className="text-center">
         Reports
@@ -1945,7 +1945,7 @@ const Bill = () => {
           <button onClick={handleCashier}>
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-    <img src={userIcon} className="w-10 h-8" alt="Cashier Icon" />
+    <img src={userIcon} className="w-10 h-8 object-contain" alt="Cashier Icon" />
     </div>
     <div className="text-center">
         Cashier
@@ -1955,7 +1955,7 @@ const Bill = () => {
           <button onClick={handleMaximize} >
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-    <img src={maximiseIcon} className="w-10 h-8" alt="Maximise Icon" />
+    <img src={maximiseIcon} className="w-10 h-8 object-contain" alt="Maximise Icon" />
     </div>
     <div className="text-center">
         Maximize
@@ -1966,7 +1966,7 @@ const Bill = () => {
           <button onClick={handleRestore} >
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-    <img src={restoreIcon} className="w-10 h-8" alt="Restore Icon" />
+    <img src={restoreIcon} className="w-10 h-8 object-contain" alt="Restore Icon" />
     </div>
     <div className="text-center">
         Restore
@@ -1976,7 +1976,7 @@ const Bill = () => {
           <button onClick={handleMinimize} >
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-    <img src={minimizeIcon} className="w-10 h-8" alt="Maximise Icon" />
+    <img src={minimizeIcon} className="w-10 h-8 object-contain" alt="Maximise Icon" />
     </div>
     <div className="text-center">
         Minimize
@@ -1987,7 +1987,7 @@ const Bill = () => {
           <button onClick={handleLogOut} >
           <div className="w-20 h-16 border-r-2 border-slate-200 flex flex-col items-center justify-center p-2">
     <div>
-    <img src={logOutIcon1} className="w-10 h-8" alt="Maximise Icon" />
+    <img src={logOutIcon1} className="w-10 h-8 object-contain" alt="Maximise Icon" />
     </div>
     <div className="text-center">
         Log out
