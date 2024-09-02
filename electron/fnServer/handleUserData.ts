@@ -24,7 +24,7 @@ export interface UserDataInterface {
 }
 
 export function saveUserData(data: UserDataInterface) {
-    const userDataPath = path.join(process.env.APP_ROOT, 'user_data.json');
+    const userDataPath = path.join(process.env.APP_INS_ROOT, 'user_data.json');
     let userData = getUserData();
     if (!userData) {
         userData = {
@@ -42,7 +42,7 @@ export function saveUserData(data: UserDataInterface) {
 }
 
 export function getUserData(): UserDataInterface | undefined {
-    const userDataPath = path.join(process.env.APP_ROOT, 'user_data.json');
+    const userDataPath = path.join(process.env.APP_INS_ROOT, 'user_data.json');
     console.log(userDataPath);
     if (fs.existsSync(userDataPath)) {
         return JSON.parse(fs.readFileSync(userDataPath, 'utf-8'));

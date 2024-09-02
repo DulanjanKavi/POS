@@ -25,7 +25,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // │
 process.env.APP_ROOT = path.join(__dirname, '..');
 process.env.JWT_TOKEN = "";
-
+//console.log(app.getAppPath())
+if (process.env.APP_ROOT.includes('app.asar')) {
+  process.env.APP_INS_ROOT = path.join(app.getAppPath(), '..', '..');
+} else {
+  process.env.APP_INS_ROOT = process.env.APP_ROOT;
+}
 
 export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
@@ -36,7 +41,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 
 let win: BrowserWindow | null;
 const sqlite3 = require('sqlite3').verbose();
-const dbPath=path.join(process.env.APP_ROOT, 'pos.db')
+const dbPath=path.join(process.env.APP_INS_ROOT, 'pos.db')
 
 var db:any = null;
 const ipcGlobals = {
@@ -131,7 +136,7 @@ function createWindow() {
     if (VITE_DEV_SERVER_URL) {
       win.loadURL(createURLRoute(VITE_DEV_SERVER_URL, "main"))
     } else {
-      win.loadFile(...createFileRoute(path.join(RENDERER_DIST, 'index.html'), "settings"))
+      win.loadFile(...createFileRoute(path.join(RENDERER_DIST, 'index.html'), "main"))
     }
     // win.webContents.openDevTools()
     splash.destroy()

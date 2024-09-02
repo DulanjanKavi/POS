@@ -11,9 +11,26 @@
     "dist-electron",
     "html"
   ],
-  "extraResources": [
-    "user_data.json",
-    "pos.db"
+  "extraFiles": [
+    {
+      "from": "user_data.json",
+      "to": "user_data.json"
+    },
+    {
+      "from": "pos.db",
+      "to": "pos.db"
+    },
+    {
+      "from": "icon.ico",
+      "to": "icon.ico"
+    },
+    {
+      "from": "./Sync Tool/",
+      "to": "./Sync Tool/",
+      "filter": [
+        "**/*"
+      ]
+    }
   ],
   "mac": {
     "target": [
