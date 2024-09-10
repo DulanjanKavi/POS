@@ -35,9 +35,9 @@ function CheckDetailComponent() {
           <table className="table-auto w-full font-semibold">
             <tbody>
               <tr className="justify-between border-b-2 border-slate-400 text-xl p-2">
-                <td className='w-3/12'>Bill no.</td>
-                <td className='w-6/12 text-left'>Cheque no.</td>
-                <td className='w-3/12 text-right'>Amount</td>
+                <td className='w-1/3'>Bill no.</td>
+                <td className='w-1/3 text-right'>Cheque no.</td>
+                <td className='w-1/3 text-right'>Amount</td>
               </tr>
             </tbody>
           </table>
@@ -47,11 +47,11 @@ function CheckDetailComponent() {
         <div className="w-full text-sm">
           {checkDetails.map((item, index) => (
             <div key={index} className="flex justify-between border-b-2">
-              <div className='w-3/12 mx-2 text-left'>{item.biiNumber}</div>
-              <div className='w-6/12 text-left overflow-hidden' title={item.aditionalDetails}>
+              <div className='w-1/3 mx-2 text-left'>{item.biiNumber}</div>
+              <div className='w-1/3 text-right overflow-hidden' title={item.aditionalDetails}>
                 {item.aditionalDetails}
               </div>
-              <div className='w-3/12 text-right mx-3'>{item.total.toFixed(2)}</div>
+              <div className='w-1/3 text-right mx-3'>{item.total.toFixed(2)}</div>
             </div>
           ))}
         </div>

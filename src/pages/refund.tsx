@@ -189,7 +189,9 @@ const addReturnBillDataisToDatabase=(OldBillNumber: string,total: number,cart: n
   };
   
   const verifyQuantity = async () => {
-      if (!Number.isInteger(quantityOfItem) || Number(quantityOfItem)<=0) {
+    const quantity = parseInt(quantityOfItem, 10);
+    
+      if ((!Number.isInteger(quantity)) || Number(quantity)<=0) {
           setErrorInWrongQuntity("Quantity value is wrong. Enter a positive integer value.");
           console.log("error verify quantity");
           return false;
@@ -385,7 +387,7 @@ const addReturnBillDataisToDatabase=(OldBillNumber: string,total: number,cart: n
             </div>
             </div>
         <div className="text-center text-xl font-bold py-2 bg-slate-800 text-white">
-                Total: {(total).toFixed(2)}
+                Total: {Number(total).toFixed(2)}
             </div>
           
         </div>
@@ -429,7 +431,7 @@ const addReturnBillDataisToDatabase=(OldBillNumber: string,total: number,cart: n
                             </td>
                         </tr>
                         <tr className="flex w-full justify-between ">
-                            <td className='w-1/4  text-right '>{item.amount.toFixed(2)}</td>
+                            <td className='w-1/4  text-right '>{Number(item.amount).toFixed(2)}</td>
                             
                             <td className='w-1/4 text-right '>{item.quantity}</td>
                             <td className='w-2/4 text-right '> </td>

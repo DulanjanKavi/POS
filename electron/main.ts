@@ -3,10 +3,13 @@ import { app, BrowserWindow,ipcMain } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-
-
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const { PosPrinter} = require('@plick/electron-pos-printer');
+
+
+
 let cashierID: any;
 let ID: any;
 let holdArray: never[]=[];
@@ -45,7 +48,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 
 let win: BrowserWindow | null
 
-function createWindow() {
+async function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     minWidth:950,
@@ -60,6 +63,14 @@ function createWindow() {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
   })
   win.maximize();
+
+  //printer data 
+  console.log("get printer data")
+  const printWindow=BrowserWindow.getFocusedWindow();
+  const list=await printWindow?.webContents.getPrintersAsync();
+  console.log('List of printers',list)
+
+
 
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
@@ -170,11 +181,12 @@ app.on('window-all-closed', () => {
   }
 })
 
-app.on('activate', () => {
+app.on('activate', async() => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
+    
   }
 })
 
@@ -375,17 +387,21 @@ ipcMain.handle('addLoyalCustomer', async (_event, tp, name, points) => {
 
 ipcMain.handle('processBill', async (_event, total, pMethod, customerID, discount, withdrowPoints, additionalDetails) => {
   try {
+    console.log(additionalDetails)
     const currentDate = new Date();
     const currentTime = currentDate.toLocaleTimeString(); 
     const currentDateFormatted = currentDate.toLocaleDateString(); 
     
-      await db.run("INSERT INTO bill (customerID, cashierID, total, pMethod, discount, withdrowPoints, aditionalDetails,date,time) VALUES (?, ?, ?, ?, ?, ?, ?,?,?)",
-          [customerID, cashierID, total, pMethod, discount, withdrowPoints, additionalDetails,currentDateFormatted,currentTime]);
+    await db.run(
+      "INSERT INTO bill (customerID, cashierID, total, pMethod, discount, withdrowPoints, aditionalDetails, date, time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [customerID, cashierID, total, pMethod, discount, withdrowPoints, additionalDetails, currentDateFormatted, currentTime]
+    );
+    console.log(additionalDetails)
   } catch (error) {
-      console.error(error);
-      return null;
+    console.error(error);
+    return null;
   }
-});
+})
 
 ipcMain.handle('returnBill', async (_event,OldBillNumber,total,cart) => {
   console.log(cart)
@@ -416,6 +432,29 @@ ipcMain.handle('verifyBillNumber', async (_event, billNumber) => {
     });
     if (row) {
       console.log(row);
+      return row;
+    } else {
+      console.log('No matching item found.');
+      return null;
+    }
+  } catch (error) {
+    throw new Error();
+  }
+});
+
+ipcMain.handle('getLastBillNumber', async () => {
+  try {
+    const row = await new Promise((resolve, reject) => {
+      db.get("SELECT MAX(biiNumber) as maxBillNumber from bill", (err: any, row: unknown) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    });
+    if (row) {
+      console.log('Last max bill number',row);
       return row;
     } else {
       console.log('No matching item found.');
@@ -734,6 +773,227 @@ ipcMain.handle('getAllReturnPayment', async () => {
     throw new Error();
   }
 });
+
+
+ipcMain.handle("printBill", async (_event, array,total,payAmount,selectedPaymentMethod,bNumber) => {
+  console.log("bill printing .......");
+  console.log(array);
+  const currentDate = new Date();
+  const currentDateFormatted = currentDate.toLocaleDateString(); 
+  const currentTimeFormatted = currentDate.toLocaleTimeString();
+  const l=array.length;
+
+  let P=0;
+    for(let i=0;i<array.length;i++)
+    {
+      P+=array[i].NoOfItems;
+    }
+
+
+
+
+
+
+
+
+
+  const options = {
+    preview: true,
+    margin: '0px',
+    copies: 1,
+    printerName: 'Microsoft Print to PDF',
+    pageSize: '80mm',
+    //height: 'auto'
+    //silent: true,
+  };
+
+  const data = [
+    //shop details
+    {
+      type:'image',
+      path:path.join(__dirname,'../src/assets/icons/shopLogo.png'),
+      position: "center", // position of image: 'left' | 'center' | 'right'
+      width: "auto", // width of image in px; default: auto
+      height: "60px",
+    },
+    {
+      type: 'text', // 'text' | 'barCode' | 'qrCode' | 'image' | 'table' | 'divider'
+      value: 'SHOP NAME',
+      style: { fontWeight: '700', textAlign: 'center', fontSize: '24px' },
+    },
+    {
+      type: 'text', // 'text' | 'barCode' | 'qrCode' | 'image' | 'table' | 'divider'
+      value: 'No. XY, XXXXXX Rd, YYYYYYYYYYYY ',
+      style: { fontWeight: '400', textAlign: 'center', fontSize: '10px' },
+    },
+    {
+      type: 'text', // 'text' | 'barCode' | 'qrCode' | 'image' | 'table' | 'divider'
+      value: 'Tel : 037 XXXXXXX / 072 YYYYYYY',
+      style: { fontWeight: '400', textAlign: 'center', fontSize: '10px',paddingBottom: '10px' },
+    },
+    {
+      type: 'divider', // we could style it using the style property, we can use divider anywhere, except on the table header
+    },
+    //bill details and cashier details
+    {
+      type: 'table',
+      style: { fontFamily: 'sans-serif' },
+      tableHeader: [
+      ],
+      tableBody:  [
+        [
+          { type: 'text', value: "Invoice number: "+bNumber,style: {textAlign: 'left',paddingTop: '10px'} },
+          { type: 'text', value: currentDateFormatted,style: {textAlign: 'right',paddingTop: '10px'} },
+        ],
+        [
+          { type: 'text', value: "Cashier: "+cashierID,style: {textAlign: 'left',paddingBottom: '10px'} },
+          { type: 'text', value: currentTimeFormatted,style: {textAlign: 'right',paddingBottom: '10px'} },
+        ],  
+      ],
+      tableFooter: [
+      ],
+      tableHeaderStyle: {},
+      tableBodyStyle: { padding:'10px 10px', margins:'20px 20px',textAlign: 'center', fontSize: '14 px',fontWeight: '400'  },
+      tableFooterStyle: { backgroundColor: '#000', color: 'white' },
+      tableHeaderCellStyle: { padding: '2px 2px' },
+      tableBodyCellStyle: {  },
+      tableFooterCellStyle: { padding: '5px 2px', fontWeight: '400' },
+    },
+
+
+
+
+
+
+    {
+      type: 'divider', // we could style it using the style property, we can use divider anywhere, except on the table header
+    },
+    {
+      type: 'table',
+      style: { fontFamily: 'sans-serif' },
+      tableHeader: [
+        { type: 'text', value: 'Price' },
+        { type: 'text', value: 'Qty' },
+        { type: 'text', value: 'Discount' },
+        { type: 'text', value: 'Amount' },
+      ],
+      tableBody: array.flatMap((item: { iname: { toString: () => any }; selectedValue: { toString: () => any }; NoOfItems: { toString: () => any }; selectedDiscount: { toString: () => any }; Amount: { toString: () => any } }) => [
+        [
+          { type: 'text', value: item.iname.toString(),style:{textAlign: 'left'} },
+        ],
+        [
+          { type: 'text', value: Number(item.selectedValue).toFixed(2) },
+          { type: 'text', value: item.NoOfItems.toString() },
+          { type: 'text', value: (Number(item.selectedDiscount)*Number(item.NoOfItems.toString())).toFixed(2) },
+          { type: 'text', value: Number(item.Amount).toFixed(2) },
+        ],
+      ]),
+      tableFooter: [
+      ],
+      tableHeaderStyle: {textAlign: 'right' },
+      tableBodyStyle: { padding:'0px 0px', margins:'0px 0px', },
+      tableFooterStyle: { backgroundColor: '#000', color: 'white' },
+      tableHeaderCellStyle: { padding: '2px 2px' },
+      tableBodyCellStyle: {textAlign: 'right' },
+      tableFooterCellStyle: { padding: '5px 2px', fontWeight: '400' },
+    },
+    {
+      type: 'divider', // we could style it using the style property, we can use divider anywhere, except on the table header
+    },
+    {
+      type: 'table',
+      style: { fontFamily: 'sans-serif' },
+      tableHeader: [
+      ],
+      tableBody:  [
+        [
+          { type: 'text', value: "Net amount",style: {textAlign: 'left',paddingTop: '10px'} },
+          { type: 'text', value: Number(total).toFixed(2),style: {textAlign: 'right',paddingTop: '10px'} },
+        ],
+        ...(selectedPaymentMethod === "Cash" ? [
+          [
+            { type: 'text', value: "Cash", style: { textAlign: 'left' } },
+            { type: 'text', value: Number(payAmount).toFixed(2), style: { textAlign: 'right' } },
+          ]
+        ] : []),
+
+        ...(selectedPaymentMethod === "Cash" ? [
+          [
+            { type: 'text', value: "Balance", style: { textAlign: 'left' } },
+            { type: 'text', value: (Number(payAmount) - Number(total)).toFixed(2), style: { textAlign: 'right' } },
+          ]
+        ] : []),
+        
+        ...(selectedPaymentMethod !== "Cash" ? [
+          [
+            { type: 'text', value: "Payment method",style: {textAlign: 'left'} },
+            { type: 'text', value: selectedPaymentMethod ,style: {textAlign: 'right'}},
+          ]
+        ] : []),
+        
+      ],
+      tableFooter: [
+      ],
+      tableHeaderStyle: {},
+      tableBodyStyle: { padding:'0px 0px', margins:'2px 2px',textAlign: 'center', fontSize: '16 px',fontWeight: '600'  },
+      tableFooterStyle: { backgroundColor: '#000', color: 'white' },
+      tableHeaderCellStyle: { padding: '2px 2px' },
+      tableBodyCellStyle: {  },
+      tableFooterCellStyle: { padding: '5px 2px', fontWeight: '400' },
+    },
+    {
+      type: 'table',
+      style: { fontFamily: 'sans-serif' },
+      tableHeader: [
+      ],
+      tableBody:  [
+        [
+          { type: 'text', value: "Number of items: ",style: {textAlign: 'left',paddingTop: '10px'} },
+          { type: 'text', value: l,style: {textAlign: 'right',paddingTop: '10px'} },
+        ],
+        [
+          { type: 'text', value: "Number of pieces: ",style: {textAlign: 'left',paddingBottom: '10px'} },
+          { type: 'text', value: P,style: {textAlign: 'right',paddingBottom: '10px'} },
+        ],  
+      ],
+      tableFooter: [
+      ],
+      tableHeaderStyle: {},
+      tableBodyStyle: { padding:'10px 10px', margins:'20px 20px',textAlign: 'center', fontSize: '14 px',fontWeight: '400'  },
+      tableFooterStyle: { backgroundColor: '#000', color: 'white' },
+      tableHeaderCellStyle: { padding: '2px 2px' },
+      tableBodyCellStyle: {  },
+      tableFooterCellStyle: { padding: '5px 2px', fontWeight: '400' },
+    },
+    {
+      type: 'text', // 'text' | 'barCode' | 'qrCode' | 'image' | 'table' | 'divider'
+      value: 'Thank You. Come Again!',
+      style: { fontWeight: '600', textAlign: 'center', fontSize: '16px',paddingTop: '20px' },
+    },
+    {
+      type: 'text', // 'text' | 'barCode' | 'qrCode' | 'image' | 'table' | 'divider'
+      value: 'Software @ XXXXXXXXXX +94 YY YYY YYYYY',
+      style: { fontWeight: '400', textAlign: 'center', fontSize: '10px',paddingBottom: '10px' },
+    },
+  ];
+
+  PosPrinter.print(data, options)
+    .then(console.log)
+    .catch((error: any) => {
+      console.log(error);
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
 
 
 

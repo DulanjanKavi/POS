@@ -34,9 +34,9 @@ const RefundComponent: React.FC = () => {
         <table className="table-auto w-full font-semibold">
           <tbody>
             <tr className="justify-between border-b-2 border-slate-400 text-xl p-2">
-              <td className='w-3/1 px-2 mr-20 text-right'>Return no.</td>
-              <td className='w-1/3 px-2 mx-2 text-center'>Old Bill no.</td>
-              <td className='w-1/3 px-2 mx-10 text-right'>Amount</td>
+              <td className='w-1/3 text-left'>Return no.</td>
+              <td className='w-1/3 text-right'>Old Bill no.</td>
+              <td className='w-1/3 text-right'>Amount</td>
             </tr>
           </tbody>
         </table>
@@ -45,8 +45,8 @@ const RefundComponent: React.FC = () => {
         <div className="w-full text-sm">
           {refundPayment.map((item, index) => (
             <div key={index} className="flex justify-between border-b-2">
-              <div className='w-1/3 mr-20 text-right'>{item.ReturnBillNumber}</div>
-              <div className='w-1/3 mx-2 text-center'>{item.OldBillNumber}</div>
+              <div className='w-1/3 mx-2 text-left'>{item.ReturnBillNumber}</div>
+              <div className='w-1/3 mx-2 text-right'>{item.OldBillNumber}</div>
               <div className='w-1/3 mx-10 text-right'>{item.total.toFixed(2)}</div>
             </div>
           ))}
