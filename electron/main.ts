@@ -113,7 +113,7 @@ async function initialLoadingProcess() {
   return true;
 }
 
-function createWindow() {
+
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'icon.ico'),
