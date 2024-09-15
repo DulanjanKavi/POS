@@ -1,15 +1,36 @@
-// @see - https://www.electron.build/configuration/configuration
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
   "appId": "YourAppID",
   "asar": true,
-  "productName": "YourAppName",
+  "productName": "Cloud POS",
   "directories": {
     "output": "release/${version}"
   },
   "files": [
     "dist",
-    "dist-electron"
+    "dist-electron",
+    "html"
+  ],
+  "extraFiles": [
+    {
+      "from": "user_data.json",
+      "to": "user_data.json"
+    },
+    {
+      "from": "pos.db",
+      "to": "pos.db"
+    },
+    {
+      "from": "icon.ico",
+      "to": "icon.ico"
+    },
+    {
+      "from": "./Sync Tool/",
+      "to": "./Sync Tool/",
+      "filter": [
+        "**/*"
+      ]
+    }
   ],
   "mac": {
     "target": [
@@ -26,7 +47,8 @@
         ]
       }
     ],
-    "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
+    "artifactName": "${productName}-Windows-${version}-Setup.${ext}",
+    "icon": "icon.ico"
   },
   "nsis": {
     "oneClick": false,

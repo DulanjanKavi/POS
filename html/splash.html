@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud POS</title>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .bg-cont{
+            position: fixed; 
+            width: 100%; 
+            height: 100%; 
+            background-color: #3456ea; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            top:0; 
+            left:0; 
+            padding: 1rem 1rem 1rem 1rem;
+            border-radius: 0.85rem;
+        }
+        .bg-cont h1{
+            color: white; 
+            font-size: 3rem; 
+            max-width: 75vw; 
+            margin-top: auto; 
+            margin-bottom: auto;
+        }
+        .loader-cont{
+            position: fixed; 
+            left: 1.2rem; 
+            bottom: 1.2rem; 
+            color: white; 
+            width: 100%; 
+            text-align: start; 
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-cont">
+        <h1>Cloud POS</h1>
+    </div>
+    <div class="loader-cont">
+        <div>Version: 1.0.0</div>
+        <small id="loader-text">Loading...</small>
+    </div>
+
+    <script>
+        var dots = 0;
+        document.addEventListener('DOMContentLoaded', () => {
+            setInterval(() => {
+                dots++;
+                if (dots > 3) {
+                    dots = 0;
+                }
+                document.querySelector('#loader-text').innerText = 'Loading' + '.'.repeat(dots);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
