@@ -245,7 +245,7 @@ function Report() {
 <div className='row-span-1 flex justify-between px-4 py-2  border-b-2 border-slate-400 items-center'>
     <button onClick={onClickOnline} className="flex justify-between w-full">
         <div>
-            <p>Bank transfer payment </p>
+            <p>Online payment </p>
         </div>
         <div>
             <p>{bankPayment}</p>

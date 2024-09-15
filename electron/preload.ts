@@ -180,9 +180,9 @@ contextBridge.exposeInMainWorld('Loyal_API', Loyal_API);
 
 
 const BILL_API={
-  processBill:async(total:any,pMethod:any,customerID:any,discount:any,withdrowPoints:any,additionalDetails:string)=>{
+  processBill:async(total:any,pMethod:any,customerID:any,discount:any,withdrowPoints:any,additionalDetails:any)=>{
     try {
-    
+      console.log("billl process");
       await ipcRenderer.invoke('processBill', total,pMethod,customerID,discount,withdrowPoints,additionalDetails);
       
     } catch (error) {
@@ -206,14 +206,6 @@ const BILL_API={
       return result;
     } catch (error) {
       console.error(error);
-    }
-  },
-  getLastBillNumber:async()=>{
-    try{
-      const result= await ipcRenderer.invoke("getLastBillNumber");
-      return result;
-    }catch(error){
-      console.log(error)
     }
   }
 }
@@ -318,17 +310,6 @@ const REPORT_API={
       console.error(error);
     }
   },
-  printBill:async(array:any,total:any,payAmount:any,selectedPaymentMethod:string,bNumber:number)=>{
-    try {
-      ipcRenderer.invoke('printBill',array,total,payAmount,selectedPaymentMethod,bNumber);
-      console.log('print bill in preload')
-      
-    } catch (error) {
-      console.error(error);
-    }
-    
-  },
   
 }
 contextBridge.exposeInMainWorld('REPORT_API', REPORT_API);
-

@@ -22,15 +22,12 @@ import userIcon from '../assets/icons/user.png'
 import coutinueIcon from '../assets/icons/continue.png'
 let paymentMethod: any[]=[]
 
-
-
 declare global {
   interface Window {
     WINDOW_API: any; // Adjust the type as needed
     Loyal_API:any;
     BILL_API:any;
     Item_API:any;
-    REPORT_API:any;
   }
 }
 
@@ -66,7 +63,6 @@ const Bill = () => {
   const [isVisiblePayMethod,setIsVisiblePayMethod]=useState(false)
   const [isConfermLoyalNumber,setIsConfermLoyalNumber]=useState(false)
   const [customerTP, setCustomerTP] = useState(0);
-  const [billNumber,setBillNumber] = useState(0)
   const [loyalCustomerDetails,setLoyalCustomerDetails]=useState<any>('')
   const [isCollectOrWithdraw,setIsCollectOrWithdraw]=useState(false)
   const [maxWithdrawPoint,setMaxWithdrawPoint]=useState(0)
@@ -74,7 +70,6 @@ const Bill = () => {
   const [isWithdrawPoint,setIsWithdrawPoint]=useState(false)
   const [isCollectPoint,setIsCollectPoint]=useState(false)
   const [payStep,setPayStep]=useState('quickPay')
-  const [selectedPaymentMethod,setSelectedPaymentMethod]=useState('')
   const [dateState, setDateState] = useState(new Date());
   const navigate = useNavigate(); 
   const [holdArray,setHoldArray]=useState<any>([])
@@ -166,11 +161,6 @@ const Bill = () => {
     }
   }
 
-  async function printProcessBill(array:any, total:any,payAmount:any,method:any,bNumber:any){
-   
-    window.REPORT_API.printBill(array,total,payAmount,method,bNumber);
-  }
-
 
   async function getHoldArray() {
     try {
@@ -196,7 +186,6 @@ const Bill = () => {
     getHoldArray();
   }, []);
 
-
   const setSearchItemArray=async()=>{
     try {
       // eslint-disable-next-line prefer-const
@@ -213,7 +202,6 @@ const Bill = () => {
     
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[searchItem])
-
 
  
 
@@ -274,9 +262,6 @@ const Bill = () => {
   const billProcess=async (total:any,pMethod:any,customerID:any,discount:any,withdrowPoints:any,additionalDetails:any)=>{
     try{
       await window.BILL_API.processBill(total,pMethod,customerID,discount,withdrowPoints,additionalDetails);
-      const result = await window.BILL_API.getLastBillNumber();
-      setBillNumber(result.maxBillNumber)
-      console.log(result.maxBillNumber)
     }
     catch(error){
       console.error(error);
@@ -308,7 +293,6 @@ const Bill = () => {
         setIsCollectPoint(true)
         console.log("collect point")
         setPayStep('collect loyal points')
-        setIsWithdrawPoint(false)
       }
     else if(type=="w"){
       //console.log("withdrow point")
@@ -318,7 +302,6 @@ const Bill = () => {
       console.log("withdrow point")
       //setTotal(total-maxWithdrawPoint)
       setPayStep('withdraw loyal points')
-      setIsCollectPoint(false)
     }
     setIsCollectOrWithdraw(false)
     setIsVisiblePayMethod(true)
@@ -676,7 +659,6 @@ const Bill = () => {
 
   const closePayMethod=()=>{
     setIsVisiblePayMethod(false)
-    setIsCollectPoint(false)
     setIsWithdrawPoint(false)
   }
 
@@ -701,14 +683,12 @@ const Bill = () => {
       setIsPayMethodCash(true)
       setErrorOnPayCash('')
       setIsVisiblePayMethodCash(true)
-      setSelectedPaymentMethod("Cash")
     }
     else if(method==='Card'){
       setIsVisiblePayMethodCard(true)
       setIsPayMethodCard(true)
       SetCardNumber(0)
       setErrorOnPayCard('')
-      setSelectedPaymentMethod("Card")
 
     }
     else if(method=='Bank Transfer'){
@@ -717,15 +697,13 @@ const Bill = () => {
       setIsPayMethodBank(true)
       setErrorOnPayBank('')
       setTransferID(0)
-      setSelectedPaymentMethod("Bank transfer")
     }
-    else if(method=='Cheque'){
-      console.log('cheque')
+    else if(method=='Check'){
+      console.log('check')
       setIsVisiblePayMethodCheque(true)
       setIsPayMethodCheque(true)
       setErrorOnPayCheque('')
       setChequeNumber(0)
-      setSelectedPaymentMethod("Cheque")
     }
 
   }
@@ -795,10 +773,7 @@ const Bill = () => {
 
   
   const [isVisibleProcessBill,setIsVisibleProcessBill]=useState(false)
-
-  const payBillSuccess=async()=>{
-    await calNoOfItems()
-    await calCardArrayLength()
+  const payBillSuccess=()=>{
     setIsVisibleProcessBill(true)
     setIsVisiblePayMethodCash(false)
   }
@@ -819,13 +794,7 @@ const Bill = () => {
   
   
   const handlePayCash = () => {
-    let newPayAmount=total;
-    if(isWithdrawPoint===true)
-    {
-      newPayAmount-=maxWithdrawPoint
-    }
-
-    if (payAmount< newPayAmount) {
+    if (payAmount< total) {
       setErrorOnPayCash('Cash amount cannot be less than gross amount');
     } else {
 
@@ -871,7 +840,7 @@ const Bill = () => {
   const handlePayCard = () => {
     setIsPayMethodCash(false)
     if (String(cardNumber).length!==4) {
-      setErrorOnPayCard('Input neet to be 4 digits.');
+      setErrorOnPayCard('Card number last 4 digits are wrong. ');
     } 
     else {
 
@@ -914,9 +883,8 @@ const Bill = () => {
 
   const handlePayBank = () => {
     setIsPayMethodBank(false)
-    setIsPayMethodCash(false)
-    if (String(transferID).length<10) {
-      setErrorOnPayBank('Bank Transfer ID must be at least 10 characters long.');
+    if (String(transferID).length!==10) {
+      setErrorOnPayCard('Bank transfer number is wrong. ');
     } 
     else {
 
@@ -925,7 +893,7 @@ const Bill = () => {
       if(payStep=='quickPay')
         {
           console.log('Quick pay')
-          billProcess (total,'Bank',0,callDiscount(),0,String(transferID))
+          billProcess (total,'Bank',0,callDiscount(),0,transferID)
         }
       else if(payStep=='add new loyal customer')
         {
@@ -934,14 +902,14 @@ const Bill = () => {
           setIsCollectPoint(true)
           console.log(collectPoint)
           addNewLoyalCustomerToDatabase(customerTP,newCustomerName,total/100)
-          billProcess (total,'Bank',customerTP,callDiscount(),0,String(transferID))
+          billProcess (total,'Bank',customerTP,callDiscount(),0,transferID)
       }
       else if(payStep=='collect loyal points')
         {
           console.log('collect loyal points')
           const newPoint=loyalCustomerDetails.points+collectPoint
           updateUserPoint(loyalCustomerDetails.TP,newPoint)
-          billProcess (total,'Bank',loyalCustomerDetails.TP,callDiscount(),0,String(transferID))
+          billProcess (total,'Bank',loyalCustomerDetails.TP,callDiscount(),0,transferID)
         }
 
       else if(payStep=='withdraw loyal points')
@@ -949,7 +917,7 @@ const Bill = () => {
           console.log('withdrow points')
           const newPoint=loyalCustomerDetails.points-maxWithdrawPoint
           updateUserPoint(loyalCustomerDetails.TP,newPoint)
-          billProcess (total-maxWithdrawPoint,'Bank',loyalCustomerDetails.TP,callDiscount(),maxWithdrawPoint,String(transferID))
+          billProcess (total-maxWithdrawPoint,'Bank',loyalCustomerDetails.TP,callDiscount(),maxWithdrawPoint,transferID)
           setTotal(total-maxWithdrawPoint)
         }
         
@@ -958,18 +926,18 @@ const Bill = () => {
   };
 
   const handlePayCheque = () => {
-    setIsPayMethodCash(false)
-    if (String(chequeNumber).length<=10) {
-      setErrorOnPayCheque('Cheque number must be at least 10 digit long.');
+    setIsPayMethodCheque(false)
+    if (String(transferID).length<=10) {
+      setErrorOnPayCard('Cheque number is wrong. ');
     } 
     else {
-      console.log('paycheque sucsessfully')
+
       payBillSuccess()
       setIsVisiblePayMethodCheque(false)
       if(payStep=='quickPay')
         {
           console.log('Quick pay')
-          billProcess (total,'Check',0,callDiscount(),0,String(chequeNumber))
+          billProcess (total,'Check',0,callDiscount(),0,chequeNumber)
         }
       else if(payStep=='add new loyal customer')
         {
@@ -978,14 +946,14 @@ const Bill = () => {
           setIsCollectPoint(true)
           console.log(collectPoint)
           addNewLoyalCustomerToDatabase(customerTP,newCustomerName,total/100)
-          billProcess (total,'Check',customerTP,callDiscount(),0,String(chequeNumber))
+          billProcess (total,'Check',customerTP,callDiscount(),0,chequeNumber)
       }
       else if(payStep=='collect loyal points')
         {
           console.log('collect loyal points')
           const newPoint=loyalCustomerDetails.points+collectPoint
           updateUserPoint(loyalCustomerDetails.TP,newPoint)
-          billProcess (total,'Check',loyalCustomerDetails.TP,callDiscount(),0,String(chequeNumber))
+          billProcess (total,'Check',loyalCustomerDetails.TP,callDiscount(),0,chequeNumber)
         }
 
       else if(payStep=='withdraw loyal points')
@@ -993,7 +961,7 @@ const Bill = () => {
           console.log('withdrow points')
           const newPoint=loyalCustomerDetails.points-maxWithdrawPoint
           updateUserPoint(loyalCustomerDetails.TP,newPoint)
-          billProcess (total-maxWithdrawPoint,'Cheque',loyalCustomerDetails.TP,callDiscount(),maxWithdrawPoint,String(chequeNumber))
+          billProcess (total-maxWithdrawPoint,'Cheque',loyalCustomerDetails.TP,callDiscount(),maxWithdrawPoint,chequeNumber)
           setTotal(total-maxWithdrawPoint)
         }
         
@@ -1107,7 +1075,6 @@ const Bill = () => {
 
 <BarcodeScannerProvider>
     <div >
-
     {/*} <div >
       <Menubar/>
       </div>*/}
@@ -1197,16 +1164,15 @@ const Bill = () => {
                           </div>
                           <div className='items-center justify-center flex'>
                           <div className='w-72 p-4 flex flex-col items-start justify-between'>
-                          
     <div className='w-full flex justify-between font-semibold '>
-        <p className=' '>Net amount :</p>
+        <p className=' '>Total:</p>
         <p>{total.toFixed(2)}</p>
     </div>
     {isPayMethodCash && (
         <div className='w-full  flex flex-col items-start z-50 font-semibold text-black'>
             <div className='w-full flex justify-between'>
                 <p className=''>Cash :</p>
-                <p>{(payAmount.toFixed(2))}</p>
+                <p>{(payAmount)}</p>
             </div>
             <div className='w-full flex justify-between'>
                 <p className=''>Balance :</p>
@@ -1233,16 +1199,8 @@ const Bill = () => {
             )}
         </div>
     )}
-
-
-
-
     {!isPayMethodCash && (
         <div className='w-full  flex flex-col items-start z-50 text-black font-semibold'>
-          <div className='w-full flex justify-between'>
-              <p className=''>Payment method :</p>
-              <p>{selectedPaymentMethod}</p>
-          </div>
             {isWithdrawPoint && (
               <div className='w-full flex justify-between'>
               <p className=''>Withdraw point :</p>
@@ -1257,14 +1215,6 @@ const Bill = () => {
             )}
         </div>
     )}
-    <div className='w-full flex justify-between font-semibold '>
-        <p className=' '>Number of items :</p>
-        <p>{noOfItems}</p>
-    </div>
-    <div className='w-full flex justify-between font-semibold '>
-        <p className=' '>Number of pieces :</p>
-        <p>{noOfPices}</p>
-    </div>
 </div>
 
 
@@ -1273,12 +1223,12 @@ const Bill = () => {
                           <div className=" p-1  border-y-2 border-slate-400">
     <table className="table-auto w-full">
                     <tbody>
-                        <tr className="flex w-full justify-between text-right ">
+                        <tr className="flex w-full justify-between ">
                             
-                            <td className='w-1/4 px-2 mx-1 text-right'>Price</td>
-                            <td className='w-1/4 px-2  mx-1 text-right'>Qut.</td>
-                            <td className='w-1/4 px-2 mx-1 text-right'>Discount</td>
-                            <td className='w-1/4 px-2 mx-1 text-right'>Amount</td>
+                            <td className='w-5/10 px-2 '>snumber</td>
+                            <td className='w-1/10 px-2 '>price</td>
+                            <td className='w-1/10 px-2 '>Qut.</td>
+                            <td className='w-1/10 px-2 '>Amount</td>
                            
                             
                         </tr>
@@ -1295,19 +1245,12 @@ const Bill = () => {
             <div key={uniqueKey} className="  rounded-lg overflow-auto">
                 <table className="table-auto w-full">
                     <tbody>
-                    <tr className="flex w-full justify-between  text-sm text-right">
+                        <tr className="flex w-full justify-between border-b-2 border-slate-300  text-sm">
                             
-                            <td className='w-1/2 px-2 mr-4  text-left'>{item.iname}</td>
-                            <td className='w-1/2 px-2 mr-4  text-left'>{item.snumber}</td>
-                            
-                            
-                        </tr>
-                        <tr className="flex w-full justify-between border-b-2 border-slate-300  text-sm text-right">
-                            
-                            <td className='w-1/4 px-2 mx-1  text-right'>{item.selectedValue.toFixed(2)}</td>
-                            <td className='w-1/4 px-2 mx-1 text-right'>{item.NoOfItems}</td>
-                            <td className='w-1/4 px-2 mx-1 text-right'>{(Number(item.discount)*Number(item.NoOfItems)).toFixed(2)}</td>
-                            <td className='w-1/4 px-2 mx-1 text-right'>{(item.Amount).toFixed(2)}</td>
+                            <td className='w-5/10 px-2 '>{item.snumber}</td>
+                            <td className='w-1/10 px-2 '>{(item.selectedValue).toFixed(2)}</td>
+                            <td className='w-1/10 px-2 '>{item.NoOfItems}</td>
+                            <td className='w-1/10 px-2 '>{(item.Amount).toFixed(2)}</td>
                             
                         </tr>
                     </tbody>
@@ -1324,9 +1267,6 @@ const Bill = () => {
                           
                           <button onClick={closeProcessBill}   className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
                             Close
-                          </button>
-                          <button onClick={()=>printProcessBill(cardArray,total,payAmount,selectedPaymentMethod,billNumber)}   className="bg-slate-400 hover:bg-slate-600 text-black hover:text-slate-100 font-semibold p-2  rounded m-2">
-                            Print
                           </button>
                           </div>
                           
@@ -1604,7 +1544,7 @@ const Bill = () => {
                           }}
                         />
                         </div>
-                        <div className='max-w-96 text-sm text-center h-5'>
+                        <div className='w-full text-sm text-center h-5'>
                         {errorOnPayBank && <p className="text-red-500">{errorOnPayBank}</p>}
                         </div>
                         <div className='flex justify-center items-center mt-2 pt-5 border-t-2 border-slate-400'>
@@ -1640,7 +1580,7 @@ const Bill = () => {
                           
                         </div>
                         <div className='flex justify-between items-center font-semibold'>
-                          <p>Cheque number :</p>
+                          <p>Transfer number :</p>
                         <input className='m-1  rounded border-2 border-slate-400 text-right focus:outline-none'
                           type="number"
                           min={0}
@@ -2168,7 +2108,7 @@ const Bill = () => {
                     </tr>
                     <tr>
                         <td className="py-1"><strong>Time:</strong> {formattedTime}</td>
-                        
+                        <td className="py-1"><strong>Bill No:</strong> 123234</td>
                     </tr>
                     
                 </table>
@@ -2228,9 +2168,7 @@ const Bill = () => {
 
 
     <div className='fixed bottom-0  w-5/12'>
-    
     <div className="flex  justify-between     w-full ">
-    
             <input className='w-full     focus:outline-none border-2 border-gray-400'
               type="text"
               value={inputText}
