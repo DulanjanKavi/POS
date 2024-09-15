@@ -75,4 +75,16 @@ export function registerSettingsWindowIpc(ipcMain:IpcMain){
         const userData = getUserData();
         return userData;
     })
+
+    ipcMain.handle('checkUpdates', async ()=>{
+        return false;
+    });
+
+    ipcMain.handle('downloadUpdates', async ()=>{
+        return false;
+    });
+
+    ipcMain.handle('installUpdates', async ()=>{
+        return false;
+    });
 }

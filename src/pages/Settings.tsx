@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SyncToolTab from "../component/Settings/SyncToolTab";
 import AboutTab from "../component/Settings/AboutTab";
+import UpdatesTab from "../component/Settings/UpdatesTab";
 
 
 export default function SettingsPage(){
-    const avaliableTabs = ['Company', 'Sync Tool', 'About'];
+    const avaliableTabs = ['Company', 'Sync Tool', 'Updates', 'About'];
     const [selectedTab, setSelectedTab] = useState('Company');
+    const [userData, setUserData] = useState<any>(null);
     
+    useEffect(()=>{
+        (window as any).SYNC_TOOL_API.settingsGetUserData().then((data:any) => setUserData(data));
+    }, []);
+
     let tabContent = null;
     if (selectedTab === 'Company') {
         tabContent = (
@@ -17,6 +23,8 @@ export default function SettingsPage(){
         )
     } else if (selectedTab === 'Sync Tool') {
         tabContent = <SyncToolTab />
+    } else if (selectedTab === 'Updates') {
+        tabContent = <UpdatesTab userData={userData} />
     } else if (selectedTab === 'About') {
         tabContent = <AboutTab />
     }

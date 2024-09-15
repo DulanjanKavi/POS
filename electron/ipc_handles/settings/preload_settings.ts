@@ -48,7 +48,31 @@ export const SYNC_TOOL_API = {
         } catch (error) {
             console.error(error);
         }
-    }
+    },
 
+
+    settingsCheckUpdates: async ()=>{
+        try {
+            return await ipcRenderer.invoke('checkUpdates');
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
+    settingsDownloadUpdates: async ()=>{
+        try {
+            return await ipcRenderer.invoke('downloadUpdates');
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
+    settingsInstallDownloadedUpdates: async ()=>{
+        try {
+            return await ipcRenderer.invoke('installDownloadedUpdates');
+        } catch (error) {
+            console.error(error);
+        }
+    },
 }
 
