@@ -1,6 +1,7 @@
 import { IpcMain } from "electron";
 import { getUserData, saveUserData, validateUserToken } from "../../fnServer/handleUserData";
-const { PosPrinter} = require('@plick/electron-pos-printer');
+//const { PosPrinter} = require('@plick/electron-pos-printer');
+import { PosPrinter } from '@plick/electron-pos-printer';
 import path from 'node:path'
 
 
@@ -623,7 +624,7 @@ ipcMain.handle('getUserID', async (_event, args) => {
         P+=array[i].NoOfItems;
       }
   
-    const options = {
+    const options:any = {
       preview: true,
       margin: '0px',
       copies: 1,
@@ -633,7 +634,7 @@ ipcMain.handle('getUserID', async (_event, args) => {
       //silent: true,
     };
   
-    const data = [
+    const data:any = [
       //shop details
       {
         type:'image',
