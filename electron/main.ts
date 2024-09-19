@@ -147,36 +147,8 @@ ipcMain.on('navigate-to-logout', () => {
   const navigate = useNavigate();
   navigate('/logout');
 });
-
-
-// Define your custom menu template
-const customMenuTemplate = [
-  {
-    label: 'File', // Example menu category
-    submenu: [
-      // Other menu items (if needed)
-      {
-        label: 'Log Out',
-        click: () => {
-          // Handle logout logic here (e.g., clear session data, navigate to login page)
-          console.log('User clicked "Log Out"');
-          // Add your custom logout logic
-        },
-      },
-    ],
-  },
-  // Other menu categories (if needed)
-];
 */
-const customMenuTemplate: (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] = [ 
-
-];
-// Set the application menu using your custom template
-Menu.setApplicationMenu(Menu.buildFromTemplate(customMenuTemplate));
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-//Menu.setApplicationMenu(null);
+Menu.setApplicationMenu(null);
 
 
 app.on('window-all-closed', () => {
