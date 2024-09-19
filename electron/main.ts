@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { app, BrowserWindow,ipcMain } from 'electron'
 import { createRequire } from 'node:module'
@@ -6,7 +7,8 @@ import path from 'node:path'
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const { PosPrinter} = require('@plick/electron-pos-printer');
+//import { PosPrinter } from '@plick/electron-pos-printer'
+const {PosPrinter} = require("@plick/electron-pos-printer");
 
 
 
@@ -50,7 +52,7 @@ let win: BrowserWindow | null
 
 async function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    //icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     minWidth:950,
     minHeight:750,
     webPreferences: {
@@ -777,7 +779,6 @@ ipcMain.handle('getAllReturnPayment', async () => {
 
 ipcMain.handle("printBill", async (_event, array,total,payAmount,selectedPaymentMethod,bNumber) => {
   console.log("bill printing .......");
-  console.log(array);
   const currentDate = new Date();
   const currentDateFormatted = currentDate.toLocaleDateString(); 
   const currentTimeFormatted = currentDate.toLocaleTimeString();
@@ -797,18 +798,20 @@ ipcMain.handle("printBill", async (_event, array,total,payAmount,selectedPayment
 
 
 
-  const options = {
-    preview: true,
-    margin: '0px',
+  const options= {
+    preview: false,
+    margin: '0 0 0 0',   
+    padding: '5 5 5 5', 
     copies: 1,
-    printerName: 'Microsoft Print to PDF',
-    pageSize: '80mm',
-    //height: 'auto'
-    //silent: true,
+    printerName: 'POS-58',
+    timeOutPerLine: 400,
+    pageSize: '58mm', // page size
+    silent:true
+    
   };
 
   const data = [
-    //shop details
+   //shop details
     {
       type:'image',
       path:path.join(__dirname,'../src/assets/icons/shopLogo.png'),
@@ -821,6 +824,7 @@ ipcMain.handle("printBill", async (_event, array,total,payAmount,selectedPayment
       value: 'SHOP NAME',
       style: { fontWeight: '700', textAlign: 'center', fontSize: '24px' },
     },
+    
     {
       type: 'text', // 'text' | 'barCode' | 'qrCode' | 'image' | 'table' | 'divider'
       value: 'No. XY, XXXXXX Rd, YYYYYYYYYYYY ',
@@ -853,7 +857,7 @@ ipcMain.handle("printBill", async (_event, array,total,payAmount,selectedPayment
       tableFooter: [
       ],
       tableHeaderStyle: {},
-      tableBodyStyle: { padding:'10px 10px', margins:'20px 20px',textAlign: 'center', fontSize: '14 px',fontWeight: '400'  },
+      tableBodyStyle: { padding:'1px 1px', margins:'2px 2px',textAlign: 'center', fontSize: '10 px',fontWeight: '400'  },
       tableFooterStyle: { backgroundColor: '#000', color: 'white' },
       tableHeaderCellStyle: { padding: '2px 2px' },
       tableBodyCellStyle: {  },
@@ -891,7 +895,7 @@ ipcMain.handle("printBill", async (_event, array,total,payAmount,selectedPayment
       tableFooter: [
       ],
       tableHeaderStyle: {textAlign: 'right' },
-      tableBodyStyle: { padding:'0px 0px', margins:'0px 0px', },
+      tableBodyStyle: { padding:'0px 0px', margins:'0px 20px ', },
       tableFooterStyle: { backgroundColor: '#000', color: 'white' },
       tableHeaderCellStyle: { padding: '2px 2px' },
       tableBodyCellStyle: {textAlign: 'right' },
@@ -974,11 +978,13 @@ ipcMain.handle("printBill", async (_event, array,total,payAmount,selectedPayment
       type: 'text', // 'text' | 'barCode' | 'qrCode' | 'image' | 'table' | 'divider'
       value: 'Software @ XXXXXXXXXX +94 YY YYY YYYYY',
       style: { fontWeight: '400', textAlign: 'center', fontSize: '10px',paddingBottom: '10px' },
-    },
+    }
   ];
 
+  
+
   PosPrinter.print(data, options)
-    .then(console.log)
+    .then(()=>{})
     .catch((error: any) => {
       console.log(error);
     });
