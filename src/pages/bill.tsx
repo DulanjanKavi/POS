@@ -68,7 +68,7 @@ const Bill = () => {
   const [itemInndex,setItemIndex]=useState(-1);
   const [isVisiblePayMethod,setIsVisiblePayMethod]=useState(false)
   const [isConfermLoyalNumber,setIsConfermLoyalNumber]=useState(false)
-  const [customerTP, setCustomerTP] = useState(0);
+  const [customerTP, setCustomerTP] = useState("0");
   const [billNumber,setBillNumber] = useState(0)
   const [loyalCustomerDetails,setLoyalCustomerDetails]=useState<any>('')
   const [isCollectOrWithdraw,setIsCollectOrWithdraw]=useState(false)
@@ -336,7 +336,7 @@ const Bill = () => {
   }
 
   const handleBackOnAddNewLoyalCustomer=()=>{
-    setCustomerTP(0)
+    setCustomerTP("0")
     setIsVisibleaddNewLoyalCustomer(false)
     SetIsVisibleLoyalCustomer(true)
   }
@@ -1028,7 +1028,7 @@ const Bill = () => {
   const handleEditInConfermLoyalNumber=()=>{
     SetIsVisibleLoyalCustomer(true)
     setIsConfermLoyalNumber(false)
-    setCustomerTP(0)
+    setCustomerTP("0")
     setLoyalCustomerDetails('')
   }
 
@@ -1078,7 +1078,7 @@ const Bill = () => {
     setItemIndex(-1)
     setNoOfitem(0)
     setPayAmount(0.00)
-    setCustomerTP(0)
+    setCustomerTP("0")
     setTotal(0)
     setLoyalCustomerDetails('')
     setMaxWithdrawPoint(0)
@@ -1678,7 +1678,7 @@ const processHoldcrat=(holdTotal:any,holdCard:any,i:any)=>{
           className="m-1  rounded border-2 border-slate-400 text-right focus:outline-none"
           type="number"
           onChange={(e) => {
-            setCustomerTP(Number(e.target.value));
+            setCustomerTP(String(e.target.value));
             setError(''); 
           }}
         />
@@ -1694,7 +1694,7 @@ const processHoldcrat=(holdTotal:any,holdCard:any,i:any)=>{
         </button>
         <button
           onClick={() => {
-            if (String(customerTP).length !== 10) {
+            if (String(customerTP).length != 10) {
               setError('Please enter a 10-digit TP number.');
             } else {
               setError(''); // Clear any previous error
@@ -2029,7 +2029,7 @@ const processHoldcrat=(holdTotal:any,holdCard:any,i:any)=>{
     <img src={coutinueIcon} className="w-10 h-8" alt="Coutinue Icon" />
     </div>
     <div className="text-center">
-        Coutinue
+        Continue
     </div>
 </div>
           </button>
