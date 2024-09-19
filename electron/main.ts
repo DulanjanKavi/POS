@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { app, BrowserWindow,ipcMain } from 'electron'
+import { app, BrowserWindow,ipcMain, Menu } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -148,7 +148,7 @@ ipcMain.on('navigate-to-logout', () => {
   navigate('/logout');
 });
 
-/*
+
 // Define your custom menu template
 const customMenuTemplate = [
   {
@@ -167,9 +167,12 @@ const customMenuTemplate = [
   },
   // Other menu categories (if needed)
 ];
+*/
+const customMenuTemplate: (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] = [ 
 
+];
 // Set the application menu using your custom template
-Menu.setApplicationMenu(Menu.buildFromTemplate(customMenuTemplate));*/
+Menu.setApplicationMenu(Menu.buildFromTemplate(customMenuTemplate));
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
