@@ -6,3 +6,17 @@ Executing get_all_products
 Error fetching products: {"msg":"Token is not valid"}
 Executing get_company_info
 Error executing get_company_info: string indices must be integers
+Executing get_all_products
+Executing get_all_products
+Executing get_company_info
+Error executing get_company_info: string indices must be integers
+Executing get_all_products
+Executing get_all_products
+Executing get_company_info
+Error executing get_company_info: string indices must be integers
+Executing get_all_products
+Executing get_all_products
+Executing get_all_products
+Executing get_all_products
+Executing get_all_products
+Error executing get_all_products: 'charmap' codec can't encode characters in position 17-25: character maps to <undefined>

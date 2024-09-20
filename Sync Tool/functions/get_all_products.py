@@ -33,6 +33,11 @@ def get_all_products(data):
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
+        # Delete all existing records in the items table
+        cursor.execute("DELETE FROM items")
+        conn.commit()
+        print("Deleted all existing products from the items table.")
+
         for product in products:
             # Convert lists to comma-separated strings
             barcodes = product['barcodes']
@@ -41,6 +46,11 @@ def get_all_products(data):
             # Handling barcodes
             snumber = barcodes[0] if len(barcodes) > 0 else None
             snumber2 = barcodes[1] if len(barcodes) > 1 else None
+
+            # Skip products where snumber is None, as it violates the NOT NULL constraint
+            if snumber is None:
+                print(f"Skipping product {product['name']} due to missing snumber.")
+                continue
             
             # Handling prices and discounts
             prices_str = ', '.join(prices)
@@ -50,6 +60,7 @@ def get_all_products(data):
                 """
                 Failed to insert product ගිම්හානයේ පොරොන්දුව - Gimhanaye Poronduwa: NOT NULL constraint failed: items.snumber. Moving to the next pro   oduct.
                 """
+                
                 cursor.execute('''
                     INSERT INTO items (snumber, snumber2, name, SKU, thumbnail, inventry_type, IS_active, price, discount)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)

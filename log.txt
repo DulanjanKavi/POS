@@ -1,0 +1,18 @@
+2024-09-18T20:53:20.771Z - Command failed: python B:\JKKumarasiri\University\Semester 5\Computer Engineering Project\App Dev\Administration Panel\New Pos 2\POS\Sync Tool\main.py
+Traceback (most recent call last):
+  File "B:\JKKumarasiri\University\Semester 5\Computer Engineering Project\App Dev\Administration Panel\New Pos 2\POS\Sync Tool\main.py", line 7, in <module>
+    from systemTray import start_system_tray_icon
+  File "B:\JKKumarasiri\University\Semester 5\Computer Engineering Project\App Dev\Administration Panel\New Pos 2\POS\Sync Tool\systemTray.py", line 1, in <module>
+    from pystray import Icon, MenuItem, Menu
+ModuleNotFoundError: No module named 'pystray'
+
+ - B:\JKKumarasiri\University\Semester 5\Computer Engineering Project\App Dev\Administration Panel\New Pos 2\POS
+2024-09-18T21:16:08.588Z - Command failed: python B:\JKKumarasiri\University\Semester 5\Computer Engineering Project\App Dev\Administration Panel\New Pos 2\POS\Sync Tool\main.py
+Traceback (most recent call last):
+  File "B:\JKKumarasiri\University\Semester 5\Computer Engineering Project\App Dev\Administration Panel\New Pos 2\POS\Sync Tool\main.py", line 7, in <module>
+    from systemTray import start_system_tray_icon
+  File "B:\JKKumarasiri\University\Semester 5\Computer Engineering Project\App Dev\Administration Panel\New Pos 2\POS\Sync Tool\systemTray.py", line 1, in <module>
+    from pystray import Icon, MenuItem, Menu
+ModuleNotFoundError: No module named 'pystray'
+
+ - B:\JKKumarasiri\University\Semester 5\Computer Engineering Project\App Dev\Administration Panel\New Pos 2\POS
