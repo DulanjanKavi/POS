@@ -5,9 +5,9 @@ import { getUserData, saveUserData, validateUserToken } from "../../fnServer/han
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const {PosPrinter} = require("@plick/electron-pos-printer");
 import path from 'node:path'
+import { ipcGlobals } from "../../main";
 
-const cashierName=""
-//modify that variable
+const cashierName=ipcGlobals.cashierID
 
 export default function registerPOSHandles(ipcMain:IpcMain, db: any, ipcGlobals: any) {
     const  paymentMethod=['Cash','Card','Bank Transfer','Cheque']

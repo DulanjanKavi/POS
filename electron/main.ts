@@ -62,7 +62,7 @@ const sqlite3 = require('sqlite3').verbose();
 const dbPath=path.join(process.env.APP_INS_ROOT, 'pos.db')
 
 var db:any = null;
-const ipcGlobals = {
+export const ipcGlobals = {
   ID: null,
   cashierID: null,
   holdArray: [],
