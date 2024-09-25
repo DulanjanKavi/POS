@@ -5,9 +5,9 @@ import { getUserData, saveUserData, validateUserToken } from "../../fnServer/han
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const {PosPrinter} = require("@plick/electron-pos-printer");
 import path from 'node:path'
-import { ipcGlobals } from "../../main";
 
-const cashierName=ipcGlobals.cashierID
+
+
 
 export default function registerPOSHandles(ipcMain:IpcMain, db: any, ipcGlobals: any) {
     const  paymentMethod=['Cash','Card','Bank Transfer','Cheque']
@@ -888,7 +888,7 @@ ipcMain.handle('getUserID', async (_event, args) => {
             { type: 'text', value: currentDateFormatted,style: {textAlign: 'right',paddingTop: '10px'} },
           ],
           [
-            { type: 'text', value: "Cashier: "+cashierName,style: {textAlign: 'left',paddingBottom: '10px'} },
+            { type: 'text', value: "Cashier: "+ipcGlobals.cashierID,style: {textAlign: 'left',paddingBottom: '10px'} },
             { type: 'text', value: currentTimeFormatted,style: {textAlign: 'right',paddingBottom: '10px'} },
           ],  
         ],
