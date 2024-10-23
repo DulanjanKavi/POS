@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import  { useState,useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import editIcon from '../image/Edit.png'
@@ -1632,7 +1633,7 @@ const Bill = () => {
         </button>
         <button
           onClick={() => {
-            if (String(customerTP).length !== 10) {
+            if (String(customerTP).length !== 9) {
               setError('Please enter a 10-digit TP number.');
             } else {
               setError(''); // Clear any previous error
